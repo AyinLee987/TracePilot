@@ -1,0 +1,201 @@
+{
+  "kind": "deterministic stubbed code-path checks, not LLM evaluation",
+  "source_repository": "https://github.com/Entarochuan/Timely-Machine",
+  "source_commit": "e13af2b8c98d799857ace789ebcfdfd4ea6c2985",
+  "controls": [
+    "No provider or ML execution imports; fake responses and scoring",
+    "Evaluator/scorer AST definitions are unchanged; constructors are bypassed",
+    "No real time, sleep, network, datasets, or external judge",
+    "Per-run evaluator outputs only; downstream interactive/ML aggregation not audited",
+    "General/ML checks establish grace-window eligibility, not absence of all cutoffs",
+    "Scorer input checks cover the inspected methods and base dispatch, not upstream deadline enforcement",
+    "No statement about effect size or published paper results"
+  ],
+  "general_deadline": {
+    "duration": 10.5,
+    "time_limit": 10.0,
+    "within_time_limit": true,
+    "is_correct": true
+  },
+  "interactive_deadline": {
+    "time_limit": 10.0,
+    "total_actural_time_duration": 12.0,
+    "final_score": 10
+  },
+  "interactive_static_order": {
+    "source": "src/timely_eval/interactive.py",
+    "lines": {
+      "execute_action": 209,
+      "read_elapsed": 212,
+      "check_deadline": 235,
+      "retain_final_score": 238
+    },
+    "evidence": "static source order; the separate FixedTimer check demonstrates retained late score"
+  },
+  "ml_deadline": {
+    "time_limit": 10.0,
+    "duration": 14.0,
+    "best_accuracy": 0.8
+  },
+  "reward_uses_transcript_timer": {
+    "Basic_timer_reward_calculator.py": {
+      "last_read_controls": {
+        "single8_match": {
+          "tool_reads_s": [
+            8.0
+          ],
+          "conclusion_s": 8.0,
+          "parsed_last_tool_read": "8.0 seconds.",
+          "reward": 1.0
+        },
+        "single20_match": {
+          "tool_reads_s": [
+            20.0
+          ],
+          "conclusion_s": 20.0,
+          "parsed_last_tool_read": "20.0 seconds.",
+          "reward": 0.49999999999999994
+        },
+        "20_then8_match": {
+          "tool_reads_s": [
+            20.0,
+            8.0
+          ],
+          "conclusion_s": 8.0,
+          "parsed_last_tool_read": "8.0 seconds.",
+          "reward": 1.0
+        },
+        "8_then20_match": {
+          "tool_reads_s": [
+            8.0,
+            20.0
+          ],
+          "conclusion_s": 20.0,
+          "parsed_last_tool_read": "20.0 seconds.",
+          "reward": 0.49999999999999994
+        }
+      },
+      "conclusion_consistency_controls": {
+        "tool8_conclusion20": {
+          "tool_reads_s": [
+            8.0
+          ],
+          "conclusion_s": 20.0,
+          "parsed_last_tool_read": "8.0 seconds.",
+          "reward": 0.5
+        },
+        "tool20_conclusion8": {
+          "tool_reads_s": [
+            20.0
+          ],
+          "conclusion_s": 8.0,
+          "parsed_last_tool_read": "20.0 seconds.",
+          "reward": 0.5
+        }
+      },
+      "input_scope": {
+        "positional_inputs": [
+          "extracted_output",
+          "identity"
+        ],
+        "extra_kwargs_consumed": false,
+        "base_dispatch_source": "rl/internbootcamp_v2/internbootcamp/src/base_reward_calculator.py"
+      }
+    },
+    "Basic_timer_reward_calculator_orig.py": {
+      "last_read_controls": {
+        "single8_match": {
+          "tool_reads_s": [
+            8.0
+          ],
+          "conclusion_s": 8.0,
+          "parsed_last_tool_read": "8.0 seconds.",
+          "reward": 0.9951056516295154
+        },
+        "single20_match": {
+          "tool_reads_s": [
+            20.0
+          ],
+          "conclusion_s": 20.0,
+          "parsed_last_tool_read": "20.0 seconds.",
+          "reward": 0.49999999999999994
+        },
+        "20_then8_match": {
+          "tool_reads_s": [
+            20.0,
+            8.0
+          ],
+          "conclusion_s": 8.0,
+          "parsed_last_tool_read": "8.0 seconds.",
+          "reward": 0.9951056516295154
+        },
+        "8_then20_match": {
+          "tool_reads_s": [
+            8.0,
+            20.0
+          ],
+          "conclusion_s": 20.0,
+          "parsed_last_tool_read": "20.0 seconds.",
+          "reward": 0.49999999999999994
+        }
+      },
+      "conclusion_consistency_controls": {
+        "tool8_conclusion20": {
+          "tool_reads_s": [
+            8.0
+          ],
+          "conclusion_s": 20.0,
+          "parsed_last_tool_read": "8.0 seconds.",
+          "reward": 0.5
+        },
+        "tool20_conclusion8": {
+          "tool_reads_s": [
+            20.0
+          ],
+          "conclusion_s": 8.0,
+          "parsed_last_tool_read": "20.0 seconds.",
+          "reward": 0.5
+        }
+      },
+      "input_scope": {
+        "positional_inputs": [
+          "extracted_output",
+          "identity"
+        ],
+        "extra_kwargs_consumed": false,
+        "base_dispatch_source": "rl/internbootcamp_v2/internbootcamp/src/base_reward_calculator.py"
+      }
+    }
+  },
+  "static_clock_readings": [
+    100.49999999999999,
+    99.59949999999999
+  ],
+  "static_clock_control": {
+    "noise_range": [
+      0.99,
+      1.01
+    ],
+    "forced_noise_factors": [
+      1.005,
+      0.995
+    ],
+    "elapsed_seconds": [
+      100.0,
+      100.1
+    ],
+    "sampling": "deterministic interior-support draws, not a frequency estimate"
+  },
+  "source_sha256": {
+    "rl/internbootcamp_v2/internbootcamp/bootcamps/Basic_LLM_timer/Basic_timer_reward_calculator.py": "2250239c4e4191cd8c88b0ec6997112a068399393d376eee3801e68ae69b5052",
+    "rl/internbootcamp_v2/internbootcamp/bootcamps/Basic_LLM_timer/Basic_timer_reward_calculator_orig.py": "7afdd25a7bee7ee7bbff4b192e16c56fdc063b5a6e3d6d497c5bbd54706d8ee2",
+    "rl/internbootcamp_v2/internbootcamp/bootcamps/Basic_LLM_timer/__init__.py": "3427e753793827e7540a5197ee2c64ec7d6af400fe0dbd0d2f09894504e7820a",
+    "rl/internbootcamp_v2/internbootcamp/src/base_reward_calculator.py": "ef616e2202760dfa54e4cee35bb5ed57119a6864739f611c6208d8d5050eb06f",
+    "src/timely_eval/agentic_ml.py": "78e8b0d12de52ab033bc84028a39cc0464287b556505216575820ab973c61506",
+    "src/timely_eval/general.py": "0213249b77c81c81c851484063551247384145be95d401b2c694a5e61d1fde6b",
+    "src/timely_eval/interactive.py": "bd1f2c7a52eb1ff878dd8965f49d21a2f40765bfcbf4c8fb3580cb699ac61221",
+    "src/timely_eval/parsing.py": "561616e48ed406d7915ee9cff454eceac8c7f9c0de9de3b28533ece229915ffc",
+    "src/timely_eval/timer.py": "7236956a2dfa4e2a2c000339e4c5a3cf01a1583c417a986541d3f9c9c1b98fa6"
+  },
+  "status": "all deterministic assertions passed"
+}

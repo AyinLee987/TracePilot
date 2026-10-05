@@ -1,0 +1,122 @@
+{
+  "kind": "real API engineering smoke; not a comparative benchmark",
+  "task_sha256": "6032d88aea4976d6efa0c0b4c51c01023037dee877f0bf7123cbcb51ecba7592",
+  "provider": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "thinking": "disabled",
+  "runs": [
+    {
+      "framework": "pi",
+      "version": "1.0.3",
+      "local_run_name": "1791211514791-ed66d216-e89e-49f9-8b2c-c542493505dc",
+      "configuration": "reviewed SDK tools and streaming usage adapter",
+      "requests": 4,
+      "agent_tool_calls": 3,
+      "response_models": [
+        "deepseek-flash"
+      ],
+      "input_tokens": 2833,
+      "output_tokens": 272,
+      "cache_hit_tokens": 1664,
+      "artifact_passed": true,
+      "agent_completed": true,
+      "exit_status": "stop",
+      "smoke_passed": true,
+      "elapsed_seconds": 7.3036642,
+      "cleanup_ok": true,
+      "credential_absent_in_tools": true,
+      "manual_code_inspection_passed": true,
+      "peak_price_estimated_cny": 0.005496672,
+      "unknown_requests": 0,
+      "unknown_reserved_cny": 0,
+      "script_sha256": "3dcb4d42018717122360274ad252a9e04b6cb20b99a19099b38c94237ff53519",
+      "raw_events_sha256": "d2f71269a2a2c9084432110e12134f93cb48018d6c2739b879890ed51333291f",
+      "artifact_sha256": "57915fbddd4136bf80150e35e93f917dd2d93c9a10ade5c3cdff943a849e51cf"
+    },
+    {
+      "framework": "mini-swe-agent",
+      "version": "2.4.6",
+      "source_commit": "a83fcae82d2a08f0ee0c688f9d137b3566c097f8",
+      "local_run_name": "20261005T144412Z-f5c3d962",
+      "configuration": "initial ambiguous validation prompt",
+      "requests": 8,
+      "agent_tool_calls": 8,
+      "response_models": [
+        "deepseek-flash"
+      ],
+      "input_tokens": 23723,
+      "output_tokens": 695,
+      "cache_hit_tokens": 18688,
+      "artifact_passed": true,
+      "agent_completed": false,
+      "exit_status": "LimitsExceeded",
+      "smoke_passed": false,
+      "elapsed_seconds": 12.571835499998997,
+      "cleanup_ok": true,
+      "credential_absent_in_tools": true,
+      "manual_code_inspection_passed": true,
+      "peak_price_estimated_cny": 0.019653024,
+      "unknown_requests": 0,
+      "unknown_reserved_cny": 0.0,
+      "script_sha256": null,
+      "raw_events_sha256": "c4c9bc55bb7175802490cf583269233d1eb2f61c6c74e3af700964d540455ec8",
+      "artifact_sha256": "b91ad2482cd77971f7ad11a71b7c526e122b171bc253ea0c17c7d209dcd9d84b"
+    },
+    {
+      "framework": "mini-swe-agent",
+      "version": "2.4.6",
+      "source_commit": "a83fcae82d2a08f0ee0c688f9d137b3566c097f8",
+      "local_run_name": "20261005T145029Z-07da9f10",
+      "configuration": "prompt clarified after first observed failure",
+      "requests": 4,
+      "agent_tool_calls": 4,
+      "response_models": [
+        "deepseek-flash"
+      ],
+      "input_tokens": 1332,
+      "output_tokens": 126,
+      "cache_hit_tokens": 640,
+      "artifact_passed": true,
+      "agent_completed": true,
+      "exit_status": "Submitted",
+      "smoke_passed": true,
+      "elapsed_seconds": 6.126497100005508,
+      "cleanup_ok": true,
+      "credential_absent_in_tools": true,
+      "manual_code_inspection_passed": true,
+      "peak_price_estimated_cny": 0.00290112,
+      "unknown_requests": 0,
+      "unknown_reserved_cny": 0.0,
+      "script_sha256": "c0a5d3fff5738bc1af8bdc22215b1257a6647007c1bf778741ac0c30eb3ae62c",
+      "raw_events_sha256": "70f761a92ad07a668c71a436b6ccea600c6c404b3a5da23159069f0fb7486463",
+      "artifact_sha256": "b91ad2482cd77971f7ad11a71b7c526e122b171bc253ea0c17c7d209dcd9d84b"
+    }
+  ],
+  "total_requests": 16,
+  "total_peak_price_estimated_cny": 0.028050816,
+  "cost_basis": {
+    "usd_per_million": {
+      "input_miss": 0.3,
+      "input_hit": 0.006,
+      "output": 1.2
+    },
+    "planning_cny_per_usd": 8,
+    "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "not_invoice": true,
+    "claude_review_usage_excluded": true
+  },
+  "limitations": [
+    "One synthetic task with different framework tools/prompts; not a framework ranking",
+    "Second mini run is a post-failure prompt repair, not independent benchmark replication",
+    "Initial mini passed field meant artifact validity only; whole smoke did not complete",
+    "First mini run did not capture script hash; raw events retained; runner script/prompt differs as documented, while both final artifact hashes are identical",
+    "Five deterministic cases plus manual code inspection, not an adversarial evaluator",
+    "Native Pi provider serialization and custom mini Model adapter; no universal TracePilot integration claim",
+    "Reported timings have different setup boundaries; no speed comparison is valid"
+  ],
+  "including_e1": {
+    "requests": 207,
+    "peak_price_estimated_cny": 0.162511296,
+    "unknown_reserved_cny": 0.0
+  }
+}

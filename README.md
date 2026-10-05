@@ -10,7 +10,9 @@ Trace-guided model and agent routing for efficient task execution.
 
 ## Status
 
-An initial adapter observes runs, model calls, tools, and retrieval in the existing Python harness. Local Langfuse deployment scripts and a synthetic end-to-end example are available. JSONL, routing, and research experiments are still planned.
+An initial adapter observes runs, model calls, tools, and retrieval in the existing Python harness. Local Langfuse deployment scripts and a synthetic end-to-end example are available. Runtime JSONL and routing remain planned.
+
+This research branch adds a timing audit, a real-API pilot, and local Pi/mini-SWE-agent smoke runners. See the [research decision and results](docs/research/decision.md); these scripts are separate from the runtime library.
 
 See the [Langfuse pilot guide](docs/langfuse-pilot.md) for setup, validation, and current limitations.
 

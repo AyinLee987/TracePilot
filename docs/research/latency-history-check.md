@@ -1,0 +1,27 @@
+# Latency-history hypothesis: focused novelty check
+
+Checked 2026-10-05. **Verdict: retain only the narrow causal question.** Neither temporal awareness, history-based latency prediction, nor shuffled latency controls alone is new. The following are primary-source neighbors, not independently reproduced results. See the separate [Timely Machine audit](timely-audit.md) for its clock/noise experiments and implementation caveats.
+
+## Five nearest works
+
+| Work and inspected sections | Verified overlap | Boundary relevant to candidate C |
+| --- | --- | --- |
+| [ChronosAttack](https://arxiv.org/html/2609.27857v1), II-A–E, III-B–C | Delays authentic tool responses without changing their contents. Altered arrival/serialization order changes decisions; stateless controls show intermediate agent state is unnecessary. | A direct threat to “timing alone changes decisions.” Its intervention changes evidence order. C must keep semantic evidence **and its serialization order** fixed, and study predictive timing information versus an urgency cue. |
+| [Lookahead-R](https://arxiv.org/html/2609.35811v1), 3.1–3.3, 4.4 | A world model conditions on query, execution history, and tool; predicts latency buckets, outcome, and utility for budgeted MCTS. Its Cost-Shuffled ablation randomizes latency labels. | A direct threat to “use traces to predict cost” and “shuffle costs to test usefulness.” The inspected experiments do not isolate matched historical delay, deadline, and evidence while separating a model's future-latency belief from its action. |
+| [Temporal Blindness / TicToc-v1](https://arxiv.org/html/2510.23853v1), 3.1–3.5, 4.1 | Timestamped multi-turn histories vary elapsed time; tool-call decisions are compared with human judgments about whether observations remain current. | Already tests whether agents use temporal context appropriately. Its target is information freshness and human preference, rather than learning the conditional distribution of future tool duration under an unchanged deadline. |
+| [Real-Time Deadlines Reveal Temporal Awareness Failures in LLM Strategic Dialogues](https://sharathg.cis.upenn.edu/assets/pdf/76_hrfUAAAAJ_9pM33mqn1YgC.pdf), 3.2, 4.5, A.3 | Negotiating agents receive per-turn remaining-time feedback; a disclosed word-count-based speech delay creates time pressure. A no-added-delay control preserves the qualitative benefit. | Already connects latency, urgency, and explicit clock feedback. C should provide an identical accurate clock in every arm, then isolate historical latency information rather than rediscovering the benefit of a clock. |
+| [CacheWise](https://arxiv.org/html/2606.16824v1), 5.2, 6.1, 6.5, 7 | External estimators predict tool duration/reuse for cache eviction; baselines include a global mean, tool-conditioned distributions, argument clusters, and ground-truth durations. Its InferCept baseline uses session-local moving averages. | Simple external prediction is a required comparator, not a contribution by itself. This is serving/cache control, not an LLM deciding how much evidence to acquire. Distribution-drift robustness is explicitly left for future work. |
+
+## Defensible hypothesis and falsification
+
+Version note: the temporal-dialogue row above uses the author-hosted PDF under its earlier title. The additional countdown/urgency/other-prompt comparisons cited in `acl-related-work.md` and the reading list were checked against arXiv v2; these sources are not assumed to be identical versions.
+
+**Hypothesis, not finding:** given the same available evidence, evidence order, remaining seconds, and total historical delay, LLMs sometimes treat slow-looking histories as urgency even when those histories do not predict future latency; conversely, they may fail to exploit histories that do predict it.
+
+Use paired histories with identical delay multisets/totals but different recent patterns. Cross them with a persistent latency process versus a history-independent process, matching marginal duration distributions. Keep answer quality, tool reliability, action utilities, prompt format, and future sampling seeds controlled. Critically, the process must be disclosed or learnable from prior episodes: identical observations under undisclosed different transition laws cannot justify different expected decisions.
+
+Compare raw trace, a fixed statistical summary, and an external predictor feeding the **same decision rule**. Also compare LLM decisions supplied with oracle probabilities. On cloned prompts, separately elicit future-duration distributions/deadline-hit probabilities and actions; asking for a prediction before acting could itself change behavior. Measure probability calibration, deadline-conditioned utility/regret, and unnecessary stopping, including predictor/prompt overhead.
+
+**Kill criteria:** effects disappear after evidence-order and clock matching; only arithmetic/prompt-format mistakes remain; or simple calibrated predictions explain all gains without a reproducible belief–action mismatch. In those cases, the evidence supports an engineering baseline or narrower diagnostic, not the proposed broad behavioral claim.
+
+Search scope included temporal-budget, stochastic tool latency, latency history/autocorrelation, and Chronos variants. No inspected paper establishes this exact conjunction of controls; this bounded search does **not** establish novelty. No model experiment was run for this note.

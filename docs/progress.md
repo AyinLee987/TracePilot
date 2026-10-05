@@ -51,6 +51,21 @@
 - **验证与文档审查**：独立 Claude CLI 文档审查退出码 0、模型 `claude-opus-5-5`，未发现阻断问题；已处理月度排期/共享预算、重试与辅助计时、deadline 截断口径和单一 deadline 的局限。14 个 Markdown 文件的 22 个本地链接、英文 README（24 行）、尾随空格、`git diff --check` 与原始输出忽略规则检查通过。没有模型能力实验、付费批量调用或运行时代码改动，不声明 E2E 或论文复现通过。
 - **下一步**：用户阅读核心论文后选择窄先导；工程继续补事件/JSONL 与用量边界。候选时延实验不以完整 router 或通用快照系统为前置条件。
 
+## 2026-10-05：独立研究分支、论文审计与真实计时先导
+
+- **保护范围**：原 `TracePilot` 工作区保持干净的 `main@dadab3f67a65f7a5e3a2d910b8d094255e6d60a8`。新 worktree `TracePilot-research-20261005` 使用 `research/acl-feasibility-20261005`；只向该研究分支提交推送。
+- **研究工作**：核查 Timely Machine 的 ACL 最终版与固定官方源码，区分设计选择、公开实现行为和未知论文影响；补查顶会与直接预印本先行。适当使用 lateral/inversion 生成候选，再做文献否证。最新建议和次日阅读顺序见 [decision](research/decision.md)。
+- **E0**：标准库脚本 `research/timely_audit.py` 验证固定提交和源文件 hash，并以明确的 fake/stub 运行不变 AST 定义。计时宽限、动作顺序、transcript 时钟奖励和噪声范围反例检查通过；不声称模型复现或论文结果失效。
+- **E1**：独立串行 `research/timing_pilot.py` 的 fake E2E 和关键截止／计费／未知用量边界通过。Claude 初审发现延迟相位与链长首个 RNG 抽样耦合，已在任何付费调用前用 `latency-phase:{seed}` 独立种子修复，重新完成 32 runs / 136 fake requests；fake 费用不计入研究支出。
+- **真实开发批次**：`dev --execute-paid --budget-cny 10 --max-calls 60`，本地批次 `.local/timing-pilot/dev-20261005-reviewed`，8 runs / 26 requests；工具 4/4 完整成功，无工具 0/4。预声明公式得出 10s deadline，随后冻结。
+- **真实 probe**：`probe --execute-paid --deadline 10 --budget-cny 50 --max-calls 384`，本地批次 `.local/timing-pilot/probe-20261005-d10`，32 runs / 165 requests。Countdown 与 deadline-only 各 9/16 完整按时成功。三次晚返回计费但不算及时成功，全部请求在截止前派发；独立从原始 JSONL 重算通过。总峰值价格估算 0.13446048 元（非账单；Claude 订阅审查另计）。完整结果、口径与局限见 [pilot-results](research/pilot-results.md)。
+- **审查**：两轮 Claude Opus 5.5 计划讨论、完整代码审查与相位修复复审，实际模型均为 `claude-opus-5-5`，复审无阻断。之后完成证据／开源 Agent 计划审查、双 runner 完整审查和增量复审。E0 证据标签进一步收紧；[处置记录](reviews/2026-10-05-overnight-research.md)。
+- **开源 Agent 部署与执行**：Pi `@earendil-works/pi-coding-agent@1.0.3` 使用本地 npm 目录，mini-SWE-agent `2.4.6` 使用独立 venv；原项目及全局配置保持原状。两套 runner 初审后真实调用；Pi 按初审建议做最小修复并通过 fake 后试跑，后续 delta review 再确认修复无阻断；mini 提示词修复则在 delta review 后补跑。使用当前 DeepSeek key，工具在无网络／无 key 的 Docker 中执行。Pi 正常 stop，mini 修正提示词后正常 Submitted，均通过五项验收与最终代码人工检查。它们是独立工程烟测，不代表正式库已完成跨框架支持。
+- **开源 Agent 首轮与补跑预算**：Pi 首轮 4 次请求正常完成，mini 首轮 8 次请求产物正确但因适配器提示词含糊未正常提交；已澄清单独 `validate` 动作并经 Claude 复审无阻断。补跑前累计已知峰值估算：E1 0.13446048 + Pi 0.005496672 + mini 0.019653024 = **0.159610176 元**，未知计费预留为 0。mini 一次补跑最坏预留 0.393216 元，仍在 mini 累计 2 元及今晚 200 元范围内；保留首轮记录，不能只报告调整提示词后的结果。
+- **补跑与最终计费**：mini 修正提示词后的 fake/live 均为 4 次请求并正常提交；新增真实估算 0.00290112 元。今晚真实 API 总计 **207 requests / 0.162511296 元峰值价格估算**（非账单），没有未知计费或余额不足报错；fake 不计费，Claude 审查使用量另计。脱敏 [结果](../research/results/open-agent-smoke.json)保留三次运行，包括首轮未完成的 mini workflow；最终无 Pi/mini 实验容器残留。
+- **研究边界**：E1 是工程验证，任务几乎只有固定行动链，不能验证候选 C，也不构成模型能力排序。正式 router、通用 checkpoint、运行时 JSONL、跨域研究尚未完成。
+- **最终检查**：Claude 最终产物审查无阻断，已处理 Pi 审查时间线、局部 provenance 字段、累计预算和研究措辞。29 个修改／新增文件的 55 个本地链接、Python AST、JavaScript 语法、JSON、README 英文、实际 key 字节缺席检查与忽略规则通过；`git diff --check` 通过。原工作区与远端 main 仍为 `dadab3f`。交付只面向 `research/acl-feasibility-20261005`，不合并 main。
+
 ## 后续记录格式
 
 每次任务新增一条记录，至少包含：日期、范围、实际完成内容、验证命令与结果、Claude 审查及处置、已知限制、下一步。代码功能的记录应附对应端到端场景；只读评审不单独触发提交循环。

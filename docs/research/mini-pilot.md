@@ -1,0 +1,48 @@
+# mini-SWE-agent portability smoke
+
+Updated 2026-10-05. This is a bounded integration check, not a SWE-bench result, model comparison, or evidence for the latency-history hypothesis. The implementation is [`research/agents/mini_smoke.py`](../../research/agents/mini_smoke.py).
+
+## Pinned installation
+
+- Official [repository](https://github.com/SWE-agent/mini-swe-agent), latest release returned by GitHub on the inspection date: **v2.4.6**; [source commit](https://github.com/SWE-agent/mini-swe-agent/tree/a83fcae82d2a08f0ee0c688f9d137b3566c097f8) `a83fcae82d2a08f0ee0c688f9d137b3566c097f8`.
+- Source archive: `.local/oss/mini/source.zip`; SHA-256 `6621bf1f23f462f3a179edb2aa08be6547a8167a7eccc666b15e7830be38e362`. Extracted source and independent Python 3.12 venv live under `.local/oss/mini/`. No installation into either original project or global Python.
+- Installed package metadata reports `2.4.6`. Installed `agents/default.py` matches the downloaded source byte-for-byte; the runner asserts SHA-256 `e8ef8aa365942d739c2ec5cb0879f60f377d2dc2de8ec670aaedf3bafb45a4c2`. Dependency versions are saved locally in `installed-packages.txt` (contains a local source-install reference; do not publish unredacted).
+- Docker engine was healthy, version `29.7.2`. Image `python:3.12.12-slim-bookworm` was pulled and is used by immutable digest `sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c`.
+
+To reproduce installation, download the official commit archive, verify its hash, create `.local/oss/mini/venv` with `python -m venv`, and install the extracted source with that venv's `python -m pip install <source-directory>`. The original installation used the project's existing Python only to create the new venv. Package installation does not invoke a model.
+
+## Actual framework and adapter boundaries
+
+The runner uses the unchanged official **DefaultAgent** `run/query/execute_actions/save` loop. Official [protocols](https://github.com/SWE-agent/mini-swe-agent/blob/a83fcae82d2a08f0ee0c688f9d137b3566c097f8/src/minisweagent/__init__.py) allow separate Model and Environment implementations; the [cookbook](https://mini-swe-agent.com/latest/advanced/cookbook/) documents environment subclassing.
+
+The custom Model implements those methods directly, using the bash-text action convention. It bypasses LiteLLM/provider factories and their retry behavior. This is actual mini execution with a custom provider adapter, not a test of the stock LiteLLM integration or current default tool-call prompt. The DockerEnvironment subclass preserves its configuration and submission convention, adding credential-free subprocess environments, bounded output, and synchronous Windows-compatible cleanup. Upstream's background POSIX-shell cleanup is not used.
+
+Shared `fixtures/tags.py` and `fixtures/task.txt` supply exactly the agreed initial bug and specification. The agent can inspect/edit `/work/tags.py`, call the standalone adapter action `validate`, and submit. `validate` is not a shell executable and cannot be combined with `cd`, pipes or other shell commands. Validation code remains in the host runner, outside agent-writable files, and is sent directly to isolated `python -I -S -c`. Five cases check trimming, empty filtering, lowercase, stable normalized order, fresh output lists, no input mutation, and `str.lower()` versus `casefold()`. Final validation runs independently after the loop ends. This small checker is not an adversarial-code evaluator; manually inspect final code before accepting a pass.
+
+## Isolation, bounds, and traces
+
+- Container: no host bind mounts, no Docker socket, no network, read-only root, unprivileged UID, no capabilities, no privilege escalation, 64-process/256-MB/one-CPU limits, 16-MB workspace and temporary tmpfs mounts. Every run gets its own disposable container. Docker commands are argv lists; model commands execute only inside it.
+- Credentials: only the model worker receives `DEEPSEEK_API_KEY` through its environment. Docker subprocesses use an explicit OS-variable allowlist; no credentials are forwarded into containers. A fake-key canary checks only boolean key absence inside Docker. Framework global config is redirected to a new empty run-local directory before import.
+- Provider: fixed official `https://api.deepseek.com/chat/completions`, `deepseek-flash`, thinking disabled, non-streaming. [DeepSeek documentation](https://api-docs.deepseek.com/api/create-chat-completion/) confirms this model/parameter contract. No endpoint/model override or proxy environment inheritance.
+- Limits: **8 model calls**, **1,024 output tokens**, **15,360 serialized UTF-8 message bytes**; no context truncation. Framework recovery does not retry malformed replies; provider, transport, and application retries are all zero. API requests each run in a separate process with a 45-second parent deadline and 30-second HTTP operation timeout. The parent kills/waits for an overlong worker; remote inference cancellation is not guaranteed, so that call's full reservation is retained and the run stops.
+- Planning reservation: 16,384 input tokens and 1,024 output tokens per call, peak-price rates USD `0.30/0.006/1.20` per million uncached/cached/output tokens, planning conversion CNY 8/USD, consistent with the existing pilot's [pricing basis](https://api-docs.deepseek.com/quick_start/pricing/). Eight full reservations total **CNY 0.393216**, below the CNY 2 allowance. This is an estimate under the stated rates/token envelope, not an invoice guarantee. Unknown/inconsistent usage, an API error, unexpected response model ID, or usage exceeding the reservation stops expansion; HTTP status is retained without error-body contents. Unknown potentially charged requests keep their full reservation, set total estimated cost to `null`, and are distinguished from the known-cost subtotal.
+- Tools have a 10-second container deadline and 15-second Docker-client timeout; output is capped at 8 KB. A timeout removes the entire container. Agent wall-time limit is 180 seconds checked between steps; a final request/tool may drain beyond it. Cleanup synchronously removes the container within a 15-second client bound and reports failure; the container also has a 600-second lifetime fallback. No claimed hard server-side cancellation.
+- `events.jsonl`, `trajectory.json`, `summary.json`, and final synthetic code stay under `.local/oss/mini/runs/<run-id>/`. Events contain model/tool starts and ends, actual response model, returned input/output/cache tokens, errors, call/reservation counts, task wall time and cleanup drain. Non-streaming TTFT and missing token fields remain `null`; fake usage is unknown, not zero. Timing begins at runner entry, including framework import/container setup, but excludes Python interpreter startup.
+
+## Validation and use
+
+```powershell
+& .local/oss/mini/venv/Scripts/python.exe -I -B research/agents/mini_smoke.py
+```
+
+The default scripted fake makes no network/model request. Run `20261005T142647Z-522a5319` executed four model turns through actual DefaultAgent/Docker, rejected the initial buggy fixture, passed independent final validation, confirmed key absence, and removed its container. Run `20261005T142920Z-115bf76c` passed after runner-entry timing/source-hash assertions; `20261005T143039Z-697480f0` passed after cost/cleanup refinements. Run `20261005T144635Z-1cf42c33` passed after clarifying the validation protocol and separating artifact validity from successful agent termination. Fake evidence validates plumbing only.
+
+After review, supply the existing key in the process environment and add `--live`. The runner never reads the medical `.env` itself, takes no key argument, and writes no credential configuration. Insufficient funds must stop paid work and be reported; do not buy credits. Raw sessions remain ignored.
+
+## Real provider results
+
+First live run `20261005T144412Z-f5c3d962`: eight real `deepseek-flash` requests, known peak-price estimated cost **CNY 0.019653024**, final code passed all five checks and manual inspection; credential isolation and cleanup passed. It ended with **LimitsExceeded**, not normal submission. The initial prompt ambiguously described `validate` as a command, so the model combined it with shell commands and then searched for a nonexistent executable. This is a custom-adapter contract problem, not evidence of an upstream mini-SWE-agent bug or inferior model ability.
+
+The original record is retained. The revised prompt explicitly describes the standalone adapter action. Summary fields now distinguish `artifact_passed`, `agent_completed` (`Submitted`), and `smoke_passed` (artifact + submission + cleanup); process exit success requires all three. Legacy `passed` means artifact validity only. The first run did not capture its script/prompt hashes; the revised runner records both in the local summary, and its shared task hash is unchanged. The public redacted JSON retains a subset of that provenance.
+
+Reviewed real rerun `20261005T145029Z-07da9f10`: **4 requests, 4 agent tool actions, Submitted, five checks passed**, credential absence and cleanup confirmed. Final code contains only the expected function and passed manual inspection. Elapsed time including setup and cleanup was 6.1265 seconds; peak-price estimate **CNY 0.00290112**. Fake `20261005T145027Z-e91ece7c` also passed after the metadata addition. Total for both real mini runs is **12 requests / CNY 0.022554144**; no unknown usage or insufficient-balance response. This is a prompt repair after observing a failure, not a success-rate or framework-performance estimate. Redacted evidence including the failed first workflow is [published here](../../research/results/open-agent-smoke.json).

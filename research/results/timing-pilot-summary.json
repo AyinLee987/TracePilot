@@ -1,0 +1,697 @@
+{
+  "kind": "real API engineering pilot on synthetic archive tasks",
+  "batches": [
+    {
+      "label": "development",
+      "local_batch_name": "dev-20261005-reviewed",
+      "real_api": true,
+      "model_requested": "deepseek-flash",
+      "response_models": [
+        "deepseek-flash"
+      ],
+      "python_version": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+      "runs": 8,
+      "requests": 26,
+      "deadline_s": null,
+      "development_gate_passed": true,
+      "suggested_deadline_s": 10,
+      "input_tokens": 8001,
+      "output_tokens": 608,
+      "cache_hit_tokens": 3072,
+      "peak_price_estimated_cny": 0.01781385600000001,
+      "api_request_median_s": 0.6907031000009738,
+      "api_request_max_s": 0.9916519999969751,
+      "requests_completing_after_cutoff": 0,
+      "invalid_actions": 0,
+      "script_sha256": "27954e3089535dd4c84c30db1562fc46e4524cf32e21f9fe5cede08dc4b49712",
+      "protocol_sha256": "134321de9fbe9047c97c0a6f76644e6f945105a15674daa751c166081841e1fd",
+      "tasks_sha256": "b9a2d0c8c5e4bb92520a64a4f54ac80fe7e42b36a40a78074b6518702d3aef42",
+      "raw_events_sha256": "04efc2bec9a06a01291682c809411cc455b6e92b1d0fe0f225839ed549137e7c",
+      "groups": {
+        "deadline-only/none/tools": {
+          "n": 4,
+          "answer_correct_including_late": 4,
+          "on_time_answer_correct": 4,
+          "on_time_fully_evidenced_success": 4,
+          "status_counts": {
+            "answered": 4
+          },
+          "mean_model_calls": 5.5,
+          "mean_tool_calls": 4.5,
+          "mean_evidence_coverage": 1.0,
+          "mean_observation_duration_s": 3.7144081499936874,
+          "peak_price_estimated_cny": 0.016313856000000022
+        },
+        "deadline-only/none/no-tools": {
+          "n": 4,
+          "answer_correct_including_late": 0,
+          "on_time_answer_correct": 0,
+          "on_time_fully_evidenced_success": 0,
+          "status_counts": {
+            "answered": 4
+          },
+          "mean_model_calls": 1,
+          "mean_tool_calls": 0,
+          "mean_evidence_coverage": 0.0,
+          "mean_observation_duration_s": 0.7813008750017616,
+          "peak_price_estimated_cny": 0.0014999999999999875
+        }
+      },
+      "paired_action_kind_checks": []
+    },
+    {
+      "label": "probe",
+      "local_batch_name": "probe-20261005-d10",
+      "real_api": true,
+      "model_requested": "deepseek-flash",
+      "response_models": [
+        "deepseek-flash"
+      ],
+      "python_version": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+      "runs": 32,
+      "requests": 165,
+      "deadline_s": 10.0,
+      "development_gate_passed": false,
+      "suggested_deadline_s": null,
+      "input_tokens": 58506,
+      "output_tokens": 3732,
+      "cache_hit_tokens": 25338,
+      "peak_price_estimated_cny": 0.11664662399999992,
+      "api_request_median_s": 0.7267309000017121,
+      "api_request_max_s": 1.1194706999958726,
+      "requests_completing_after_cutoff": 3,
+      "invalid_actions": 0,
+      "script_sha256": "27954e3089535dd4c84c30db1562fc46e4524cf32e21f9fe5cede08dc4b49712",
+      "protocol_sha256": "134321de9fbe9047c97c0a6f76644e6f945105a15674daa751c166081841e1fd",
+      "tasks_sha256": "286a0b585eb3a9731561e7456077d749b157a20748f3810f2eef07279f4968fc",
+      "raw_events_sha256": "7442cb02dd79e6e1954045a03c13fd3b45e83c6379285776af7e3e2fb08f91ab",
+      "groups": {
+        "deadline-only/alternating/tools": {
+          "n": 8,
+          "answer_correct_including_late": 4,
+          "on_time_answer_correct": 3,
+          "on_time_fully_evidenced_success": 3,
+          "status_counts": {
+            "answered": 3,
+            "deadline": 5
+          },
+          "mean_model_calls": 5.125,
+          "mean_tool_calls": 4.5,
+          "mean_evidence_coverage": 0.8333333333333333,
+          "mean_observation_duration_s": 9.896851800003788,
+          "peak_price_estimated_cny": 0.02892969599999997
+        },
+        "deadline-only/grouped/tools": {
+          "n": 8,
+          "answer_correct_including_late": 6,
+          "on_time_answer_correct": 6,
+          "on_time_fully_evidenced_success": 6,
+          "status_counts": {
+            "answered": 6,
+            "deadline": 2
+          },
+          "mean_model_calls": 5.25,
+          "mean_tool_calls": 4.5,
+          "mean_evidence_coverage": 0.8541666666666666,
+          "mean_observation_duration_s": 8.128160312500768,
+          "peak_price_estimated_cny": 0.030765456000000038
+        },
+        "countdown/grouped/tools": {
+          "n": 8,
+          "answer_correct_including_late": 6,
+          "on_time_answer_correct": 5,
+          "on_time_fully_evidenced_success": 5,
+          "status_counts": {
+            "answered": 5,
+            "deadline": 3
+          },
+          "mean_model_calls": 5.25,
+          "mean_tool_calls": 4.5,
+          "mean_evidence_coverage": 0.8541666666666666,
+          "mean_observation_duration_s": 8.460082087503906,
+          "peak_price_estimated_cny": 0.029561903999999965
+        },
+        "countdown/alternating/tools": {
+          "n": 8,
+          "answer_correct_including_late": 4,
+          "on_time_answer_correct": 4,
+          "on_time_fully_evidenced_success": 4,
+          "status_counts": {
+            "answered": 4,
+            "deadline": 4
+          },
+          "mean_model_calls": 5,
+          "mean_tool_calls": 4.5,
+          "mean_evidence_coverage": 0.8333333333333333,
+          "mean_observation_duration_s": 9.737501674997475,
+          "peak_price_estimated_cny": 0.027389567999999948
+        }
+      },
+      "paired_action_kind_checks": [
+        {
+          "seed": 201,
+          "pattern": "alternating",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "f8370b43730257cb312e447d4a650ed1adb90be57919611820082f7636836f7c",
+            "f8370b43730257cb312e447d4a650ed1adb90be57919611820082f7636836f7c"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "f8370b43730257cb312e447d4a650ed1adb90be57919611820082f7636836f7c",
+            "f8370b43730257cb312e447d4a650ed1adb90be57919611820082f7636836f7c"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            true,
+            true
+          ]
+        },
+        {
+          "seed": 201,
+          "pattern": "grouped",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "f8370b43730257cb312e447d4a650ed1adb90be57919611820082f7636836f7c",
+            "f8370b43730257cb312e447d4a650ed1adb90be57919611820082f7636836f7c"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "f8370b43730257cb312e447d4a650ed1adb90be57919611820082f7636836f7c",
+            "f8370b43730257cb312e447d4a650ed1adb90be57919611820082f7636836f7c"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            true,
+            true
+          ]
+        },
+        {
+          "seed": 202,
+          "pattern": "alternating",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "search"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "search"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "dfd176d576d4409d1b70c024902c34f30448e3069978f6e17900967b6cc2a6a6",
+            "dfd176d576d4409d1b70c024902c34f30448e3069978f6e17900967b6cc2a6a6"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "dfd176d576d4409d1b70c024902c34f30448e3069978f6e17900967b6cc2a6a6",
+            "dfd176d576d4409d1b70c024902c34f30448e3069978f6e17900967b6cc2a6a6"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            false,
+            false
+          ]
+        },
+        {
+          "seed": 202,
+          "pattern": "grouped",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "d0f7f1fb772bcfa92d1cb7b4bba3987176f250fd92d7d3712fef28abf1a695bd",
+            "d0f7f1fb772bcfa92d1cb7b4bba3987176f250fd92d7d3712fef28abf1a695bd"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "d0f7f1fb772bcfa92d1cb7b4bba3987176f250fd92d7d3712fef28abf1a695bd",
+            "d0f7f1fb772bcfa92d1cb7b4bba3987176f250fd92d7d3712fef28abf1a695bd"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            false,
+            false
+          ]
+        },
+        {
+          "seed": 203,
+          "pattern": "alternating",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "b094e0d4c60270d2a5a27f65ee1bcb8ef2c38f78242927d88c64a743034203a1",
+            "b094e0d4c60270d2a5a27f65ee1bcb8ef2c38f78242927d88c64a743034203a1"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "b094e0d4c60270d2a5a27f65ee1bcb8ef2c38f78242927d88c64a743034203a1",
+            "b094e0d4c60270d2a5a27f65ee1bcb8ef2c38f78242927d88c64a743034203a1"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            true,
+            true
+          ]
+        },
+        {
+          "seed": 203,
+          "pattern": "grouped",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "7e3e0091f4e1d049948c6ed331b2ef84c4041aa8b2d79a160b28033e558ca548",
+            "7e3e0091f4e1d049948c6ed331b2ef84c4041aa8b2d79a160b28033e558ca548"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "7e3e0091f4e1d049948c6ed331b2ef84c4041aa8b2d79a160b28033e558ca548",
+            "7e3e0091f4e1d049948c6ed331b2ef84c4041aa8b2d79a160b28033e558ca548"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            false,
+            false
+          ]
+        },
+        {
+          "seed": 204,
+          "pattern": "alternating",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "search",
+            "fetch"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "search"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "2deecdb2c9bc2f125065fcbbced99e627850f0bd3053245bd0592177ff49f9e0",
+            "2deecdb2c9bc2f125065fcbbced99e627850f0bd3053245bd0592177ff49f9e0"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "2deecdb2c9bc2f125065fcbbced99e627850f0bd3053245bd0592177ff49f9e0",
+            "2deecdb2c9bc2f125065fcbbced99e627850f0bd3053245bd0592177ff49f9e0"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            false,
+            false
+          ]
+        },
+        {
+          "seed": 204,
+          "pattern": "grouped",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "1804988dd4799a445dbc1019f0388e971699933a22618e4957ed94097f662bef",
+            "1804988dd4799a445dbc1019f0388e971699933a22618e4957ed94097f662bef"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "1804988dd4799a445dbc1019f0388e971699933a22618e4957ed94097f662bef",
+            "1804988dd4799a445dbc1019f0388e971699933a22618e4957ed94097f662bef"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            true,
+            true
+          ]
+        },
+        {
+          "seed": 205,
+          "pattern": "alternating",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "search"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "search"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "ad7c6cdb810c82707b880f4f3416f5dc124b6c4754bb1767a8d2d9a3a909be9c",
+            "ad7c6cdb810c82707b880f4f3416f5dc124b6c4754bb1767a8d2d9a3a909be9c"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "ad7c6cdb810c82707b880f4f3416f5dc124b6c4754bb1767a8d2d9a3a909be9c",
+            "ad7c6cdb810c82707b880f4f3416f5dc124b6c4754bb1767a8d2d9a3a909be9c"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            false,
+            false
+          ]
+        },
+        {
+          "seed": 205,
+          "pattern": "grouped",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "606a6ff34a4ff68a0d2968fbcdda21cc0179a70dcf531f83cc3f9ee4224307ac",
+            "606a6ff34a4ff68a0d2968fbcdda21cc0179a70dcf531f83cc3f9ee4224307ac"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "606a6ff34a4ff68a0d2968fbcdda21cc0179a70dcf531f83cc3f9ee4224307ac",
+            "606a6ff34a4ff68a0d2968fbcdda21cc0179a70dcf531f83cc3f9ee4224307ac"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            true,
+            true
+          ]
+        },
+        {
+          "seed": 206,
+          "pattern": "alternating",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "bbb33617200d1185a4ea5ba0d1212e50adff4890f34cdd4f0f4402242d4439ce",
+            "bbb33617200d1185a4ea5ba0d1212e50adff4890f34cdd4f0f4402242d4439ce"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "25378cfb4325e958419d6f70226494d9fabfff86fcd3cd5961c3b67d9b55b990",
+            "25378cfb4325e958419d6f70226494d9fabfff86fcd3cd5961c3b67d9b55b990"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            false,
+            true
+          ]
+        },
+        {
+          "seed": 206,
+          "pattern": "grouped",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "bbb33617200d1185a4ea5ba0d1212e50adff4890f34cdd4f0f4402242d4439ce",
+            "bbb33617200d1185a4ea5ba0d1212e50adff4890f34cdd4f0f4402242d4439ce"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "bbb33617200d1185a4ea5ba0d1212e50adff4890f34cdd4f0f4402242d4439ce",
+            "bbb33617200d1185a4ea5ba0d1212e50adff4890f34cdd4f0f4402242d4439ce"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            true,
+            true
+          ]
+        },
+        {
+          "seed": 207,
+          "pattern": "alternating",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "971f75b6f80a13bc15950088799a0a51fe4ea93169d6f39ae04f7e8bf320f2d2",
+            "971f75b6f80a13bc15950088799a0a51fe4ea93169d6f39ae04f7e8bf320f2d2"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "971f75b6f80a13bc15950088799a0a51fe4ea93169d6f39ae04f7e8bf320f2d2",
+            "971f75b6f80a13bc15950088799a0a51fe4ea93169d6f39ae04f7e8bf320f2d2"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            true,
+            true
+          ]
+        },
+        {
+          "seed": 207,
+          "pattern": "grouped",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "971f75b6f80a13bc15950088799a0a51fe4ea93169d6f39ae04f7e8bf320f2d2",
+            "971f75b6f80a13bc15950088799a0a51fe4ea93169d6f39ae04f7e8bf320f2d2"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "c38e533b4663fa43c0ff113c7441e7b9b999a2f6652862ed12d3153e4f66b06a",
+            "c38e533b4663fa43c0ff113c7441e7b9b999a2f6652862ed12d3153e4f66b06a"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            true,
+            false
+          ]
+        },
+        {
+          "seed": 208,
+          "pattern": "alternating",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "search"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "search"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "6cd703e6cca9a37ab541f834f2951a05fb5b60c95500ca85216c07b245359730",
+            "6cd703e6cca9a37ab541f834f2951a05fb5b60c95500ca85216c07b245359730"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "6cd703e6cca9a37ab541f834f2951a05fb5b60c95500ca85216c07b245359730",
+            "6cd703e6cca9a37ab541f834f2951a05fb5b60c95500ca85216c07b245359730"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            false,
+            false
+          ]
+        },
+        {
+          "seed": 208,
+          "pattern": "grouped",
+          "deadline_only_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "countdown_actions": [
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "search",
+            "fetch",
+            "answer"
+          ],
+          "common_prefix_action_kind_diverged": false,
+          "common_full_action_prefix_hashes": [
+            "001d1e89be7464cb66afd1c63462875c9c3df7cba633dde82e6800738d13f8e7",
+            "001d1e89be7464cb66afd1c63462875c9c3df7cba633dde82e6800738d13f8e7"
+          ],
+          "common_full_action_prefix_equal": true,
+          "on_time_response_common_prefix_hashes": [
+            "001d1e89be7464cb66afd1c63462875c9c3df7cba633dde82e6800738d13f8e7",
+            "001d1e89be7464cb66afd1c63462875c9c3df7cba633dde82e6800738d13f8e7"
+          ],
+          "on_time_response_common_prefix_equal": true,
+          "fully_evidenced_success": [
+            true,
+            true
+          ]
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Single model alias, 4 development tasks and 8 probe tasks; one invocation per condition",
+    "Synthetic nearly fixed action chains, not a meaningful optional-verification choice",
+    "E1 neither validates nor falsifies informative-latency-history hypothesis C",
+    "Full common-prefix equality includes completed late responses; a separate on-time-only check is also given. Neither proves identical policies",
+    "Peak pricing with planning conversion 8 CNY/USD; estimates not invoices; Claude reviews separate",
+    "No claims of statistical significance, model rankings, real production delay distribution, or Timely-RL reproduction"
+  ],
+  "total_requests": 191,
+  "total_peak_price_estimated_cny": 0.13446047999999994
+}
