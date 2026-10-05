@@ -20,4 +20,5 @@ Use end-to-end validation, review changes with Claude CLI, update relevant docs,
 
 - [Project plan and conventions](agent.md)
 - [Progress](docs/progress.md)
+- [Research options and reading notes](docs/research-directions.md)
 - [Review checklist](docs/review-checklist.md)
