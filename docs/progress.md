@@ -6,10 +6,10 @@
 
 - **任务范围**：初始化用户指定的本地仓库与 GitHub remote，建立项目计划、进度和工程工作流程。
 - **已完成**：确认本地目录与远端均为空；初始化 `main`；配置 `origin`；创建 `agent.md`、工具指令入口、README、忽略规则和审查文档。
-- **验证**：Git、GitHub 账户认证和 Claude CLI 可用；本地文档链接、`git diff --cached --check`、敏感/生成目录忽略规则已检查。当前没有可执行功能，不声明运行时端到端验证通过。
+- **验证**：Git、GitHub 账户认证和 Claude CLI 可用；10 个本地文档链接、`git diff --cached --check`、敏感/生成目录忽略规则检查通过。当前没有可执行功能，不声明运行时端到端验证通过。
 - **Claude 审查**：已通过 Claude Code CLI 2.1.289 执行，退出码 0，无阻断发现；CLI 当前配置的后端为 `deepseek-v4-pro`。已处理文档一致性建议，详见[审查记录](reviews/2026-10-05-bootstrap.md)。
-- **Git 同步**：等待本次初始化提交和首次推送。同步状态以实际 Git 命令结果为准。
-- **下一步**：提交并验证首次远端同步，更新完成状态；随后开始 P1 的事件与本地记录闭环。
+- **Git 同步**：初始化提交 `2887f2a` 已通过 `git push -u origin main` 推送；`git rev-parse HEAD` 与 `git ls-remote origin refs/heads/main` 核对一致，工作区干净。随后将本次同步结果补记到状态文档，作为独立文档提交同步。
+- **下一步**：开始 P1 的事件与本地记录闭环。
 
 ## 后续记录格式
 
