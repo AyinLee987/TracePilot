@@ -1,8 +1,33 @@
 # Latency-history hypothesis: focused novelty check
 
-Checked 2026-10-05. **Verdict: retain only the narrow causal question.** Neither temporal awareness, history-based latency prediction, nor shuffled latency controls alone is new. The following are primary-source neighbors, not independently reproduced results. See the separate [Timely Machine audit](timely-audit.md) for its clock/noise experiments and implementation caveats.
+Rechecked 2026-10-05 after the user requested a second novelty search. **Verdict: retain only a small empirical falsification probe; do not lock it in as the ACL contribution yet.** Temporal awareness, history-based latency prediction, shuffled cost controls, and prediction-versus-control analysis all have precedents. The following are primary-source neighbors, not independently reproduced results. See the separate [Timely Machine audit](timely-audit.md) for its clock/noise experiments and implementation caveats.
 
-## Five nearest works
+## New direct neighbors found in the second search
+
+| Work / verified status | Actual overlap | Remaining distinction, not proof of novelty |
+| --- | --- | --- |
+| [JAUNT](https://arxiv.org/html/2510.18550v1), arXiv v1, 2025-10-21; no independently verified conference venue | Sections 5.2–5.3 use EWMA of recent/historical latency to predict tool duration, then give the LLM predicted latency, semantic scores and user quality/speed preferences to choose tools. Section 6 compares a greedy latency rule. | The LLM consumes an external prediction. It does not isolate inference from raw duration sequences under matched evidence, deadline and historical totals. A predictor feeding an LLM router is already prior work. |
+| [NetMCP](https://arxiv.org/html/2510.13467v1), arXiv v1, 2025-10-15 | SONAR combines semantic matching with EWMA, rising latency, variation and outage penalties. Five search servers share the Exa backend to control functionality while changing network conditions. | External numerical routing, not an LLM behavioral diagnosis. Neither EWMA routing nor controlling tool capability is new. |
+| [Can LLMs Perceive Time? An Empirical Investigation](https://arxiv.org/html/2604.00010v1), listed as a Poster on the [ICLR 2026 ICBINB workshop site](https://sites.google.com/view/icbinb-2026/papers), not ICLR main conference | Tests prospective duration estimates, relative ordering, retrospective recall and multistep agent estimates. Appendix D.2 supplies prediction/actual-time feedback between two sets of tasks; Appendix G recommends historical-duration logging. | Feedback calibration is already studied. The authors acknowledge different before/after tasks as a confound. In inspected sections 3, D.2 and G, we found no matched-deadline continue/stop experiment or predictive-versus-independent tool-history manipulation. |
+| [Your LLM Agents are Temporally Blind](https://aclanthology.org/2026.findings-acl.1848/), ACL 2026 **Findings** | TicToc varies the final time gap with earlier content/timestamps held fixed, then evaluates tool use versus direct answers against human preferences. Section 4.3 examines stated reasoning versus actual action mismatch. | Its elapsed time changes information freshness. It does not forecast the next tool duration under a fixed deadline and fixed information value. Same-content temporal interventions and reasoning/action mismatch are precedents. |
+
+The earlier TicToc row below used arXiv v1; this recheck verified its ACL Findings publication and inspected the final paper. Conference status is not inferred from an arXiv identifier or an author-supplied conference field.
+
+## Claims that must be withdrawn or treated as baselines
+
+- **History prediction to LLM action:** JAUNT already combines these components.
+- **Accurate versus shuffled cost information:** Lookahead-R section 4.4 already has Cost-Shuffled. It shuffles training latency labels, not a single fixed-total history. This narrower difference alone does not establish a contribution.
+- **Time information versus urgency:** [Real-Time Deadlines v2](https://arxiv.org/html/2601.13206v2) already compares numeric countdowns, qualitative urgency, repeated budget reminders and directed time tracking. Its online dialogues may diverge, unlike a matched decision probe. Venue remains author-claimed EMNLP, not independently verified here.
+- **Prediction accuracy versus decision quality:** [Calibration Is Not Control](https://arxiv.org/html/2606.21399v1), sections 3–5, already uses identical-prefix branches and matched information, and shows that scalar recalibration need not repair control regret. Its prediction target is failure/intervention value rather than duration.
+- **Real elapsed-time planning:** [A Formal Metareasoning Model of Concurrent Planning and Execution](https://ojs.aaai.org/index.php/AAAI/article/view/26464), AAAI 2023, already formalizes stochastic completion and deadlines. The general decision-theoretic formulation is not new.
+
+An additional theoretical neighbor is [Sequential Sampling for Binary Classification: Two LLMs are (Almost) All You Need](https://arxiv.org/html/2604.01086v3). It jointly considers sampling and stopping with stochastic waiting costs; its known-distribution, per-model i.i.d. latency setting is different from learning a changing delay process. Do not assume past timing must help when the future is conditionally independent of it.
+
+[TraceLab](https://arxiv.org/html/2606.30560v1) is useful as workload evidence and a potential trace source: it explicitly motivates duration prediction from requested-operation semantics and recent latency history. It is not evidence that our proposed behavioral effect occurs. Its paper snapshot and the larger current project dataset should not be mixed.
+
+**Updated decision:** the search did not find the complete proposed interaction test, but combining existing controls is not a novelty result. The remaining question is whether, at matched evidence/order, remaining time and historical total, models respond differently to histories only when those histories carry useful predictive information. A contribution would require a stable empirical finding, a convincing alternative-explanation analysis, and consequences for real agent outcomes. Simple forecast/reserve rules remain mandatory comparators. No additional model experiment was run in this recheck.
+
+## Previously inspected neighbors
 
 | Work and inspected sections | Verified overlap | Boundary relevant to candidate C |
 | --- | --- | --- |

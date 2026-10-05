@@ -120,6 +120,8 @@ TracePilot 计划成为一个基于任务特征与 Agent 执行轨迹进行路�
 
 研究方向已与 Claude Opus 5.5 完成多轮可行性讨论。早期记录见 [`docs/research-directions.md`](docs/research-directions.md)，本轮最新建议见 [`docs/research/decision.md`](docs/research/decision.md)。少数据/轨迹路由、干预收益、接管损失、延迟预测和保留首稿均有直接先行；推荐先验证“相同证据和剩余时间下，模型能否区分耗时历史的预测价值与紧迫感”。这仍是待否证的问题，不是已确认新颖的方法，不因此更改 P2–P5 的实现状态。
 
+用户要求的同日二次查重进一步发现 JAUNT、NetMCP、Can LLMs Perceive Time? 等直接近邻，并核实 TicToc 的 ACL Findings 状态。候选 C 只保留作小探针；历史预测、预测辅助路由、时间反馈校准和预测／行动分离均不能单独作为创新。新增来源和限制见 [`docs/research/latency-history-check.md`](docs/research/latency-history-check.md)。
+
 用户已授权夜间小实验及 Pi 等开源 Agent 的本地试跑，使用当前 Agent 项目的 API key；余额不足时报告，不自动购买额度。研究在独立 worktree / 分支 `research/acl-feasibility-20261005` 进行，原 `main@dadab3f` 不修改、不合并、不强推。今晚实验上限 200 元、总研究预算约 2,000 元；原始输出及凭证留在忽略目录。Pi 与 mini-SWE-agent 已隔离部署并完成真实小任务；mini 首轮适配器提示词问题导致未正常提交，修正后通过，首轮记录保留。两框架加 E1 共 207 次请求，峰值价格估算约 0.163 元；无未知计费或余额不足报错。详细范围、审查和结果见 [`docs/research/open-agent-plan.md`](docs/research/open-agent-plan.md)。
 
 **下一步：** 根据已写入 Langfuse 的记录核对指标与缺口，定义 TracePilot 最小事件口径，再做本地 trace 前缀与 JSONL。补齐 Provider attempt 与辅助调用的用量边界后，再锁定问答先导任务、两个模型和测量口径，推进分类路由与编程任务。Agent 内部状态不迁移为 Langfuse schema。

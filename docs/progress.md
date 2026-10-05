@@ -66,6 +66,14 @@
 - **研究边界**：E1 是工程验证，任务几乎只有固定行动链，不能验证候选 C，也不构成模型能力排序。正式 router、通用 checkpoint、运行时 JSONL、跨域研究尚未完成。
 - **最终检查**：Claude 最终产物审查无阻断，已处理 Pi 审查时间线、局部 provenance 字段、累计预算和研究措辞。29 个修改／新增文件的 55 个本地链接、Python AST、JavaScript 语法、JSON、README 英文、实际 key 字节缺席检查与忽略规则通过；`git diff --check` 通过。原工作区与远端 main 仍为 `dadab3f`。交付只面向 `research/acl-feasibility-20261005`，不合并 main。
 
+## 2026-10-05：历史耗时决策方向二次查重
+
+- **范围**：用户要求再次检索候选 C 的相关论文；并行检查时延预测／路由、时间感知行为、元推理和预测／控制分解，再核验原文。
+- **新增依据**：JAUNT、NetMCP 已覆盖历史时延辅助路由；Can LLMs Perceive Time? 已测耗时自估和历史反馈校准，官方页面确认 ICLR 2026 ICBINB workshop poster；TicToc 已发表于 ACL 2026 Findings，包含同内容时间干预与 Think–Answer mismatch。重核 Lookahead-R 的 Cost-Shuffled 和 Calibration Is Not Control 的同前缀预测／控制比较。
+- **结论更新**：宽泛方法组件已有先行；候选 C 只保留作小型实证探针，不把“尚未检索到完全相同控制组合”当作新颖性证明。详细差异、强基线与阅读优先级已同步到 [查重笔记](research/latency-history-check.md)、[方向说明](research/decision.md)和 `agent.md`。
+- **边界**：本轮仅文献／文档工作，没有新增 Agent 能力实验或复现；原有试跑费用不变。README 仍准确，未作无意义修改。未核实的会议字段不冒称录用。
+- **审查及验证**：Claude CLI 实际模型 `claude-opus-5-5`、`is_error=false`。已处理“推荐主线”旧标题与条件预算不一致、统一阅读顺序、将未见某实验的判断限定到已检查部分；详细处置追加到 [审查记录](reviews/2026-10-05-overnight-research.md)。文档相对链接、实际 key 缺席、忽略目录与 `git diff --check` 检查通过；无运行时代码改动，不声称新增 E2E。
+
 ## 后续记录格式
 
 每次任务新增一条记录，至少包含：日期、范围、实际完成内容、验证命令与结果、Claude 审查及处置、已知限制、下一步。代码功能的记录应附对应端到端场景；只读评审不单独触发提交循环。
