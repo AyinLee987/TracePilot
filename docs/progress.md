@@ -20,6 +20,16 @@
 - **Git 同步**：变更提交 `758da70` 已推送到 `origin/main`，本地 HEAD 与远端引用核对一致，工作区干净；本条同步结果随后作为独立文档记录提交。
 - **下一步**：开始 P1 事件和本地记录；先完成问答与编程的实验准备，购物沙箱按后续阶段推进。
 
+## 2026-10-05：切换 Claude CLI 默认审查模型
+
+- **任务范围**：检查并切换本机 Claude CLI 默认模型，说明下一阶段 P1；未实现运行时代码。
+- **已完成**：原用户设置为 `opus`，但继承环境将模型与端点覆盖为 DeepSeek。在本机用户设置中固定 `claude-opus-5-5`、使用官方端点与已有 Claude 登录，并覆盖旧模型映射；已备份原设置。项目约定同步记录默认审查模型，README 仍准确，无需修改。
+- **验证**：不传 `--model` 的最小 CLI 请求退出码 0、返回 `OK`，`modelUsage` 为 `claude-opus-5-5`；认证方式为 `claude.ai`。此验证仅证明本机 CLI 默认调用可用，不代表 TracePilot 运行时已通过测试。
+- **验证命令**：PowerShell 中将 `Validation only. Reply exactly OK. Do not use tools or inspect files.` 通过 stdin 传入 `claude --print --permission-mode plan --permission-prompts none --tools= --strict-mcp-config --disable-slash-commands --no-session-persistence --output-format json`，未传 `--model`。读取 JSON 的 `is_error`、`result` 和 `modelUsage` 核验。
+- **Claude 审查**：Opus 5.5 已对本次 diff 完成只读审查，退出码 0、实际模型 `claude-opus-5-5`，无阻断问题；未设置费用或轮次上限。已采纳模型不符时重新审查、统一配置措辞、补全验证命令和最近更新等建议。
+- **已知边界**：本机用户配置与备份不提交到仓库；模型约定与脱敏验证结论入库。P1 仍待开始。
+- **下一步**：P1 依次完成事件格式、按运行隔离的本地状态、开销统计、JSONL 采集、Langfuse 导出和端到端验收。
+
 ## 后续记录格式
 
 每次任务新增一条记录，至少包含：日期、范围、实际完成内容、验证命令与结果、Claude 审查及处置、已知限制、下一步。代码功能的记录应附对应端到端场景；只读评审不单独触发提交循环。
