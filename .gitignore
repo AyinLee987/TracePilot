@@ -1,0 +1,42 @@
+# Python environments and generated files
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Credentials and machine-specific configuration
+.env
+.env.*
+!.env.example
+!.env.*.example
+.claude/settings.local.json
+.local/
+.idea/
+.vscode/
+
+# Raw traces, checkpoints, datasets, and experiment outputs
+data/
+datasets/
+artifacts/
+runs/
+logs/
+checkpoints/
+private/
+*.log
+*.db
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+
+# Other local tooling
+node_modules/
+.DS_Store
+Thumbs.db
