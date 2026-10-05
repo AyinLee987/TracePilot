@@ -30,6 +30,19 @@
 - **已知边界**：本机用户配置与备份不提交到仓库；模型约定与脱敏验证结论入库。P1 仍待开始。
 - **下一步**：P1 依次完成事件格式、按运行隔离的本地状态、开销统计、JSONL 采集、Langfuse 导出和端到端验收。
 
+## 2026-10-05：Langfuse 部署配置与自研 Agent 适配
+
+- **任务范围**：先实施 Langfuse 独立部署/SDK 接入与现有 harness 执行边界埋点；保留内部 AgentState，不提前实现 router 或通用插件引擎。
+- **已实现**：可安装 Python 包与可选依赖、固定版本/镜像 digest 的本地 Compose 配置、幂等部署脚本、`TracedReActLoop`、完整 E2E 示例与接入说明。旧 Agent 仓库的未提交改动保持原样。
+- **记录范围**：完整运行、主模型 generation、工具业务状态、初始 RAG、context 管理；正文默认关闭，用量区分 reported/estimated/unknown，根 ledger 只作核对。后台导出由调用方拥有的官方 SDK 管理。
+- **E2E 验证**：`.venv/Scripts/python.exe examples/harness_smoke.py --harness-path '../agent/agent-harness-from-scratch' --live --env-file .local/langfuse/sdk.env --report .local/harness-smoke-live.json` 退出码 0；真实 harness/词法检索/官方 SDK/本地 Langfuse 写入并读回 **19 条 trace、115 个 observations**。18 项流程检查覆盖答案/token 与原 loop 一致，失败→反思→恢复，共享 loop 线程/异步并发，同线程交错，流式完整/提前关闭，最终事件后关闭，超时/取消，致命错误，暂停续跑增量，恶意工具名/ID 脱敏，telemetry 创建/update/end 失败降级；核对 run/父子隔离、起止时间、正文关闭与用量来源。内存导出同样通过。LLM 与 fetch 是合成实现，付费模型调用为 0；不作为模型能力或真实费用证据。
+- **基础检查**：Python 3.12.14、Langfuse SDK 4.17.0；`pip check`、`git diff --check` 通过。部署脚本语法/Compose 配置、重复执行保留凭证、进程环境恢复、并发 setup lock、6 个镜像 digest 与 2 个 loopback 映射检查通过。凭证、虚拟环境和运行结果均被 Git 忽略。
+- **基础设施状态**：首次镜像拉取发生 Docker EOF/API 500，重启时发现两组 Windows 运行时 socket 残留；自动审批拒绝删除后，由用户手动清理，保留镜像、数据卷和配置。随后 6 个容器成功运行，依赖健康，`/api/public/health` 返回 OK / 4.50.0，项目 API 鉴权 HTTP 200。初次 live 读回发现 v4 events_only 模式不支持旧 trace API（404），改用 observations v2 后上述 E2E 通过。
+- **修复与审查**：调试修复 SDK 子 observation 的根标记，以及结果已发出后关闭 generator 被误记为取消。按 Claude 发现补齐遥测派生计算容错、未知工具名/ID 和动态终止原因脱敏、恢复段 token 增量、清理时取消信号传播、估算费用标识及边界 E2E。初审、完整代码复审、依赖增量审查均由实际 `claude-opus-5-5` 完成，退出码 0；复审无阻断问题，未设置费用/轮次上限。Claude 做静态审查，E2E 由执行者运行；剩余建议及支持边界见[审查记录](reviews/2026-10-05-langfuse-pilot.md)。
+- **干净安装复验**：发现外部 harness 在 `import agent` 时必须导入 PyYAML，已补进 `pilot` extra 并固定验证版本 6.0.3。在新建 `.local/clean-venv` 中按 `constraints-pilot.txt` 安装后，完整合成 E2E（SDK 内存导出）再次得到 19 traces / 115 observations。原环境真实服务端读回已通过；本次仅补齐依赖声明，没有修改运行时行为。
+- **已知边界**：隐藏 Provider 重试、辅助模型/embedding 的逐次耗时和费用尚未拆分；原有共享模型/工具/provider 的线程安全仍由调用方负责。JSONL、本地路由前缀、分类路由及论文实验尚未实现。
+- **下一步**：根据已采集的记录决定 TracePilot 事件语义和最小本地前缀，再补齐辅助调用/重试开销与 JSONL。
+
 ## 后续记录格式
 
 每次任务新增一条记录，至少包含：日期、范围、实际完成内容、验证命令与结果、Claude 审查及处置、已知限制、下一步。代码功能的记录应附对应端到端场景；只读评审不单独触发提交循环。

@@ -1,0 +1,37 @@
+# Overlay for the pinned, unmodified upstream Compose file.
+# !override requires Docker Compose 2.24.4 or newer.
+x-local-logging: &local-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  langfuse-web:
+    image: docker.langfuse.com/langfuse/langfuse:4.50.0@sha256:3d2ae888a0e6edb41fdba6e7d5baca5e4baede3a870dac7970dadd9d925b018e
+    ports: !override
+      - "127.0.0.1:${TRACEPILOT_LANGFUSE_WEB_PORT:?required}:3000"
+    logging: *local-logging
+  langfuse-worker:
+    image: docker.langfuse.com/langfuse/langfuse-worker:4.50.0@sha256:52f7fd41ded2f1a6acab13ff7cb1832d36dfe2cbf44adea402b7a09cfa4ce800
+    environment:
+      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://minio:9000
+    ports: !reset []
+    logging: *local-logging
+  clickhouse:
+    image: docker.io/clickhouse/clickhouse-server:25.12@sha256:8a790dd3468db22b1d4e7b18a176f378ff5ff6053b9c48dd4ea1fa71a24c5ba6
+    ports: !reset []
+    logging: *local-logging
+  minio:
+    image: cgr.dev/chainguard/minio:latest@sha256:4cf4831a2bbcf13ddca09c1cbcc9faff716dd3c4247e0babc32864b8ee8e0034
+    ports: !override
+      - "127.0.0.1:${TRACEPILOT_LANGFUSE_MEDIA_PORT:?required}:9000"
+    logging: *local-logging
+  redis:
+    image: docker.io/redis:7@sha256:c6eabf748fc7a61dbb5a705c78bcf3d6377b1127a97d0ce965c11c44ba46896f
+    ports: !reset []
+    logging: *local-logging
+  postgres:
+    image: docker.io/postgres:17@sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f
+    ports: !reset []
+    logging: *local-logging

@@ -1,0 +1,6 @@
+{
+  "release": "v4.50.0",
+  "commit": "ef1075337a463170c83e9d64e3ac09b83e1d3407",
+  "compose_url": "https://raw.githubusercontent.com/langfuse/langfuse/ef1075337a463170c83e9d64e3ac09b83e1d3407/docker-compose.yml",
+  "compose_sha256": "d0309ef3072dba426c6f81f56d46f446361099a8fc0fdf1b042bdf822d85ac3a"
+}

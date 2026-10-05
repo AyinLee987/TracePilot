@@ -10,7 +10,9 @@ Trace-guided model and agent routing for efficient task execution.
 
 ## Status
 
-Planning stage. Repository setup is complete; runtime features and experiments are not implemented yet. Start with RAG and coding, then add a shopping sandbox.
+An initial adapter observes runs, model calls, tools, and retrieval in the existing Python harness. Local Langfuse deployment scripts and a synthetic end-to-end example are available. JSONL, routing, and research experiments are still planned.
+
+See the [Langfuse pilot guide](docs/langfuse-pilot.md) for setup, validation, and current limitations.
 
 ## Development
 

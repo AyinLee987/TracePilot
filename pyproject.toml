@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tracepilot"
+version = "0.1.0"
+description = "Trace-guided model and agent routing experiments"
+readme = "README.md"
+requires-python = ">=3.12"
+
+[project.optional-dependencies]
+langfuse = ["langfuse>=4.17,<5"]
+pilot = [
+  "langfuse>=4.17,<5",
+  "numpy>=2,<3",
+  "jsonschema>=4,<5",
+  "cloudpickle>=3,<4",
+  "python-dotenv>=1,<2",
+  "PyYAML>=6,<7",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
