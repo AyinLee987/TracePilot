@@ -1,0 +1,355 @@
+{
+  "schema": 1,
+  "status": "complete",
+  "score_status": "complete",
+  "score_stop_reason": null,
+  "unscored_identity_count": 0,
+  "paid_input": true,
+  "fixture_scores": false,
+  "deadlines_s": [
+    5.0,
+    15.0
+  ],
+  "denominators": {
+    "common": 16,
+    "native": 128,
+    "physical": 144,
+    "snapshots": 288
+  },
+  "trajectory_status_counts": {
+    "complete": 144
+  },
+  "known_cost_cny": "2.785298144",
+  "request_unknown_liability_cny": "0",
+  "provider_calls": 0,
+  "judge_containers": 0,
+  "limitations": {
+    "baseline": "attempt 1, independently gated by each cutoff; a later eligible program never replaces the baseline",
+    "common": "conditional on one Flash-produced HE99 fallback; never pooled with native starts; absence of fallback improvement is unknown for incomplete trajectories",
+    "cost": "physical known usage costs counted once; cutoff/selected cost splits attribute full eventual request bills by dispatch time",
+    "he32": "full operational denominator and exclusion sensitivity; retain known numerical oracle/input-mutation limitation",
+    "inference": "no p values, confidence intervals, fitted crossing times or causal claims from before/after traces",
+    "post_selection_cost": "continuing after public perfection is the frozen experimental protocol; post-selection fees are not automatically avoidable deployment waste",
+    "rates": "pass_rate uses the complete planned/stratum denominator; with unknown quality it is only observed success proportion",
+    "scope": "eight development tasks and one conditional HE99 state; not full EvalPlus or broad model ranking",
+    "status": "no_candidate is no eligible delivery from an executed trajectory; not_started/not_evaluated/infra is unknown quality, never an observed failure",
+    "stratum": "native attempt 1 format failure or parsed public fail/timeout only; common is not applicable because repair already receives seed feedback",
+    "task_threshold": "three distinct task groups meets only the prespecified minimum support threshold; it does not establish a cross-task effect",
+    "transitions": "descriptive adjacent attempts; common seed-to-attempt-1 edges are separate; timeout counts as observed failure, infra/missing scores break known comparisons",
+    "units": "144 physical trajectories, 288 correlated prefix snapshots; task groups are the inference units",
+    "unknown_cost": "per-request unresolved liability is separate from the terminal whole-batch hold; never add both",
+    "clock": "5/15 are recorded WSL monotonic cutoffs. UTC batch elapsed differs; external physical-time equivalence and stability across conditions are unverified. Do not rescale retrospectively.",
+    "he99": "Frozen hidden outcomes measure reference agreement. A post-run exact-rational audit found 15 reference discrepancies on HE99 under exact numeric-string semantics. Original scores remain unchanged; full and prespecified HE32-excluded views are retained."
+  },
+  "tables": {
+    "attempts.csv": {
+      "path": "attempts.csv",
+      "sha256": "d9b3b5e7c60f4fdc4f5a3283d09b75fbe2d6178a1fb01571644e21d9f37eb14f"
+    },
+    "common_seed_transitions.csv": {
+      "path": "common_seed_transitions.csv",
+      "sha256": "7c1cc54a7be56ce2bd1b6b88341bdf0824242c874f5860d36e8b16e9fc57390e"
+    },
+    "conditions.csv": {
+      "path": "conditions.csv",
+      "sha256": "124eb50b8d9c3747c87ccd1acbb80fd8f038988f29d9d76c781170c1b05cb9b8"
+    },
+    "observations.csv": {
+      "path": "observations.csv",
+      "sha256": "18ad37d40c3a2148d421de67efc4a91d6e383cff0842cd886175d0184ac4d724"
+    },
+    "paired_task_contrasts.csv": {
+      "path": "paired_task_contrasts.csv",
+      "sha256": "9afb279e5e87ce378d14a6ca7c9004c5e91b70f66b2811ce9a4d40459a7a6bcc"
+    },
+    "task_conditions.csv": {
+      "path": "task_conditions.csv",
+      "sha256": "bd7dbf5c5c37382dee1df1cf9350668808ee9152b36d87be95f226092df04c70"
+    },
+    "trajectories.csv": {
+      "path": "trajectories.csv",
+      "sha256": "3bd6b34df5e8f016976c63a1c0478777316ef50bba94c9ecbe8a2f43bb06758e"
+    }
+  },
+  "stratum_support": [
+    {
+      "applicable": true,
+      "cohort": "native",
+      "cross_task_inference_supported": true,
+      "exclude_he32": 0,
+      "n_membership_unknown": 0,
+      "n_tasks": 5,
+      "n_trajectories": 13
+    },
+    {
+      "applicable": true,
+      "cohort": "native",
+      "cross_task_inference_supported": true,
+      "exclude_he32": 1,
+      "n_membership_unknown": 0,
+      "n_tasks": 4,
+      "n_trajectories": 10
+    },
+    {
+      "applicable": false,
+      "cohort": "common",
+      "cross_task_inference_supported": null,
+      "exclude_he32": 0,
+      "n_membership_unknown": null,
+      "n_tasks": null,
+      "n_trajectories": null
+    },
+    {
+      "applicable": false,
+      "cohort": "common",
+      "cross_task_inference_supported": null,
+      "exclude_he32": 1,
+      "n_membership_unknown": null,
+      "n_tasks": null,
+      "n_trajectories": null
+    }
+  ],
+  "common_never_improved_fallback": {
+    "count": 0,
+    "denominator": 16,
+    "not_started_denominator": 0,
+    "observed_denominator": 16,
+    "unknown_count": 0
+  },
+  "cache_by_condition": [
+    {
+      "cache_hit_tokens": 5862,
+      "cache_miss_tokens": 2406,
+      "cohort": "common",
+      "delay_s": 0,
+      "known_prompt_token_hit_fraction": 0.7089985486211902,
+      "model": "deepseek-flash",
+      "policy": "repair",
+      "requests": 16
+    },
+    {
+      "cache_hit_tokens": 3836,
+      "cache_miss_tokens": 2353,
+      "cohort": "common",
+      "delay_s": 1,
+      "known_prompt_token_hit_fraction": 0.619809339150105,
+      "model": "deepseek-flash",
+      "policy": "repair",
+      "requests": 12
+    },
+    {
+      "cache_hit_tokens": 2304,
+      "cache_miss_tokens": 2736,
+      "cohort": "common",
+      "delay_s": 0,
+      "known_prompt_token_hit_fraction": 0.45714285714285713,
+      "model": "deepseek-flash",
+      "policy": "resample",
+      "requests": 18
+    },
+    {
+      "cache_hit_tokens": 1536,
+      "cache_miss_tokens": 1824,
+      "cohort": "common",
+      "delay_s": 1,
+      "known_prompt_token_hit_fraction": 0.45714285714285713,
+      "model": "deepseek-flash",
+      "policy": "resample",
+      "requests": 12
+    },
+    {
+      "cache_hit_tokens": 5760,
+      "cache_miss_tokens": 1160,
+      "cohort": "common",
+      "delay_s": 0,
+      "known_prompt_token_hit_fraction": 0.8323699421965318,
+      "model": "deepseek-v4-pro",
+      "policy": "repair",
+      "requests": 14
+    },
+    {
+      "cache_hit_tokens": 3328,
+      "cache_miss_tokens": 1718,
+      "cohort": "common",
+      "delay_s": 1,
+      "known_prompt_token_hit_fraction": 0.6595323028141102,
+      "model": "deepseek-v4-pro",
+      "policy": "repair",
+      "requests": 10
+    },
+    {
+      "cache_hit_tokens": 3328,
+      "cache_miss_tokens": 299,
+      "cohort": "common",
+      "delay_s": 0,
+      "known_prompt_token_hit_fraction": 0.9175627240143369,
+      "model": "deepseek-v4-pro",
+      "policy": "resample",
+      "requests": 13
+    },
+    {
+      "cache_hit_tokens": 2816,
+      "cache_miss_tokens": 253,
+      "cohort": "common",
+      "delay_s": 1,
+      "known_prompt_token_hit_fraction": 0.9175627240143369,
+      "model": "deepseek-v4-pro",
+      "policy": "resample",
+      "requests": 11
+    },
+    {
+      "cache_hit_tokens": 35438,
+      "cache_miss_tokens": 26367,
+      "cohort": "native",
+      "delay_s": 0,
+      "known_prompt_token_hit_fraction": 0.5733840304182509,
+      "model": "deepseek-flash",
+      "policy": "repair",
+      "requests": 124
+    },
+    {
+      "cache_hit_tokens": 21754,
+      "cache_miss_tokens": 20109,
+      "cohort": "native",
+      "delay_s": 1,
+      "known_prompt_token_hit_fraction": 0.5196474213505959,
+      "model": "deepseek-flash",
+      "policy": "repair",
+      "requests": 87
+    },
+    {
+      "cache_hit_tokens": 5087,
+      "cache_miss_tokens": 24398,
+      "cohort": "native",
+      "delay_s": 0,
+      "known_prompt_token_hit_fraction": 0.17252840427335933,
+      "model": "deepseek-flash",
+      "policy": "resample",
+      "requests": 126
+    },
+    {
+      "cache_hit_tokens": 3307,
+      "cache_miss_tokens": 17106,
+      "cohort": "native",
+      "delay_s": 1,
+      "known_prompt_token_hit_fraction": 0.16200460490863666,
+      "model": "deepseek-flash",
+      "policy": "resample",
+      "requests": 87
+    },
+    {
+      "cache_hit_tokens": 26624,
+      "cache_miss_tokens": 12018,
+      "cohort": "native",
+      "delay_s": 0,
+      "known_prompt_token_hit_fraction": 0.6889912530407328,
+      "model": "deepseek-v4-pro",
+      "policy": "repair",
+      "requests": 86
+    },
+    {
+      "cache_hit_tokens": 18944,
+      "cache_miss_tokens": 9049,
+      "cohort": "native",
+      "delay_s": 1,
+      "known_prompt_token_hit_fraction": 0.6767406137248598,
+      "model": "deepseek-v4-pro",
+      "policy": "repair",
+      "requests": 67
+    },
+    {
+      "cache_hit_tokens": 13952,
+      "cache_miss_tokens": 6027,
+      "cohort": "native",
+      "delay_s": 0,
+      "known_prompt_token_hit_fraction": 0.6983332499124081,
+      "model": "deepseek-v4-pro",
+      "policy": "resample",
+      "requests": 87
+    },
+    {
+      "cache_hit_tokens": 12544,
+      "cache_miss_tokens": 4698,
+      "cohort": "native",
+      "delay_s": 1,
+      "known_prompt_token_hit_fraction": 0.7275258090708735,
+      "model": "deepseek-v4-pro",
+      "policy": "resample",
+      "requests": 73
+    }
+  ],
+  "study_terminal_event": "settle",
+  "study_terminal_accounting": {
+    "artifacts": {
+      "generation-closed.json": "00ba7196f09763192009390a877b2202d2dead374c922fbb6bb54170deb692ec",
+      "requests.jsonl": "9f32ab2ec38060229bd05c190340183b49de565c385161b6182fbd835a269733",
+      "result.json": "d66fc9f475295d3cebdc1323fb90918b3e5a29ec33f790b17990eb2f85104ba6",
+      "trajectories.json": "1171a4570b772253581d31b19509208dda7a48da502418c4e6d71ff4a89d135b"
+    },
+    "cost_cny": "2.785298144"
+  },
+  "publication": {
+    "date": "2026-10-06",
+    "scope": "Real R3 development coding experiment; not a completed Timely four-game reproduction.",
+    "table_bytes_unchanged": true,
+    "raw_candidates_hidden_inputs_credentials_published": false,
+    "analysis_provider_calls_and_judge_containers": "These fields describe offline analysis only; online requests and hidden scoring ran earlier.",
+    "private_analysis_summary_sha256": "a4b58345ccdc896b4a5adf2c3bb072d21806789918e5fd0396031b70b92856ce",
+    "analysis_source_sha256": "223a6d12265c4a5e9d77b3d5ee989c32351f8cc08fdf332397b2e8b009f3b3fc",
+    "source_unchanged": true,
+    "online_code_commit": "513cfb7c235289aa103aa3ea758702b198bc0972",
+    "analysis_code_commit": "f024c7753e2d41816349f5e03068201712c9a0e5",
+    "plan_digest": "9ffd14bfbae598e0f278d9ecfc426340a8bd3224b4a99537a83184b46f31beab",
+    "runtime_image": "sha256:83712435c2675d4426381b7ac449347f834a1f0b820c945b4cb9b92ab46b9e8d",
+    "scored_identities": 715,
+    "online_requests_known_settled": 843,
+    "costs_cny": {
+      "batch": "2.785298144",
+      "study_cumulative": "3.129782592",
+      "all_experiments_cumulative": "3.292293888",
+      "basis": "Usage-based estimates, not invoices; Claude reviews excluded."
+    }
+  },
+  "common_seed_provenance": {
+    "candidate_sha256": "04e08559ca23e02df18bf9b365c7d485268c20a73fd21aa7d8d0f62b55b787c4",
+    "public_summary_sha256": "e78caa3a76f6b89cd1ed07726be3f5ade42533beddd373d8b8c875d1e131023e",
+    "run_id": "draft-11-he99-deepseek-flash-rep2"
+  },
+  "historical_seed_acquisition_cost": {
+    "one_source_call_cny": "0.001285344",
+    "extension16_total_cny": "0.047613312",
+    "first32_total_cny": "0.132294528",
+    "scope": "Historical acquisition already included in cumulative accounting; not charged again in this batch."
+  },
+  "clock_diagnostic": {
+    "utc_elapsed_s": 2255.434085,
+    "outer_monotonic_elapsed_s": 2443.493910041,
+    "difference_s": 188.059825041,
+    "cause": "unknown",
+    "per_trajectory_external_clock_mapping": "unverified",
+    "retrospective_rescaling_applied": false
+  },
+  "he99_diagnostic": {
+    "post_run": true,
+    "frozen_scores_changed": false,
+    "semantics": "Nearest integer to the exact finite decimal string; exact halves away from zero. This interpretation is stated explicitly; the task text specifies no binary-float conversion or magnitude bound.",
+    "method": "Independent Fraction conversion and integer quotient/remainder; inspected recorded outputs without rerunning candidates.",
+    "scope": "15 disagreement inputs only, not a semantic rescore of all 715 checks.",
+    "audited_inputs": 15,
+    "reference_incorrect": 15,
+    "original_candidate_numeric_correct": 11,
+    "original_candidate_exceptions": 4,
+    "later_reference_matching_candidate_incorrect": 15,
+    "native_d15_pro_only_pairs": 5,
+    "all_pro_only_pairs_on_he99": true,
+    "interpretation": "Do not use these five labels as unqualified model capability or semantic repair evidence. Candidate exceptions remain genuine failures."
+  },
+  "private_evidence_sha256": {
+    "terminal": "1456d69f1713348172f541e18bd8e2cb44e292c1d5ba9af39594a4f5a8298414",
+    "hidden": "ef2b1b34cd26ca5a3faeffc2a6edea63ce9a6a8235e3ce3f86209449a76b0f90",
+    "public": "4b8eb4f9a4e136a6bbf1d1da5590f2f2aad51e0c1ba601508173884428dd1fd6",
+    "clock": "e9069098114a88ea015cf67dca7cc52a3ed8cd8e41c61791633b0c5dda5c7022",
+    "he99_mechanism": "7e671a64fd4b6a495b6539a845f9a96a3b7cf9c8f5630893a24ea8caeeaa2b0c",
+    "he99_fraction": "d93e2c05a66809c2b8b742dd07264698f3f2f5e09d77dd118eb01befd51cb0e1"
+  }
+}

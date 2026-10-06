@@ -119,7 +119,7 @@ The sole predefined extension uses `coding_pilot.py --prepare-paid-plan --stage 
 
 ### Shared-deadline coding experiments
 
-The [R3 protocol](../docs/research/coding-deadline.md) keeps 128 native trajectories and 16 continuations from one public error state. All 144 online trajectories are complete, with 843 known-settled requests and child exit0/reaped. The batch estimate is CNY 2.785298144; the same study totals CNY 3.129782592, or CNY 3.292293888 including earlier independent experiments. These are usage estimates, not invoices, and exclude Claude reviews. Hidden scoring is in progress; final quality comparisons are not yet available. See [versioned runtime validation](results/coding-deadline-validation.json) for the earlier engineering checks.
+The [R3 protocol](../docs/research/coding-deadline.md) keeps 128 native trajectories and 16 continuations from one public error state. All 144 online trajectories are complete, with 843 known-settled requests and child exit0/reaped. The batch estimate is CNY 2.785298144; the same study totals CNY 3.129782592, or CNY 3.292293888 including earlier independent experiments. These are usage estimates, not invoices, and exclude Claude reviews. Hidden scoring and actual offline analysis are complete: 715/715 candidate identities scored, with all 144/288 planned rows retained. See the [results and limits](../docs/research/coding-deadline-results.md) and [portable tables](results/coding-deadline/summary.json). See [versioned runtime validation](results/coding-deadline-validation.json) for the earlier engineering checks.
 
 The two snapshots use frozen 5/15-second monotonic cutoffs. Outer UTC and monotonic elapsed times differed by 188.059825041 seconds (2255.434085 versus 2443.493910041). Eligibility under the recorded clock is auditable, but correspondence to external real 5/15 seconds remains unverified. Do not rescale, replace historical runs or infer that every result is invalid; preserve the discrepancy and complete independent clock verification before another paid stage.
 
@@ -155,7 +155,15 @@ python -B research/plot_coding_deadline.py --source FRESH_ANALYSIS_DIR/summary.j
 
 Plotting uses `requirements-plot.txt`, verifies referenced tables and accepts only the frozen 5/15 cutoffs. Three figures each export PNG/PDF/SVG; missing quality becomes NA, unstarted rows do not enter observed boxplots, and unknown fees remain marked lower bounds. This is descriptive analysis, without interpolation-based crossing estimates or held-out prediction claims.
 
-Validation so far: 21 pure-JSON analysis checks and old closed settle/cancel fixtures with 144/288 rows; 13 checks on earlier plot versions, nine focused shared-axis checks, and final text-only exports/visual inspection. Four actual Claude Opus 5.5 review rounds completed with no remaining blocker. See the [versioned evidence](results/coding-deadline-analysis-validation.json). These checks do not validate actual paid-result analysis or figures; hidden scoring has not finished. The [R4 candidate](../docs/research/coding-prefix-prediction.md) is not frozen, admitted or paid. Timely's valid four-game curves and the full research goal remain incomplete.
+Validation so far: 21 pure-JSON analysis checks and old closed settle/cancel fixtures with 144/288 rows; 13 checks on earlier plot versions, nine focused shared-axis checks, and final text-only exports/visual inspection. Four actual Claude Opus 5.5 review rounds completed with no remaining blocker. See the [versioned evidence](results/coding-deadline-analysis-validation.json). Those records are the historical feature checkpoint. The subsequent actual run completed 715/715 hidden scores and full 144/288 analysis with original inputs unchanged. The [result report](../docs/research/coding-deadline-results.md) records actual figure validation separately; do not infer semantic correctness from the HE99 reference-agreement scores. The [R4 candidate](../docs/research/coding-prefix-prediction.md) is not frozen, admitted or paid. Timely's valid four-game curves and the full research goal remain incomplete.
+
+The committed numerical tables contain no candidate code or hidden inputs. Rebuild the actual coding plots in a fresh directory:
+
+```bash
+python -B research/plot_coding_deadline.py --source research/results/coding-deadline/summary.json --output .local/coding-deadline-figures-rebuilt
+```
+
+Rebuilding preserves the plotted content; PDF/SVG byte hashes can differ because Matplotlib includes generated metadata. Each render writes a manifest for its own files. The public summary retains hashes of the private analysis and independent audits; its table bytes match the closed analysis output. /32 exclusion was prespecified. HE99's additional exact-number/reference discrepancy was discovered after scoring and is disclosed without replacing labels or silently dropping the task.
 
 ### Descriptive Timely trajectory
 

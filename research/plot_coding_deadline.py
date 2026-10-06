@@ -77,14 +77,16 @@ def save(fig, output: Path, name: str) -> dict:
     for suffix in (".pdf", ".svg", ".png"):
         path = output / (name + suffix)
         fig.savefig(path, dpi=180, facecolor="white")
+        if suffix == ".svg":
+            path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n"))
         images[path.name] = sha(path.read_bytes())
     plt.close(fig)
     return images
 
 
 def quality_plot(rows: list[dict], deadlines: list[float]):
-    fig, axes = plt.subplots(2, 2, figsize=(7.4, 6.4), sharex=True, sharey=True)
-    fig.subplots_adjust(left=.09, right=.985, bottom=.18, top=.84, wspace=.12, hspace=.21)
+    fig, axes = plt.subplots(2, 2, figsize=(7.4, 6.8), sharex=True, sharey=True)
+    fig.subplots_adjust(left=.09, right=.985, bottom=.22, top=.84, wspace=.12, hspace=.21)
     for row_index, excluded in enumerate((0, 1)):
         for col_index, delay in enumerate((0, 1)):
             ax = axes[row_index, col_index]
@@ -110,13 +112,14 @@ def quality_plot(rows: list[dict], deadlines: list[float]):
             ax.set_axisbelow(True)
             if row_index == 1:
                 ax.set_xlabel("WSL monotonic cutoff (s)")
-    fig.supylabel("Observed hidden passes / planned (%)", x=.015, y=.53, fontsize=9)
+    fig.supylabel("Frozen reference agreement / planned (%)", x=.015, y=.55, fontsize=9)
     handles, labels = axes[0, 0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="upper center", bbox_to_anchor=(.53, .96), ncol=2,
                frameon=False, fontsize=9)
-    fig.text(.09, .085, "Native-start development tasks; two repeats per task/condition. Missing answers remain in the denominator.", fontsize=8)
-    fig.text(.09, .055, "Two WSL monotonic cutoffs only; external clock equivalence is unverified. No crossing time is estimated.", fontsize=8)
-    fig.text(.09, .025, "* Incomplete grading: observed success fraction is a lower bound. No population confidence interval is implied.", fontsize=8)
+    fig.text(.09, .12, "Native-start tasks; two repeats per condition. Missing answers remain in planned denominators.", fontsize=8)
+    fig.text(.09, .087, "WSL monotonic cutoffs; external clock equivalence unverified. No crossing time is estimated.", fontsize=8)
+    fig.text(.09, .054, "Reference agreement only: /32 numeric-oracle limits; /99\u2020 exact-number/reference discrepancies.", fontsize=8)
+    fig.text(.09, .021, "* Incomplete grading: a lower bound. No semantic model ranking or population confidence interval.", fontsize=8)
     return fig
 
 
@@ -180,10 +183,10 @@ def task_plot(rows: list[dict], deadlines: list[float]):
             current.append(100 * (numeric(points[0], "pass_rate") - numeric(points[1], "pass_rate"))
                            if all(observed(p) for p in points) else float("nan"))
         values.append(current)
-    fig, ax = plt.subplots(figsize=(7.4, 5.4))
-    fig.subplots_adjust(left=.15, right=.88, bottom=.25, top=.92)
+    fig, ax = plt.subplots(figsize=(7.8, 5.8))
+    fig.subplots_adjust(left=.18, right=.89, bottom=.29, top=.92)
     im = ax.imshow(values, vmin=-100, vmax=100, cmap="PuOr", aspect="auto")
-    ax.set_yticks(range(len(TASKS)), [f"HumanEval/{n}" + (" *" if n == 32 else "") for n in TASKS])
+    ax.set_yticks(range(len(TASKS)), [f"HumanEval/{n}" + (" *" if n == 32 else " \u2020" if n == 99 else "") for n in TASKS])
     ax.set_xticks(range(len(columns)), [f"{p}\n+{delay}s / {d:g}s" for p, delay, d in columns], fontsize=8)
     ax.set_xlabel("Policy / tool delay / WSL monotonic cutoff", labelpad=8)
     for y, line in enumerate(values):
@@ -191,10 +194,11 @@ def task_plot(rows: list[dict], deadlines: list[float]):
             label = "NA" if value != value else f"{value:+.0f}" if value else "0"
             ax.text(x, y, label, ha="center", va="center", fontsize=9,
                     color="white" if abs(value) >= 75 else "#111827")
-    fig.colorbar(im, ax=ax, fraction=.045, pad=.025, label="Flash minus Pro (percentage points)")
-    fig.text(.15, .1, "Each cell compares two repeats per model. Positive favors Flash; negative favors Pro.", fontsize=8)
-    fig.text(.15, .065, "* /32 has a known numeric-oracle limitation. NA means incomplete hidden grading.", fontsize=8)
-    fig.text(.15, .03, "Descriptive development outcomes, not a validated rule for choosing a model on a new task.", fontsize=8)
+    fig.colorbar(im, ax=ax, fraction=.045, pad=.025, label="Reference-agreement gap (percentage points)")
+    fig.text(.15, .12, "Frozen reference-agreement gap: positive = Flash, negative = Pro. Two repeats per model.", fontsize=8)
+    fig.text(.15, .085, "* /32: numeric-oracle limitation. \u2020 /99: exact-number/reference discrepancies.", fontsize=8)
+    fig.text(.15, .05, "NA: incomplete grading. Scores are frozen; no semantic model ranking is implied.", fontsize=8)
+    fig.text(.15, .015, "Descriptive development data, not a validated selection rule for a new task.", fontsize=8)
     return fig
 
 
@@ -240,9 +244,11 @@ def main() -> None:
               "incomplete_input": incomplete,
               "limits": ["Two correlated measured cutoffs; no interpolation-based crossover estimate.",
                          "WSL monotonic cutoffs; batch UTC duration differs and external clock equivalence is unverified.",
+                         "Frozen hidden outcomes measure reference agreement, not semantic model ranking.",
+                         "HE32 has a numeric-oracle limitation; HE99 has exact-number/reference discrepancies. Original scores and prespecified views remain unchanged.",
                          "Task variation and observed trajectory ranges, not population confidence intervals.",
                          "No held-out prediction or multiple task domains in these development plots."]}
-    (output / "figures.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+    (output / "figures.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({"output": str(output), "figures": len(images), "provider_calls": 0}))
 
 

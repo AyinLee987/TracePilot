@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "source_sha256": "1f184345b86845d169e038cdba9d927c8028cbe32a5d8514c11b28f43df3c574",
+  "script_sha256": "7f93e3dff81a3bfc6096fabb0692b79c4f3a8446895914bda7f85de23ff79d5a",
+  "matplotlib": "3.11.2",
+  "provider_calls": 0,
+  "images": {
+    "deadline-quality.pdf": "f33d8b105feeb541937ec408107f207d5654bcc0d973920690401f1b886cae91",
+    "deadline-quality.svg": "e774d5e8d2e31ed1737965743fd55441727a849925a17cf96633c017421fbdfb",
+    "deadline-quality.png": "ad400c7f3f3af11897556d1729fb85a4e1aa2bb1fd1756b6059e6e621b691922",
+    "deadline-work.pdf": "efd6139461b18aa0e3d5b7fd029fe0c544cb4e01089f51d7bb47a8e90ff93534",
+    "deadline-work.svg": "ae778bb52b29d1889111b0c09b97e4a4a6dd48ad069dd150d4aaaabe66af39c8",
+    "deadline-work.png": "f89f1e119c6efae1e7e8fdb3bd224403b66f5e6d4b64f119a2d23d0b21d83983",
+    "deadline-task-gaps.pdf": "cda91c202f64ecb1b74896396b1d46fb005ffaff30df8437a7337e995adddf1d",
+    "deadline-task-gaps.svg": "89c46f3fe34de9480df744a28c216b346280d4fd6586e03d7ba81b6415380875",
+    "deadline-task-gaps.png": "e235087372993c75f56a1d8e95cbbff57e7b55ca9fb260c39f52c4396fa82076"
+  },
+  "synthetic_input": false,
+  "incomplete_input": false,
+  "limits": [
+    "Two correlated measured cutoffs; no interpolation-based crossover estimate.",
+    "WSL monotonic cutoffs; batch UTC duration differs and external clock equivalence is unverified.",
+    "Frozen hidden outcomes measure reference agreement, not semantic model ranking.",
+    "HE32 has a numeric-oracle limitation; HE99 has exact-number/reference discrepancies. Original scores and prespecified views remain unchanged.",
+    "Task variation and observed trajectory ranges, not population confidence intervals.",
+    "No held-out prediction or multiple task domains in these development plots."
+  ]
+}

@@ -2,6 +2,15 @@
 
 阶段状态以 [`agent.md`](../agent.md) 为准。本文件记录每次任务的实际工作、验证和审查结果。
 
+## 2026-10-06：R3 实际评分、逐轮诊断与结果发布
+
+- **完成范围**：144 条真实在线轨迹、843 次请求终态已封存；离线 hidden scorer exit0，714 个持久候选加 1 个独立 seed 共715/715评分，未知0，原输入未变，资源已清理。实际分析 exit0，保留144物理轨迹和288相关快照；[结果报告](research/coding-deadline-results.md)和[脱敏数值包](../research/results/coding-deadline/summary.json)分别提供解释与复用入口。
+- **主要结果**：native 每模型64条，5秒参考通过 Flash51/Pro45，15秒 Flash51/Pro55；同一轨迹的两时限不作独立样本。Flash 相对首稿通过增益0，Pro +1/+9均为无可交付候选转为通过。common 的单个自然错误状态独立报告，不混入 native 排名。
+- **限制**：/32预设敏感性保留；/99在评分后发现精确数值与参考实现不一致，独立 Fraction 核验15个位置，参考15个错误、代表候选 `native-041/attempt-01` 有11个数学正确+4个异常，不能称候选全对。全部5个15秒Pro-only配对均来自/99，不可当作能力优势标签；未改分、未删题、未重跑。WSL monotonic与外部时钟对应仍未验证，原批差188.059825041秒的记录保留。
+- **验证**：独立交叉核对7张CSV、原始/评分证据、规划分母和843条已结算费用，无数值差异；1440个费用分段比较一致。实际三图已导出PNG/PDF/SVG并目视检查；发布时检查Git的LF规范化不破坏summary、SVG与manifest的hash链。真实证据与历史synthetic检查分开，见[结果验证](../research/results/coding-deadline-results-validation.json)。本次分析/绘图无新增API或Docker调用。
+- **审查**：实际Claude CLI为 `claude-opus-5-5`，exit0、is_error=false、审查期间源文件未变，未发现阻断。已澄清代表候选、重建文件的hash边界及图替代文本；仓库既有全局 `eol=lf` 规则覆盖JSON/SVG，CSV精确规则保留原字节。审查中的“844行含seed”说明不采纳：实际为843请求加1个派发前截止记录，seed独立。见[审查处置](reviews/2026-10-06-coding-deadline-results.md)。
+- **费用和下一步**：本批估算2.785298144元、同一study累计3.129782592元、所有实验合计3.292293888元，非账单且不含Claude审查。R4仍未冻结、准入或付费，先明确标签语义和开发可辨识性并核验外部时钟。Timely四游戏/有效曲线和完整研究目标仍未完成。
+
 ## 2026-10-06：在线 R3 终态与离线分析/绘图功能
 
 - **在线状态**：原冻结矩阵144/144轨迹 complete，843次请求全部 known_settled，外层 child exit0/reaped。本批估算2.785298144元，原累计200元 study 合计3.129782592元，含早期独立实验合计3.292293888元；无未知费用，非账单，不含Claude审查。hidden scorer（本地session69912）正在运行，尚无最终评分；本条不发布胜负或修复收益。

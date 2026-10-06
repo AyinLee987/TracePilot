@@ -6,3 +6,6 @@
 *.jpg binary
 *.jpeg binary
 *.pdf binary
+
+# Preserve the analyzer's exact CSV bytes referenced by the result manifest.
+/research/results/coding-deadline/*.csv -text

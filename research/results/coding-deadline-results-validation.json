@@ -1,0 +1,605 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "date": "2026-10-06",
+  "scope": "Actual closed R3 development data: hidden scoring, analysis, portable publication and real figure exports. Not the earlier synthetic feature checkpoint.",
+  "analysis": {
+    "exit_code": 0,
+    "status": "complete",
+    "denominators": {
+      "common": 16,
+      "native": 128,
+      "physical": 144,
+      "snapshots": 288
+    },
+    "source_unchanged": true,
+    "script_sha256": "223a6d12265c4a5e9d77b3d5ee989c32351f8cc08fdf332397b2e8b009f3b3fc",
+    "provider_calls": 0,
+    "judge_containers": 0,
+    "private_summary_sha256": "a4b58345ccdc896b4a5adf2c3bb072d21806789918e5fd0396031b70b92856ce",
+    "public_summary_sha256": "1f184345b86845d169e038cdba9d927c8028cbe32a5d8514c11b28f43df3c574",
+    "private_absolute_paths_and_file_inventories_removed": true,
+    "csv_bytes_identical_to_closed_analysis": true
+  },
+  "hidden_scoring": {
+    "status": "complete",
+    "stop_reason": null,
+    "fixture_only": false,
+    "hidden_resources_closed": true,
+    "input_unchanged": true,
+    "persisted_candidate_count": 714,
+    "independent_common_seed_count": 1,
+    "scored_identity_count": 715,
+    "unscored_identity_count": 0,
+    "provider_calls": 0,
+    "image_id": "sha256:83712435c2675d4426381b7ac449347f834a1f0b820c945b4cb9b92ab46b9e8d",
+    "manifest_sha256": "8d6ed3992a914841645cf50cdaf1f49d9f273c8078d0cdf1a756747d4b8b2e84"
+  },
+  "independent_csv_crosscheck": {
+    "status": "passed",
+    "blockers": {},
+    "tables_row_counts": {
+      "attempts.csv": 844,
+      "common_seed_transitions.csv": 16,
+      "conditions.csv": 96,
+      "observations.csv": 288,
+      "paired_task_contrasts.csv": 336,
+      "task_conditions.csv": 308,
+      "trajectories.csv": 144
+    },
+    "checks": {
+      "attempts.csv": {
+        "comparisons": 845,
+        "mismatches": 0
+      },
+      "common_seed_transitions.csv": {
+        "comparisons": 17,
+        "mismatches": 0
+      },
+      "common_separation": {
+        "comparisons": 4,
+        "mismatches": 0
+      },
+      "conditions.csv": {
+        "comparisons": 96,
+        "mismatches": 0
+      },
+      "independent_audit_hashes": {
+        "comparisons": 2,
+        "mismatches": 0
+      },
+      "observations": {
+        "comparisons": 289,
+        "mismatches": 0
+      },
+      "paired64_independent": {
+        "comparisons": 3,
+        "mismatches": 0
+      },
+      "paired_task_contrasts.csv": {
+        "comparisons": 336,
+        "mismatches": 0
+      },
+      "per_cutoff_cost_segments": {
+        "comparisons": 1440,
+        "mismatches": 0
+      },
+      "physical_cost_once": {
+        "comparisons": 3,
+        "mismatches": 0
+      },
+      "prior_hidden_condition_audit": {
+        "comparisons": 48,
+        "mismatches": 0
+      },
+      "prior_public_audit": {
+        "comparisons": 17,
+        "mismatches": 0
+      },
+      "prior_public_delivery_audit": {
+        "comparisons": 32,
+        "mismatches": 0
+      },
+      "request_inventory": {
+        "comparisons": 1687,
+        "mismatches": 0
+      },
+      "sources_unchanged": {
+        "comparisons": 18,
+        "mismatches": 0
+      },
+      "table_hash_bindings": {
+        "comparisons": 7,
+        "mismatches": 0
+      },
+      "task_conditions.csv": {
+        "comparisons": 308,
+        "mismatches": 0
+      },
+      "terminal_and_missingness": {
+        "comparisons": 294,
+        "mismatches": 0
+      },
+      "trajectories.csv": {
+        "comparisons": 145,
+        "mismatches": 0
+      }
+    },
+    "completion": {
+      "physical_complete": 144,
+      "snapshots": 288,
+      "scored_identities": 715,
+      "unscored_identities": 0,
+      "unknown_selected_or_baseline": 0,
+      "unknown_requests": 0,
+      "not_started": 0,
+      "score_complete": true
+    },
+    "native_full_and_exclude32": [
+      {
+        "exclude_he32": false,
+        "model": "deepseek-flash",
+        "deadline_s": 5.0,
+        "denominator": 64,
+        "selected_counts": {
+          "fail": 12,
+          "pass": 51,
+          "timeout": 1
+        },
+        "baseline_counts_at_D": {
+          "fail": 12,
+          "pass": 51,
+          "timeout": 1
+        },
+        "gain_counts": {
+          "0": 64
+        },
+        "no_candidate_to_pass": 0,
+        "fail_or_timeout_to_pass": 0
+      },
+      {
+        "exclude_he32": false,
+        "model": "deepseek-flash",
+        "deadline_s": 15.0,
+        "denominator": 64,
+        "selected_counts": {
+          "fail": 12,
+          "pass": 51,
+          "timeout": 1
+        },
+        "baseline_counts_at_D": {
+          "fail": 12,
+          "pass": 51,
+          "timeout": 1
+        },
+        "gain_counts": {
+          "0": 64
+        },
+        "no_candidate_to_pass": 0,
+        "fail_or_timeout_to_pass": 0
+      },
+      {
+        "exclude_he32": false,
+        "model": "deepseek-v4-pro",
+        "deadline_s": 5.0,
+        "denominator": 64,
+        "selected_counts": {
+          "no_candidate": 19,
+          "pass": 45
+        },
+        "baseline_counts_at_D": {
+          "no_candidate": 20,
+          "pass": 44
+        },
+        "gain_counts": {
+          "0": 63,
+          "1": 1
+        },
+        "no_candidate_to_pass": 1,
+        "fail_or_timeout_to_pass": 0
+      },
+      {
+        "exclude_he32": false,
+        "model": "deepseek-v4-pro",
+        "deadline_s": 15.0,
+        "denominator": 64,
+        "selected_counts": {
+          "fail": 7,
+          "no_candidate": 2,
+          "pass": 55
+        },
+        "baseline_counts_at_D": {
+          "fail": 5,
+          "no_candidate": 13,
+          "pass": 46
+        },
+        "gain_counts": {
+          "0": 55,
+          "1": 9
+        },
+        "no_candidate_to_pass": 9,
+        "fail_or_timeout_to_pass": 0
+      },
+      {
+        "exclude_he32": true,
+        "model": "deepseek-flash",
+        "deadline_s": 5.0,
+        "denominator": 56,
+        "selected_counts": {
+          "fail": 5,
+          "pass": 51
+        },
+        "baseline_counts_at_D": {
+          "fail": 5,
+          "pass": 51
+        },
+        "gain_counts": {
+          "0": 56
+        },
+        "no_candidate_to_pass": 0,
+        "fail_or_timeout_to_pass": 0
+      },
+      {
+        "exclude_he32": true,
+        "model": "deepseek-flash",
+        "deadline_s": 15.0,
+        "denominator": 56,
+        "selected_counts": {
+          "fail": 5,
+          "pass": 51
+        },
+        "baseline_counts_at_D": {
+          "fail": 5,
+          "pass": 51
+        },
+        "gain_counts": {
+          "0": 56
+        },
+        "no_candidate_to_pass": 0,
+        "fail_or_timeout_to_pass": 0
+      },
+      {
+        "exclude_he32": true,
+        "model": "deepseek-v4-pro",
+        "deadline_s": 5.0,
+        "denominator": 56,
+        "selected_counts": {
+          "no_candidate": 11,
+          "pass": 45
+        },
+        "baseline_counts_at_D": {
+          "no_candidate": 12,
+          "pass": 44
+        },
+        "gain_counts": {
+          "0": 55,
+          "1": 1
+        },
+        "no_candidate_to_pass": 1,
+        "fail_or_timeout_to_pass": 0
+      },
+      {
+        "exclude_he32": true,
+        "model": "deepseek-v4-pro",
+        "deadline_s": 15.0,
+        "denominator": 56,
+        "selected_counts": {
+          "no_candidate": 1,
+          "pass": 55
+        },
+        "baseline_counts_at_D": {
+          "no_candidate": 10,
+          "pass": 46
+        },
+        "gain_counts": {
+          "0": 47,
+          "1": 9
+        },
+        "no_candidate_to_pass": 9,
+        "fail_or_timeout_to_pass": 0
+      }
+    ],
+    "common_separate": [
+      {
+        "model": "deepseek-flash",
+        "deadline_s": 5.0,
+        "denominator": 8,
+        "selected_counts": {
+          "fail": 7,
+          "pass": 1
+        }
+      },
+      {
+        "model": "deepseek-flash",
+        "deadline_s": 15.0,
+        "denominator": 8,
+        "selected_counts": {
+          "fail": 7,
+          "pass": 1
+        }
+      },
+      {
+        "model": "deepseek-v4-pro",
+        "deadline_s": 5.0,
+        "denominator": 8,
+        "selected_counts": {
+          "fail": 4,
+          "pass": 4
+        }
+      },
+      {
+        "model": "deepseek-v4-pro",
+        "deadline_s": 15.0,
+        "denominator": 8,
+        "selected_counts": {
+          "pass": 8
+        }
+      }
+    ],
+    "native_D15_pairs": {
+      "full": {
+        "both_pass": 50,
+        "flash_only_pass": 1,
+        "pro_only_pass": 5,
+        "neither_pass": 8,
+        "unknown": 0
+      },
+      "exclude32": {
+        "both_pass": 50,
+        "flash_only_pass": 1,
+        "pro_only_pass": 5,
+        "neither_pass": 0,
+        "unknown": 0
+      },
+      "full_pairs": 64,
+      "exclude32_pairs": 56,
+      "CSV_task_policy_delay_cells": 32,
+      "repeats_per_full_cell": 2
+    },
+    "physical_cost": {
+      "known_cost_cny": "2.785298144",
+      "request_unknown_liability_cny": "0",
+      "requests": 843,
+      "breakdown": [
+        {
+          "cohort": "native",
+          "model": "deepseek-flash",
+          "requests": 424,
+          "physical_known_cost_cny": "0.794092128"
+        },
+        {
+          "cohort": "native",
+          "model": "deepseek-v4-pro",
+          "requests": 313,
+          "physical_known_cost_cny": "1.740880768"
+        },
+        {
+          "cohort": "common",
+          "model": "deepseek-flash",
+          "requests": 58,
+          "physical_known_cost_cny": "0.062001024"
+        },
+        {
+          "cohort": "common",
+          "model": "deepseek-v4-pro",
+          "requests": 48,
+          "physical_known_cost_cny": "0.188324224"
+        }
+      ],
+      "rule": "Count one settled bill per physical request. Two correlated cutoff prefix/selection cost attributions are not additional expenditure."
+    },
+    "interpretation_boundaries": [
+      "No numerical mismatch found is not a validation of the oracle semantics or the historical clock.",
+      "All pass/fail labels remain frozen-oracle outcomes; the separately recorded HE99 exact-rational discrepancy and HE32 limitation apply.",
+      "D5/D15 are recorded monotonic cutoffs with unresolved external-clock equivalence.",
+      "Do not pool native/common or both correlated deadlines into a model ranking."
+    ]
+  },
+  "crosscheck_private_evidence_sha256": "bd402dee4fe188d47e6e7d5c56f1ce7170301117c135c0b3553824f62191d509",
+  "real_plot_qa": {
+    "schema": 1,
+    "status": "passed",
+    "scope": "Render existing completed real R3 aggregate reference-agreement tables; no experiment or hidden judge rerun",
+    "command": [
+      ".local/plot-venv/Scripts/python.exe",
+      "-B",
+      "research/plot_coding_deadline.py",
+      "--source",
+      "research/results/coding-deadline/summary.json",
+      "--output",
+      ".local/coding-deadline-lf-publication-fa197d0cea964c85bd3da602753ef7b9/lf-render"
+    ],
+    "exit_code": 0,
+    "provider_calls_during_plot_qa": 0,
+    "docker_calls_during_plot_qa": 0,
+    "paid_input": true,
+    "fixture_scores": false,
+    "score_status": "complete",
+    "denominators": {
+      "common": 16,
+      "native": 128,
+      "physical": 144,
+      "snapshots": 288
+    },
+    "source_summary_sha256": "1f184345b86845d169e038cdba9d927c8028cbe32a5d8514c11b28f43df3c574",
+    "source_csv_sha256": {
+      "attempts.csv": "d9b3b5e7c60f4fdc4f5a3283d09b75fbe2d6178a1fb01571644e21d9f37eb14f",
+      "common_seed_transitions.csv": "7c1cc54a7be56ce2bd1b6b88341bdf0824242c874f5860d36e8b16e9fc57390e",
+      "conditions.csv": "124eb50b8d9c3747c87ccd1acbb80fd8f038988f29d9d76c781170c1b05cb9b8",
+      "observations.csv": "18ad37d40c3a2148d421de67efc4a91d6e383cff0842cd886175d0184ac4d724",
+      "paired_task_contrasts.csv": "9afb279e5e87ce378d14a6ca7c9004c5e91b70f66b2811ce9a4d40459a7a6bcc",
+      "task_conditions.csv": "bd7dbf5c5c37382dee1df1cf9350668808ee9152b36d87be95f226092df04c70",
+      "trajectories.csv": "3bd6b34df5e8f016976c63a1c0478777316ef50bba94c9ecbe8a2f43bb06758e"
+    },
+    "source_csv_count": 7,
+    "source_csv_unchanged": true,
+    "plot_script_sha256": "7f93e3dff81a3bfc6096fabb0692b79c4f3a8446895914bda7f85de23ff79d5a",
+    "figures_manifest_sha256": "ccc5a06039082baf236a87e47457a086cc90fe85b364f0d984899ce8019e2bf4",
+    "exported_image_count": 9,
+    "image_hashes_verified": true,
+    "image_sha256": {
+      "deadline-quality.pdf": "f33d8b105feeb541937ec408107f207d5654bcc0d973920690401f1b886cae91",
+      "deadline-quality.svg": "e774d5e8d2e31ed1737965743fd55441727a849925a17cf96633c017421fbdfb",
+      "deadline-quality.png": "ad400c7f3f3af11897556d1729fb85a4e1aa2bb1fd1756b6059e6e621b691922",
+      "deadline-work.pdf": "efd6139461b18aa0e3d5b7fd029fe0c544cb4e01089f51d7bb47a8e90ff93534",
+      "deadline-work.svg": "ae778bb52b29d1889111b0c09b97e4a4a6dd48ad069dd150d4aaaabe66af39c8",
+      "deadline-work.png": "f89f1e119c6efae1e7e8fdb3bd224403b66f5e6d4b64f119a2d23d0b21d83983",
+      "deadline-task-gaps.pdf": "cda91c202f64ecb1b74896396b1d46fb005ffaff30df8437a7337e995adddf1d",
+      "deadline-task-gaps.svg": "89c46f3fe34de9480df744a28c216b346280d4fd6586e03d7ba81b6415380875",
+      "deadline-task-gaps.png": "e235087372993c75f56a1d8e95cbbff57e7b55ca9fb260c39f52c4396fa82076"
+    },
+    "final_output_matches_current_source": true,
+    "visual_method": "Previous final PNGs were visually inspected; all three LF-regenerated PNGs have exactly identical decoded pixels and file bytes.",
+    "visual_checks": [
+      {
+        "image": "deadline-quality.png",
+        "status": "passed",
+        "observations": "Full eight-task and prespecified HE32-excluded views retained. Frozen reference agreement label, HE99 dagger note, WSL monotonic cutoffs and unverified external clock equivalence are readable; no text clipping."
+      },
+      {
+        "image": "deadline-work.png",
+        "status": "passed",
+        "observations": "Shared per-row scales contain the observed ranges; labels and footnotes are readable with no overlap. WSL monotonic cutoff, usage-cost and separate common-state qualifiers remain."
+      },
+      {
+        "image": "deadline-task-gaps.png",
+        "status": "passed",
+        "observations": "All task labels fit after adding left margin. HE32 asterisk and HE99 dagger with exact-number/reference-discrepancy note are legible. Frozen reference-agreement and no-semantic-ranking statements remain."
+      }
+    ],
+    "limits": [
+      "Two correlated measured cutoffs; no interpolation-based crossover estimate.",
+      "WSL monotonic cutoffs; batch UTC duration differs and external clock equivalence is unverified.",
+      "Frozen hidden outcomes measure reference agreement, not semantic model ranking.",
+      "HE32 has a numeric-oracle limitation; HE99 has exact-number/reference discrepancies. Original scores and prespecified views remain unchanged.",
+      "Task variation and observed trajectory ranges, not population confidence intervals.",
+      "No held-out prediction or multiple task domains in these development plots."
+    ],
+    "claude_calls": 0,
+    "git_writes": 0,
+    "publication_portability": {
+      "status": "passed",
+      "archive": ".local/coding-deadline-lf-publication-fa197d0cea964c85bd3da602753ef7b9/previous-figures",
+      "previous_qa": ".local/coding-deadline-lf-publication-fa197d0cea964c85bd3da602753ef7b9/previous-qa.json",
+      "change": "Explicit LF manifest write and SVG CRLF-to-LF normalization before hashing; root normalized summary serialization only.",
+      "lf_checks": {
+        "research/plot_coding_deadline.py": {
+          "crlf_count": 0,
+          "sha256": "7f93e3dff81a3bfc6096fabb0692b79c4f3a8446895914bda7f85de23ff79d5a"
+        },
+        "research/results/coding-deadline/summary.json": {
+          "crlf_count": 0,
+          "sha256": "1f184345b86845d169e038cdba9d927c8028cbe32a5d8514c11b28f43df3c574"
+        },
+        ".local/coding-deadline-lf-publication-fa197d0cea964c85bd3da602753ef7b9/lf-render/figures.json": {
+          "crlf_count": 0,
+          "sha256": "ccc5a06039082baf236a87e47457a086cc90fe85b364f0d984899ce8019e2bf4"
+        },
+        ".local/coding-deadline-lf-publication-fa197d0cea964c85bd3da602753ef7b9/lf-render/deadline-quality.svg": {
+          "crlf_count": 0,
+          "sha256": "e774d5e8d2e31ed1737965743fd55441727a849925a17cf96633c017421fbdfb"
+        },
+        ".local/coding-deadline-lf-publication-fa197d0cea964c85bd3da602753ef7b9/lf-render/deadline-task-gaps.svg": {
+          "crlf_count": 0,
+          "sha256": "89c46f3fe34de9480df744a28c216b346280d4fd6586e03d7ba81b6415380875"
+        },
+        ".local/coding-deadline-lf-publication-fa197d0cea964c85bd3da602753ef7b9/lf-render/deadline-work.svg": {
+          "crlf_count": 0,
+          "sha256": "ae778bb52b29d1889111b0c09b97e4a4a6dd48ad069dd150d4aaaabe66af39c8"
+        }
+      },
+      "pixel_comparison": [
+        {
+          "image": "deadline-quality.png",
+          "size": [
+            1332,
+            1224
+          ],
+          "mode": "RGBA",
+          "pixel_identical": true,
+          "png_bytes_identical": true,
+          "pixel_sha256": "d7a3123c26f3ccc1a3a64fee1588ed98730db0584cfc4a2fcbd9c97c25a0b849"
+        },
+        {
+          "image": "deadline-task-gaps.png",
+          "size": [
+            1404,
+            1044
+          ],
+          "mode": "RGBA",
+          "pixel_identical": true,
+          "png_bytes_identical": true,
+          "pixel_sha256": "e3ae721b493390145d3e84392893f6deacf33fdc61f50aee8a1c487a50206a3d"
+        },
+        {
+          "image": "deadline-work.png",
+          "size": [
+            1404,
+            1224
+          ],
+          "mode": "RGBA",
+          "pixel_identical": true,
+          "png_bytes_identical": true,
+          "pixel_sha256": "12a07576bb0e7aa26ad0bc90f2aa954f5a3158c7b62d99a6cd8ae7408fb9eb65"
+        }
+      ],
+      "tracked_files_replaced_by_exact_copies": [
+        "deadline-quality.pdf",
+        "deadline-quality.png",
+        "deadline-quality.svg",
+        "deadline-task-gaps.pdf",
+        "deadline-task-gaps.png",
+        "deadline-task-gaps.svg",
+        "deadline-work.pdf",
+        "deadline-work.png",
+        "deadline-work.svg",
+        "figures.json"
+      ],
+      "csv_policy": "Seven original analyzer CSV bytes and hashes retained. Root owns exact /research/results/coding-deadline/*.csv -text Git attribute; no CSV normalization performed here.",
+      "git_index_verification": "Root-owned follow-up; this QA did not run git.",
+      "provider_calls": 0,
+      "docker_calls": 0
+    }
+  },
+  "real_plot_private_evidence_sha256": "db1480f4268b07ede7b6147fe4b33ef739ab0b38167006f48a8a973888c51097",
+  "review": {
+    "status": "complete_no_blocker",
+    "actual_model": "claude-opus-5-5",
+    "returncode": 0,
+    "is_error": false,
+    "review_input_files_unchanged_during_execution": true,
+    "private_review_sha256": "b321a6c3a6b91809da672970d254d73544841f6a2770c615a20d5df2a45a5cf7",
+    "scope": "Actual results, numerical tables, plot delta and publication/documentation claims; independent audits provide checks not reproduced by the read-only reviewer.",
+    "post_review_changes": "Adopted wording clarifications and recorded review/validation outcomes only; no algorithm, table, plot or manifest change.",
+    "correction": "844 attempt rows are 843 dispatched requests plus one deadline_before_dispatch record, not a common-seed row.",
+    "representative_candidate": "he99_diagnostic original_candidate_* counts refer to native-041/attempt-01 at the 15 audited disagreement positions, not all candidates or all 715 checks."
+  },
+  "limitations": {
+    "baseline": "attempt 1, independently gated by each cutoff; a later eligible program never replaces the baseline",
+    "common": "conditional on one Flash-produced HE99 fallback; never pooled with native starts; absence of fallback improvement is unknown for incomplete trajectories",
+    "cost": "physical known usage costs counted once; cutoff/selected cost splits attribute full eventual request bills by dispatch time",
+    "he32": "full operational denominator and exclusion sensitivity; retain known numerical oracle/input-mutation limitation",
+    "inference": "no p values, confidence intervals, fitted crossing times or causal claims from before/after traces",
+    "post_selection_cost": "continuing after public perfection is the frozen experimental protocol; post-selection fees are not automatically avoidable deployment waste",
+    "rates": "pass_rate uses the complete planned/stratum denominator; with unknown quality it is only observed success proportion",
+    "scope": "eight development tasks and one conditional HE99 state; not full EvalPlus or broad model ranking",
+    "status": "no_candidate is no eligible delivery from an executed trajectory; not_started/not_evaluated/infra is unknown quality, never an observed failure",
+    "stratum": "native attempt 1 format failure or parsed public fail/timeout only; common is not applicable because repair already receives seed feedback",
+    "task_threshold": "three distinct task groups meets only the prespecified minimum support threshold; it does not establish a cross-task effect",
+    "transitions": "descriptive adjacent attempts; common seed-to-attempt-1 edges are separate; timeout counts as observed failure, infra/missing scores break known comparisons",
+    "units": "144 physical trajectories, 288 correlated prefix snapshots; task groups are the inference units",
+    "unknown_cost": "per-request unresolved liability is separate from the terminal whole-batch hold; never add both",
+    "clock": "5/15 are recorded WSL monotonic cutoffs. UTC batch elapsed differs; external physical-time equivalence and stability across conditions are unverified. Do not rescale retrospectively.",
+    "he99": "Frozen hidden outcomes measure reference agreement. A post-run exact-rational audit found 15 reference discrepancies on HE99 under exact numeric-string semantics. Original scores remain unchanged; full and prespecified HE32-excluded views are retained."
+  },
+  "publication_checks": {
+    "hash_bindings_working_tree_and_git_index": 18,
+    "local_links_checked_before_final_review_record_update": 160,
+    "public_privacy_files_checked": 9,
+    "plot_ast": "passed",
+    "README_English_ASCII": true,
+    "csv_git_rule": "/research/results/coding-deadline/*.csv -text",
+    "other_text_git_rule": "* text=auto eol=lf",
+    "whitespace_scope": "Hand-authored files and CSV checked with cr-at-eol; generated Matplotlib SVG path trailing spaces excluded. No source/data bytes altered for whitespace cleanup."
+  }
+}
