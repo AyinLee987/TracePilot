@@ -1,0 +1,43 @@
+{
+  "check_count": 26,
+  "checks": [
+    "known_protocol_failure_settles_actual_once",
+    "full_independent_24_rows_v2",
+    "study_module_hash_frozen",
+    "unstarted_reservations_released_after_cleanup",
+    "legacy_files_and_genesis_unchanged",
+    "prepare_is_inert_and_dry",
+    "explicit_plan_and_review_hash_gates",
+    "reviewed_hash_cannot_raise_cap_or_drop_history",
+    "failed_atomic_publication_has_no_binding",
+    "exact_activation_retry_after_inert_temp",
+    "duplicate_and_fork_activation_refused",
+    "old_head_refused",
+    "activation_review_tamper_refused",
+    "fresh_calibration_before_timed",
+    "full_revised_matrix_subprocess_e2e",
+    "complete_extension_basis_carries_cumulative_budget",
+    "extension_is_audit_only_no_hidden_executor",
+    "sealed_old_raw_tamper_refused",
+    "unknown_overcap_liability_carried_without_double_count",
+    "second_small_revision_refused",
+    "missing_result_retains_full_guard",
+    "uncertain_cleanup_blocks_all_migration",
+    "resumable_clean_stop_cannot_migrate",
+    "unregistered_attempt_inventory_blocks_migration",
+    "failed_preparation_never_binds_registry",
+    "whole_first_block_must_fit_residual_cap"
+  ],
+  "code_sha256": {
+    "timely_batch.py": "d9bbdab7e9fc6a961cbfc489f9e30b6bd50333437fd73f26a7c004af6a19d296",
+    "timely_batch_fake_e2e.py": "c5fbc3b88d1fd9b87be7da5cabf8e61ff1fba62f1496f15b73c4c10d24324cd8",
+    "timely_study.py": "7c115f4ab263b4514d64dd20394a366b2da1d461a3fb6dc35b78fb8a76804210",
+    "timely_study_fake_e2e.py": "5a04256d496bf884fa95038148dfcc3414f386c80dc0b645e1cb5652ca86e6a9"
+  },
+  "fake_children_only": true,
+  "provider_calls": 0,
+  "real_evaluator_rerun": false,
+  "status": "passed",
+  "source_summary_sha256": "f61a9ef5ed458fbcb94b59b0c6c447f3556508d3090dce4c56fe90fc2a1b4ee0",
+  "scope": "audited same-budget succession; synthetic subprocess children, not real model/evaluator reproduction"
+}

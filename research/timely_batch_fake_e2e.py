@@ -108,7 +108,7 @@ def fixture_child(arguments: list[str]) -> int:
     parser.add_argument("--mode")
     parser.add_argument("--steps", type=int)
     parser.add_argument("--tool-delay", type=float)
-    parser.add_argument("--tool-format", choices=("official", "single-json-v1"), default="official")
+    parser.add_argument("--tool-format", choices=("official", "single-json-v1", "single-json-v2"), default="official")
     parser.add_argument("--seed", type=int)
     parser.add_argument("--max-calls", type=int)
     parser.add_argument("--budget-cny")

@@ -27,6 +27,8 @@ The [first real R1 result](results/timely-r1.json) preserves a protocol failure:
 
 ## Frozen Timely small matrix
 
+The commands in this section describe the stopped v1 matrix; use audited succession below for v2. Do not create another independent paid plan.
+
 `timely_batch.py` coordinates 24 serial episodes: eight 32-step speed runs (two models, virtual tool delays of 0/10 seconds, two repeats), then sixteen timed runs at 32/64 steps. Calibration uses the summed official time divided by summed recorded steps within each model/delay condition. Every predeclared calibration must be usable; the script stops on failure instead of selecting successful repeats.
 
 ```bash
@@ -83,4 +85,24 @@ See the [Pi setup and evidence](../docs/research/pi-pilot.md) and [mini-SWE-agen
 The [redacted results](results/open-agent-smoke.json) include the initial mini workflow failure and the prompt-corrected rerun. These are integration checks, not performance comparisons or a universal TracePilot adapter.
 
 
-Capacity and recovery details are in the [reproduction plan](../docs/research/timely-reproduction.md#9-付费前容量停止与恢复边界). Request limits are 256,000 message-JSON bytes and 1 MiB total request bytes. Oversized/invalid requests stop that transport without dispatch. A stopped paid plan has no automatic retry or migration command; preserve its ledger and reconcile it into the same cumulative study budget before an explicitly reviewed migration. Do not delete the registry or reuse failed calibration results. The frozen runtime also includes the WSL platform, so an OS upgrade prevents silent resume.
+Capacity and recovery details are in the [reproduction plan](../docs/research/timely-reproduction.md#9-付费前容量停止与恢复边界). Request limits are 256,000 message-JSON bytes and 1 MiB total request bytes. Oversized/invalid requests stop that transport without dispatch. A stopped paid plan has no automatic retry. The explicit study succession commands below preserve its ledger and reconcile the same cumulative study budget before activation. Do not delete the registry or reuse failed calibration results. The frozen runtime also includes the WSL platform, so an OS upgrade prevents silent resume.
+
+### First paid matrix and protocol revision
+
+The [first paid R2 matrix](results/timely-r2-small-v1.json) stopped after 1 of 24 planned episodes: six Pro responses lacked a closing tool tag. All 32 calls have settled usage; none of that episode is usable calibration. The cumulative pilot estimate is CNY 0.103705632. Preserve the old ledger, complete denominator and raw evidence.
+
+The separately named `single-json-v2` condition adds explicit closing-tag examples without changing the official parser or repairing model output. Its [six focused offline checks](results/timely-v2-validation.json) passed; real model compliance is still unverified. Only one complete revised matrix is allowed by the predeclared policy, after reviewed migration into the same cumulative CNY 200 budget. Historical commands above describe the first matrix; do not create another independently funded paid plan.
+
+### Audited study succession
+
+Run these in the same pinned Linux environment after the code review and commit. Preparation makes no provider calls and does not activate a plan. Inspect its complete 24 rows, parent seal, opening balance, and printed canonical plan digest. Activation requires that exact digest and a hash of the completed review artifact.
+
+```sh
+python -B research/timely_study.py prepare-revision --parent .local/timely-r2-small-paid-20261006 --pilot-root .local/timely-r2-small-v2-paid-20261006 --tool-format single-json-v2
+python -B research/timely_study.py activate --pilot-root .local/timely-r2-small-v2-paid-20261006 --plan-sha256 VERIFIED_PLAN_DIGEST --review PATH_TO_COMPLETED_REVIEW --review-sha256 VERIFIED_REVIEW_HASH
+python -B research/timely_batch.py run --pilot-root .local/timely-r2-small-v2-paid-20261006
+```
+
+Only after the dry check, use the existing paid `run` command with the provider env file and `--max-runs 4`. The genesis registry stays unchanged; a hash-linked transition identifies the sole active plan. Known cost and unresolved liabilities carry forward separately. Old files must stay sealed. The shared study lock serializes activation and paid execution. A second failed-small revision is rejected. `extension-basis` only audits a completed stage for a named subsequent executor; it does not implement or run four-game or coding experiments.
+
+Keep frozen Timely code unchanged until the active matrix is terminal. Later executors require a reviewed code-version migration. If activation errors after publication, inspect the actual study head before retrying. Retain the review artifact; its hash is checked at execution. Keep outer clock observations outside sealed batch roots. Aggregate by `(pilot_id, run_id)` and distinguish this matrix's spend from cumulative study spend.

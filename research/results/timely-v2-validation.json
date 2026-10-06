@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "scope": "single-json-v2 prompt integration; fake model with real Jericho; no live compliance claim",
+  "zero_api": true,
+  "passed_cases": 6,
+  "total_cases": 6,
+  "source_summary_sha256": "6beaf5dc302d77526f25bc5047b5598dbeb46f17d906a1b23f5f0c6d8f0163a3",
+  "code_sha256": {
+    "research/timely_reproduce.py": "b062c2603976e9687885481d5e9fe3186317405b591735b5c56b556635791366",
+    "research/timely_reproduction_fake_e2e.py": "85f61206a6ba5d690b8f3ffdcab667feb529fba124029ed147b19fbe4f745181"
+  },
+  "cases": [
+    {
+      "name": "valid-speed",
+      "passed": true,
+      "technical_ok": true,
+      "protocol_ok": true,
+      "calibration_usable": true,
+      "errors": []
+    },
+    {
+      "name": "single-json-v2-speed",
+      "passed": true,
+      "technical_ok": true,
+      "protocol_ok": true,
+      "calibration_usable": true,
+      "errors": []
+    },
+    {
+      "name": "single-json-v2-timed",
+      "passed": true,
+      "technical_ok": true,
+      "protocol_ok": true,
+      "calibration_usable": false,
+      "errors": []
+    },
+    {
+      "name": "single-json-v2-missing-close",
+      "passed": true,
+      "technical_ok": true,
+      "protocol_ok": false,
+      "calibration_usable": false,
+      "errors": []
+    },
+    {
+      "name": "single-json-v2-conclusion",
+      "passed": true,
+      "technical_ok": true,
+      "protocol_ok": false,
+      "calibration_usable": false,
+      "errors": []
+    },
+    {
+      "name": "single-json-v1-speed",
+      "passed": true,
+      "technical_ok": true,
+      "protocol_ok": true,
+      "calibration_usable": true,
+      "errors": []
+    }
+  ]
+}

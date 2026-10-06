@@ -562,9 +562,20 @@ def verify_paid_study(root: Path, plan: dict) -> None:
     require(isinstance(expected, dict) and expected.get("path") == str(registry.resolve())
             and expected.get("sha256") == file_hash(registry), "paid_study_registry_changed_or_missing")
     record = read_json(registry)
-    require(record.get("pilot_root") == str(root) and not record.get("blocked_unknown_history")
+    require(not record.get("blocked_unknown_history")
             and record.get("imports") == plan["imports"] == r1_inventory(),
             "study_inventory_mismatch_manual_reconciliation_required")
+    verify_active_stage(root, plan)
+
+
+def verify_active_stage(root: Path, plan: dict) -> None:
+    """A reviewed successor must be the sole active head of the same study."""
+    admission = plan.get("study_admission")
+    if admission is not None:
+        require(admission.get("module_sha256") == file_hash(Path(__file__).with_name("timely_study.py")),
+                "study_module_changed")
+    from timely_study import assert_active
+    assert_active(root, plan)
 
 
 def create_plan(root: Path, source: Path, game: Path, *, paid: bool = False,
@@ -629,7 +640,8 @@ class Ledger:
         self.events: list[dict] = []
         self.state = {"opened": False, "reserved": {}, "started": None, "settled": {},
                       "blocks": [], "next": 0, "stopped": None, "calibrations": None, "complete": False,
-                      "spent_cny": str(sum((money(x["cost_cny"]) for x in plan["imports"]), Decimal(0)))}
+                      "spent_cny": str(money(plan["study_opening"]["known_cny"]) if "study_opening" in plan else
+                                       sum((money(x["cost_cny"]) for x in plan["imports"]), Decimal(0)))}
         if self.path.exists():
             raw = self.path.read_bytes()
             require(raw.endswith(b"\n"), "torn_ledger_requires_operator_inspection")
@@ -646,7 +658,8 @@ class Ledger:
                 and digest(payload) == event.get("sha256"), "invalid_ledger_chain")
 
     def committed(self) -> Decimal:
-        return money(self.state["spent_cny"]) + sum(map(money, self.state["reserved"].values()), Decimal(0))
+        carried = sum((money(item["held_cny"]) for item in self.plan.get("study_opening", {}).get("liabilities", [])), Decimal(0))
+        return money(self.state["spent_cny"]) + carried + sum(map(money, self.state["reserved"].values()), Decimal(0))
 
     def _apply(self, event: str, data: dict) -> None:
         state, plan = self.state, self.plan
@@ -760,7 +773,8 @@ def ensure_calibrations(root: Path, plan: dict, ledger: Ledger) -> dict[str, dic
 def run_pilot(root: Path, *, execute_offline: bool = False, execute_paid: bool = False,
               env_file: Path | None = None, max_runs: int | None = None,
               fixture_prefix: list[str] | None = None, fixture_timeout_s: float | None = None) -> dict:
-    context = exclusive(PAID_STUDY_ROOT) if execute_paid else nullcontext()
+    bound = "study_admission" in read_json(local_path(root) / "plan.json")
+    context = exclusive(PAID_STUDY_ROOT) if execute_paid or (execute_offline and bound) else nullcontext()
     with context:
         return _run_pilot(root, execute_offline=execute_offline, execute_paid=execute_paid,
                           env_file=env_file, max_runs=max_runs, fixture_prefix=fixture_prefix,
@@ -785,6 +799,8 @@ def _run_pilot(root: Path, *, execute_offline: bool, execute_paid: bool,
     require(fixture_timeout_s is None or (fixture_prefix is not None and fixture_timeout_s > 0), "invalid_fixture_timeout")
     if execute_paid:
         verify_paid_study(root, plan)
+    elif "study_admission" in plan:
+        verify_active_stage(root, plan)
     require(max_runs is None or (type(max_runs) is int and max_runs > 0), "invalid_max_runs")
     with exclusive(root):
         ledger = Ledger(root, plan)
@@ -888,7 +904,7 @@ def main() -> int:
     create.add_argument("--import-r1", type=Path, action="append", default=[])
     create.add_argument("--cap-cny", default="200")
     create.add_argument("--seed", type=int, default=20261006)
-    create.add_argument("--tool-format", choices=("official", "single-json-v1"), default="official")
+    create.add_argument("--tool-format", choices=("official", "single-json-v1", "single-json-v2"), default="official")
     run = commands.add_parser("run")
     run.add_argument("--pilot-root", type=Path, required=True)
     modes = run.add_mutually_exclusive_group()

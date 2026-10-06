@@ -1,0 +1,156 @@
+{
+  "schema": 1,
+  "stage": "R2 small matrix; failed single-json-v1 condition",
+  "paid": true,
+  "code_commit": "7fcb6326e98bb17976a0586cf48ea3d69ca8398e",
+  "planned_episodes": 24,
+  "executed_episodes": 1,
+  "unexecuted_episodes": 23,
+  "usable_calibrations": 0,
+  "stop_reason": "calibration_not_usable",
+  "row": {
+    "block": "speed-repeat-1",
+    "cap_cny": "10",
+    "mode": "speed",
+    "model": "deepseek-v4-pro",
+    "repeat": 1,
+    "run_id": "r001-speed-deepseek-v4-pro-d0-s32-rep1",
+    "seed": 20261007,
+    "steps": 32,
+    "tool_delay": 0
+  },
+  "response_models": [
+    "deepseek-v4-pro"
+  ],
+  "technical_ok": true,
+  "protocol_ok": false,
+  "calibration_usable": false,
+  "calibration_exclusions": [
+    "invalid_tool_protocol"
+  ],
+  "counts": {
+    "model_responses": 32,
+    "recorded_steps": 32,
+    "request_dispatch": 32,
+    "request_complete": 32,
+    "request_rejected": 0,
+    "request_unknown": 0,
+    "sdk_error_responses": 0,
+    "conclusion_responses": 0,
+    "no_tool_steps": 6,
+    "malformed_tool_blocks": 6,
+    "invalid_tool_arguments": 0,
+    "executed_tools": 26,
+    "discarded_tool_calls": 0,
+    "tools_by_name": {
+      "step": 24,
+      "get_score": 1,
+      "get_max_score": 1
+    },
+    "finish_reasons": {
+      "stop": 32
+    }
+  },
+  "game": {
+    "official_score": 5,
+    "official_success_flag": false,
+    "signed_score": 5,
+    "max_score": 350,
+    "normalized_score": 0.014285714285714285,
+    "victory": false,
+    "game_over": false
+  },
+  "wall_s": 38.227329658,
+  "timing": {
+    "official_logical_total_s": 38.12915765331665,
+    "official_virtual_tool_s": 0.0,
+    "official_time_limit_s": null,
+    "http_completed_total_s": 37.99116161900014
+  },
+  "excluded_calibration": {
+    "mode": "speed",
+    "official_tau": 1.1915361766661454,
+    "numerator_official_time_s": 38.12915765331665,
+    "denominator_recorded_steps": 32,
+    "recomputed_tau": 1.1915361766661454
+  },
+  "malformed_steps_redacted": [
+    {
+      "step": 0,
+      "has_open_tag": true,
+      "has_close_tag": false,
+      "finish_reason": "stop",
+      "content_characters": 127
+    },
+    {
+      "step": 1,
+      "has_open_tag": true,
+      "has_close_tag": false,
+      "finish_reason": "stop",
+      "content_characters": 62
+    },
+    {
+      "step": 2,
+      "has_open_tag": true,
+      "has_close_tag": false,
+      "finish_reason": "stop",
+      "content_characters": 117
+    },
+    {
+      "step": 3,
+      "has_open_tag": true,
+      "has_close_tag": false,
+      "finish_reason": "stop",
+      "content_characters": 101
+    },
+    {
+      "step": 4,
+      "has_open_tag": true,
+      "has_close_tag": false,
+      "finish_reason": "stop",
+      "content_characters": 133
+    },
+    {
+      "step": 5,
+      "has_open_tag": true,
+      "has_close_tag": false,
+      "finish_reason": "stop",
+      "content_characters": 140
+    }
+  ],
+  "usage_totals": {
+    "prompt_tokens": 56053,
+    "completion_tokens": 1020,
+    "total_tokens": 57073,
+    "prompt_cache_hit_tokens": 51840,
+    "prompt_cache_miss_tokens": 4213
+  },
+  "estimated_cny": "0.095050560",
+  "current_pilot_estimated_cny": "0.103705632",
+  "all_experimental_estimated_cny": "0.266216928",
+  "unknown_reserved_cny": "0",
+  "cost_semantics": "peak-price usage estimate; not invoice or account balance",
+  "cleanup_verified": true,
+  "outer_clock_offset_change_s": -0.4547078609466553,
+  "clock_interpretation": "whole-command observation only; not per-request causal attribution; original timer gates retained",
+  "paper_result_reproduced": false,
+  "supports_model_ranking": false,
+  "raw_artifacts": {
+    "directory": ".local/timely-r2-small-paid-20261006/runs/r001-speed-deepseek-v4-pro-d0-s32-rep1",
+    "sha256": {
+      "environment.json": "e28f5e1557323681175d3523667f958b3f9293a8da659b8056037557c171702c",
+      "manifest.json": "5a9061581bbd2981c67c1afe5b57bcdb49e73723b4cdb522d035d06a23649cae",
+      "official/speed_summary.json": "a1c07ce2840495efcf8db87c2289e7d4e37e9ecf06f84178e4fab93ca751436e",
+      "official/trajectories_max_steps_32.jsonl": "8caf1f47e28b876f4e343f7bf6fdfb746a301b385bbe11f3be2c451b0134ef23",
+      "requests.jsonl": "fbca1fd6965bc7bc81649fdbfc11fcee16b479cc7d81e9c2d20188fc5100d099",
+      "result.json": "804763543a3640bf2c19bc733eaab411abd2863fdfef4560d37573a3826d9fe8"
+    }
+  },
+  "batch_artifacts_sha256": {
+    "plan.json": "ccfd9b0b3652f1a85cb081fbb6bb7762928a6ffd1674a4b96c57ecc07d693b57",
+    "ledger.jsonl": "aed3451284d201b1ea09b3747c38dd1cacc7f6983ae341b5a1ec74d5a368ab7f",
+    "processes/r001-speed-deepseek-v4-pro-d0-s32-rep1.closed.json": "94d8a9ee6b52b90e79385e624be924997e0dc748f63f8827cf781f627ac8e508",
+    "outer-clock-first-four.jsonl": "7cffd99264bf34c3efae2938319efbe120f07dcef19f2d875ecb987de8fcef85"
+  },
+  "next_action": "At most one separately reviewed complete revised matrix under the same cumulative CNY 200 budget; preserve the failed 24-row denominator."
+}

@@ -1,8 +1,8 @@
 """Run one pinned Timely/Jericho episode with bounded, observable model calls.
 
 The official evaluator loop, virtual latency, scoring, and clock noise are
-preserved. Prompts are official by default; single-json-v1 is a disclosed
-format-only clarification. This is an API-model protocol replication, not the paper's
+preserved. Prompts are official by default; single-json variants are disclosed
+format instructions, not output repair. This is an API-model protocol replication, not the paper's
 unreleased cold-start checkpoints. Fake mode still requires a real game ROM.
 """
 from __future__ import annotations
@@ -26,10 +26,17 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 COMMIT = "e13af2b8c98d799857ace789ebcfdfd4ea6c2985"
 HTTP_OPERATION_TIMEOUT_S = 60
-TOOL_FORMATS = ("official", "single-json-v1")
+TOOL_FORMATS = ("official", "single-json-v1", "single-json-v2")
 SINGLE_JSON_TOOL_NOTE = """Tool-call format for this condition (single-json-v1):
 For each non-conclusion reply, emit exactly one <tool_call>{"name":"<function-name>","arguments":{}}</tool_call> block containing a JSON object. Use the function signatures above for argument names and values.
 Call only one tool per reply, and wait for its observation before calling another tool. Do not use DSML or native tool-call syntax.
+For a terminal conclusion, keep the existing <conclusion> format."""
+SINGLE_JSON_V2_TOOL_NOTE = """Tool-call format for this condition (single-json-v2):
+Every non-conclusion reply must contain exactly one complete tool-call block on one physical line. Both the opening <tool_call> and closing </tool_call> tags are required. A JSON object without the closing tag will not execute.
+Complete syntax examples (choose the actual function and arguments for the current state):
+<tool_call>{"name":"step","arguments":{"action":"look"}}</tool_call>
+<tool_call>{"name":"get_available_actions","arguments":{}}</tool_call>
+Use the function signatures above. Call only one tool per reply and wait for its observation. Do not use DSML or native tool-call syntax, and do not insert a newline inside the tool-call block. If you include reasoning, place it before the tool-call line. End every non-conclusion reply with the literal closing tag </tool_call>.
 For a terminal conclusion, keep the existing <conclusion> format."""
 
 
@@ -37,7 +44,8 @@ def tool_format_metadata(system_prompt: str, base_tool_prompt: str, tool_format:
     """Describe the exact prompt condition without changing module state."""
     if tool_format not in TOOL_FORMATS:
         raise ValueError("Unknown tool format")
-    note = SINGLE_JSON_TOOL_NOTE if tool_format == "single-json-v1" else ""
+    note = {"official": "", "single-json-v1": SINGLE_JSON_TOOL_NOTE,
+            "single-json-v2": SINGLE_JSON_V2_TOOL_NOTE}[tool_format]
     actual = base_tool_prompt + ("\n\n" + note if note else "")
     prompts = {"base_tool_prompt": base_tool_prompt, "actual_tool_prompt": actual,
                "base_system_message": system_prompt + "\n\n" + base_tool_prompt,
@@ -105,7 +113,7 @@ def arguments() -> argparse.Namespace:
     parser.add_argument("--temperature", type=float, default=0.7)
     parser.add_argument("--execute-paid", action="store_true")
     parser.add_argument("--env-file", type=Path)
-    parser.add_argument("--fake-case", choices=["valid", "no-tool", "conclusion", "conclusion-after-tool",
+    parser.add_argument("--fake-case", choices=["valid", "no-tool", "missing-close", "conclusion", "conclusion-after-tool",
                                                "length", "invalid-finish-reason", "action-discovery", "tool-error",
                                                "http-error", "missing-usage"], default="valid")
     args = parser.parse_args()
@@ -197,7 +205,7 @@ async def run(args: argparse.Namespace) -> dict:
         "runner_sha256": {name: hashlib.sha256((Path(__file__).parent / name).read_bytes()).hexdigest()
                           for name in ["timely_reproduce.py", "timely_transport.py", "timely_evidence.py"]},
         "differences_from_paper": ["unreleased cold-start checkpoints unavailable", "API model substitution", "one serial episode", "bounded output and retries", "public-release prompts and evaluator", "explicit Python noise seed", "in-memory environment observer adds small included runtime overhead"]
-                                 + (["single-json-v1 tool-format-only prompt clarification"] if args.tool_format != "official" else []),
+                                 + ([f"{args.tool_format} tool-format-only prompt clarification"] if args.tool_format != "official" else []),
     }
     dump(output / "manifest.json", manifest)
     calls = 0
@@ -211,6 +219,8 @@ async def run(args: argparse.Namespace) -> dict:
             return httpx.Response(500, text="fake upstream error", request=request)
         if args.fake_case == "no-tool":
             content = "I will think without using any tool."
+        elif args.fake_case == "missing-close":
+            content = content.removesuffix("</tool_call>")
         elif args.fake_case == "conclusion" or (args.fake_case == "conclusion-after-tool" and calls > 1):
             content = "<conclusion>I declare success.</conclusion>"
         elif args.fake_case == "tool-error":

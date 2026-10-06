@@ -140,6 +140,17 @@ class Case:
 
 CASES = (
     Case("valid-speed", calibration_usable=True),
+    Case("single-json-v2-speed", tool_format="single-json-v2", calibration_usable=True),
+    Case("single-json-v2-timed", tool_format="single-json-v2",
+         extra_args=("--mode", "timed", "--average-duration-per-step", "0.000001"),
+         recorded_steps=1, model_responses=1, executed_tools=1, request_dispatch=1, request_complete=1),
+    Case("single-json-v2-missing-close", tool_format="single-json-v2", fake_case="missing-close",
+         protocol_ok=False, executed_tools=0,
+         required_warnings=("responses_without_parseable_tool_calls",)),
+    Case("single-json-v2-conclusion", tool_format="single-json-v2", fake_case="conclusion", protocol_ok=False,
+         recorded_steps=0, model_responses=1, executed_tools=0,
+         request_dispatch=1, request_complete=1, conclusion_responses=1,
+         required_warnings=("official_conclusion_success_is_not_game_victory",)),
     Case("single-json-v1-speed", tool_format="single-json-v1", calibration_usable=True),
     Case("single-json-v1-timed", tool_format="single-json-v1",
          extra_args=("--mode", "timed", "--average-duration-per-step", "0.000001"),
@@ -307,8 +318,9 @@ def inspect_case(case: Case, output: Path, control: Path, game_path: Path,
         check(manifest["sdk_max_retries"] == 0 and manifest["official_agent_attempts"] == 1,
               "unexpected retry configuration")
         check("outer_retries" not in manifest, "legacy retry metadata is ambiguous")
-        from timely_reproduce import SINGLE_JSON_TOOL_NOTE
-        note = SINGLE_JSON_TOOL_NOTE if case.tool_format == "single-json-v1" else ""
+        from timely_reproduce import SINGLE_JSON_TOOL_NOTE, SINGLE_JSON_V2_TOOL_NOTE
+        note = {"official": "", "single-json-v1": SINGLE_JSON_TOOL_NOTE,
+                "single-json-v2": SINGLE_JSON_V2_TOOL_NOTE}[case.tool_format]
         check(manifest["tool_format"] == case.tool_format
               and manifest["prompt_condition_id"] == f"timely-interactive:{case.tool_format}"
               and manifest["tool_format_note"] == note, "prompt condition metadata mismatch")
@@ -316,7 +328,7 @@ def inspect_case(case: Case, output: Path, control: Path, game_path: Path,
         check(prompt_hashes["base_tool_prompt"] == guard["prompt_scope"]["base_tool_prompt_sha256"]
               and prompt_hashes["base_system_message"] == guard["prompt_scope"]["base_system_message_sha256"],
               "base prompt hashes differ from unchanged official module")
-        adapted_difference = "single-json-v1 tool-format-only prompt clarification"
+        adapted_difference = f"{case.tool_format} tool-format-only prompt clarification"
         check((adapted_difference in manifest["differences_from_paper"]) == bool(note), "prompt adaptation disclosure missing or invented")
         if not note:
             check(prompt_hashes["base_tool_prompt"] == prompt_hashes["actual_tool_prompt"]
@@ -327,7 +339,11 @@ def inspect_case(case: Case, output: Path, control: Path, game_path: Path,
                 system = event["request_body"]["messages"][0]["content"]
                 check(hashlib.sha256(system.encode()).hexdigest() == prompt_hashes["actual_system_message"],
                       "actual request system prompt differs from manifest")
-                check(system.count(SINGLE_JSON_TOOL_NOTE) == int(bool(note)), "tool format note must appear exactly once only in adapted condition")
+                if note:
+                    check(system.count(note) == 1, "tool format note must appear exactly once only in adapted condition")
+                else:
+                    check(SINGLE_JSON_TOOL_NOTE not in system and SINGLE_JSON_V2_TOOL_NOTE not in system,
+                          "official condition must not contain an adapted note")
                 base = system.removesuffix("\n\n" + note) if note else system
                 check(hashlib.sha256(base.encode()).hexdigest() == prompt_hashes["base_system_message"],
                       "adaptation changed the original system prompt beyond appending the note")
