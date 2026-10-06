@@ -1,6 +1,7 @@
 # Official Timely four-game evaluation
 
-Status: prepared; real execution has not started. This is the current priority.
+Status: 256 episodes generated. Execution is switching schedulers at the user's
+request; the remaining 128 episodes have not been dispatched at this checkpoint.
 
 Use the released evaluator at `e13af2b8c98d799857ace789ebcfdfd4ea6c2985`
 with its original prompts, parser, tool feedback, scoring and virtual tool delays.
@@ -31,6 +32,25 @@ reserves at most CNY 20 and releases the unused amount after verified settlement
 Unknown usage or technical failure stops new dispatch; no automatic reruns.
 No credentials, ROMs or raw trajectories are published.
 
+## User-directed scheduling change
+
+The initial coordinator dispatched chunks of six and waited for each chunk's
+slowest episode. The user requested asynchronous scheduling. The replacement
+keeps at most six isolated episode processes running and immediately fills a
+vacant slot. Each episode's tool-feedback loop remains sequential.
+
+The original coordinator was signalled alone and allowed its workers to finish.
+Its terminal snapshot contains 255 settled episodes and one held reservation;
+episode 252 independently finished with known usage and verified process cleanup.
+The replacement verifies and settles that episode without rerunning it, then
+executes only the 128 undispatched rows. Original plans, results, calibration and
+source files remain unchanged. A supplement binds the new scheduler and the
+transition evidence; combined results are written to separate files.
+
+Scheduling phase must be retained in the results: the change may affect API load
+and latency. A combined table is not evidence from one unchanged scheduling
+condition. The original per-game/model calibration is retained and disclosed.
+
 ## Interpretation
 
 This evaluates current API models on the released benchmark. It does not
@@ -40,6 +60,7 @@ wall-clock comparison. The original evaluator's success flag is reported
 separately from actual game victory. Format failures and zero scores are results.
 Clock consistency is reported alongside official logical and observed wall time.
 
-Execution: `research/timely_official.py`; local manifests and traces stay under
+Execution: `research/timely_official.py`, continued by
+`research/timely_official_async.py`; local manifests and traces stay under
 `.local/timely-official-paid-20261006`. End-to-end checks use real game environments
 with synthetic HTTP and are labelled separately from paid model results.
