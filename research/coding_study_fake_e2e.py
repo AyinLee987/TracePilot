@@ -23,6 +23,90 @@ def coding_plan() -> dict:
     return pilot.make_plan(paid=False)
 
 
+def coding_archive_fixture(root: Path, archive: Path) -> Path:
+    """Model a terminal legacy first16 lacking coding_stage, with older study bytes."""
+    plan = batch.read_json(root / "plan.json")
+    plan.pop("coding_stage", None)
+    sources = {name: (batch.ROOT / "research" / name).read_bytes()
+               for name in (*study.CODING_FILES, "timely_study.py", "timely_batch.py")}
+    sources["timely_study.py"] += b"\n# Explicit older fixture source; never executed.\n"
+    plan["study_admission"]["module_sha256"] = hashlib.sha256(sources["timely_study.py"]).hexdigest()
+    (root / "plan.json").write_bytes(batch.canonical(plan) + b"\n")
+    result = batch.read_json(root / "result.json")
+    result["plan_sha256"] = batch.digest(plan)
+    (root / "result.json").write_bytes(batch.canonical(result) + b"\n")
+    summary = batch.read_json(root / "summary.json")
+    summary["plan_sha256"] = batch.digest(plan)
+    (root / "summary.json").write_bytes(batch.canonical(summary) + b"\n")
+    ledger = [json.loads(line) for line in (root / "coding-ledger.jsonl").read_bytes().splitlines()]
+    ledger[0]["data"]["plan_sha256"] = batch.digest(plan)
+    ledger[-1]["data"]["artifacts"] = study._coding_refs(root)
+    previous = None
+    for event in ledger:
+        event["previous_sha256"] = previous
+        event["sha256"] = batch.digest({key: value for key, value in event.items() if key != "sha256"})
+        previous = event["sha256"]
+    (root / "coding-ledger.jsonl").write_bytes(b"".join(batch.canonical(e) + b"\n" for e in ledger))
+    chain = batch.PAID_STUDY_ROOT / "transitions.jsonl"
+    events = [json.loads(line) for line in chain.read_bytes().splitlines()]
+    events[-1].update(module_sha256=plan["study_admission"]["module_sha256"],
+                     plan_sha256=batch.digest(plan), plan_file_sha256=batch.file_hash(root / "plan.json"))
+    events[-1]["sha256"] = batch.digest({key: value for key, value in events[-1].items() if key != "sha256"})
+    chain.write_bytes(b"".join(batch.canonical(e) + b"\n" for e in events))
+    archive.mkdir()
+    files = {}
+    for name, raw in sources.items():
+        (archive / name).write_bytes(raw)
+        normalized = raw.replace(b"\r\n", b"\n")
+        files[name] = {"sha256": hashlib.sha256(raw).hexdigest(), "source_repository_path": f"research/{name}",
+                       "git_blob": hashlib.sha1(b"blob " + str(len(normalized)).encode() + b"\0" + normalized).hexdigest()}
+    manifest = archive / "manifest.json"
+    batch.write_new(manifest, {"schema": 2, "kind": "coding-terminal-source-archive", "source_commit": "b" * 40,
+        "source_plan_file_sha256": batch.file_hash(root / "plan.json"), "source_plan_canonical_sha256": batch.digest(plan),
+        "activation_review": events[-1]["review"], "files": files, "fixture_only": True})
+    return manifest
+
+
+def synthetic_public_completion(root: Path, summary: dict) -> None:
+    """Explicit schema fixture only: no candidate code or judge container executes."""
+    for row in summary["rows"]:
+        check(row["generation_status"] == "parsed", "synthetic success response parsed by actual generator")
+        directory = root / "drafts" / row["run_id"]
+        public = {"task_id": row["task_id"], "visibility": "public", "status": "pass",
+                  "reason": "public_checks_complete", "checked": 1, "total": 1, "passed": 1,
+                  "checks": [{"passed": True}], "fixture_only": True}
+        row["public"] = public
+        for name in ("public-summary.json", "public/public-result.json"):
+            path = directory / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            batch.write_new(path, public)
+        names = ["public/candidate", "hidden/candidate"] + (["hidden/reference"] if row["number"] != 32 else [])
+        for name in names:
+            path = directory / name / "execution.json"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            batch.write_new(path, {"worker_cli_reaped": True, "cleanup": {"removed": True},
+                                  "source_sha256": row["parse"]["code_sha256"], "fixture_only": True})
+    (root / "summary.json").write_bytes(batch.canonical(summary) + b"\n")
+    batch.write_new(root / "execution-process-closed.json", {"pilot_root": str(root), "paid": False,
+        "child_pid": 999999, "child_reaped": True, "child_returncode": 0, "fixture_only": True})
+
+
+def all_parsed_backend(tasks: dict, rows: list[dict]) -> httpx.MockTransport:
+    calls = 0
+    def reply(request):
+        nonlocal calls
+        row = rows[calls]
+        calls += 1
+        task = tasks[row["number"]]
+        check(json.loads(request.content) == pilot.request_body(row, task), "unchanged fixed request")
+        return httpx.Response(200, json={"id": f"fixture-{calls}", "model": row["model"],
+            "choices": [{"index": 0, "finish_reason": "stop", "message": {"role": "assistant",
+                         "content": task["prompt"] + task["canonical_solution"]}}],
+            "usage": {"prompt_tokens": 20, "completion_tokens": 5, "total_tokens": 25,
+                      "prompt_cache_hit_tokens": 0, "prompt_cache_miss_tokens": 20}})
+    return httpx.MockTransport(reply)
+
+
 def old_version_fixture(root: Path, archive: Path) -> Path:
     """Construct a synthetic prior version; never execute the archived bytes.
 
@@ -139,6 +223,7 @@ def main() -> int:
     game.write_bytes(b"synthetic game identity")
     tasks, provenance = pilot.coding.load_tasks()
     checks = []
+    real_study_root = batch.PAID_STUDY_ROOT.resolve()
 
     @contextmanager
     def fixture(name: str, *, unknown_parent=False, clean_stop=False):
@@ -153,6 +238,9 @@ def main() -> int:
         review = directory / "review.json"
         batch.write_new(review, {"fixture_only": True})
         with patch.object(batch, "PAID_STUDY_ROOT", registry):
+            check(batch.PAID_STUDY_ROOT.resolve() == registry.resolve()
+                  and registry.resolve().is_relative_to(parent.resolve())
+                  and registry.resolve() != real_study_root, "fixture study root is isolated before any study operation")
             expect_error(lambda: batch.run_pilot(original, execute_offline=True, fixture_prefix=prefix(original, "unusable")), "first Timely fail")
             revised = directory / "timely-revision"
             prepared = study.prepare_revision(original, revised, tool_format="single-json-v2")
@@ -173,6 +261,117 @@ def main() -> int:
 
     def activate(root, prepared, review):
         return study.activate(root, plan_sha256=prepared["plan_sha256"], review=review, review_sha256=batch.file_hash(review))
+
+    if "--extension-only" in sys.argv:
+        with fixture("extension-parent", unknown_parent=True) as (directory, original, revised, archive, review):
+            root, prepared = prepare(directory, revised, archive)
+            activate(root, prepared, review)
+            plan = batch.read_json(root / "plan.json")
+            summary = asyncio.run(pilot.execute_admitted(root, execute_paid=False,
+                inner=all_parsed_backend(tasks, plan["rows"]), evaluate=False))
+            synthetic_public_completion(root, summary)
+            archive = coding_archive_fixture(root, directory / "coding-archive")
+            plan = batch.read_json(root / "plan.json")
+            successor = directory / "extension"
+            extension = pilot.make_plan(paid=False, stage="extension16")
+            def prepare_extension(output=successor, candidate=extension):
+                return study.prepare_coding_extension16(root, output, candidate, provenance, historical_sources=archive)
+            head_before = study.head()
+            legacy_before = (study._files(original), study._files(revised), study._files(root))
+            expect_error(lambda: study.assert_active(root, plan), "historical module cannot execute")
+            basis = study._coding_parent_basis(root, archive)
+            batch_cost = Decimal(summary["study_settlement"]["batch_cost_cny"])
+            check(Decimal(basis["opening"]["known_cny"]) == Decimal("0.02") + batch_cost
+                  and basis["opening"]["liabilities"] == plan["study_opening"]["liabilities"],
+                  "known coding cost once and inherited unknown unchanged")
+            checks += ["coding_terminal_six_source_version_migration", "known_cost_once_inherited_unknown_preserved"]
+
+            def mutate_reject(path, mutate, label):
+                raw = path.read_bytes()
+                try:
+                    obj = json.loads(raw)
+                    mutate(obj)
+                    path.write_bytes(batch.canonical(obj) + b"\n")
+                    expect_error(prepare_extension, label)
+                    check(not successor.exists() and study.head() == head_before, "failed preparation cannot claim head")
+                finally:
+                    path.write_bytes(raw)
+                checks.append(label)
+            mutate_reject(root / "execution-process-closed.json", lambda x: x.update(child_reaped=False), "unreaped_parent_refused")
+            first = root / "drafts" / plan["rows"][0]["run_id"]
+            mutate_reject(first / "public/candidate/execution.json", lambda x: x.update(cleanup={"removed": False}),
+                          "uncertain_public_cleanup_refused")
+            mutate_reject(first / "hidden/reference/execution.json", lambda x: x.update(worker_cli_reaped=False),
+                          "hidden_cleanup_checked_without_hidden_score")
+            mutate_reject(first / "public-summary.json", lambda x: x.update(status="fail"), "public_failure_blocks_no_error_extension")
+            mutate_reject(root / "summary.json", lambda x: x.update(all_16_responses_received=False), "partial_cannot_mean_no_errors")
+            mutate_reject(root / "summary.json", lambda x: x.update(paid=True), "summary_paid_identity_bound")
+            mutate_reject(root / "summary.json", lambda x: x.update(plan_sha256="0" * 64), "summary_plan_digest_bound")
+            mutate_reject(root / "result.json", lambda x: x["accounting"].update(spent_estimate_cny="0"), "terminal_billing_artifact_tamper")
+            mutate_reject(archive, lambda x: x.update(source_plan_file_sha256="0" * 64), "archive_plan_file_hash_required")
+            old_source = archive.parent / "timely_study.py"
+            raw = old_source.read_bytes()
+            old_source.write_bytes(raw + b" ")
+            expect_error(prepare_extension, "archive bytes tamper")
+            old_source.write_bytes(raw)
+            checks.append("archived_source_bytes_tamper_refused")
+
+            ledger = root / "coding-ledger.jsonl"
+            raw = ledger.read_bytes()
+            ledger.write_bytes(raw[:-1])
+            expect_error(prepare_extension, "torn historical coding ledger")
+            ledger.write_bytes(raw)
+            records = [json.loads(line) for line in raw.splitlines()]
+            last = records[-1]
+            last.update(event="stop", data={"liability_cny": "3.20", "artifacts": study._coding_refs(root),
+                                            "reason": "whole_coding_batch_unresolved"})
+            last["sha256"] = batch.digest({key: value for key, value in last.items() if key != "sha256"})
+            ledger.write_bytes(b"".join(batch.canonical(e) + b"\n" for e in records))
+            held_raw = ledger.read_bytes()
+            expect_error(prepare_extension, "stopped or unknown parent cannot extend")
+            check(ledger.read_bytes() == held_raw and study.head() == head_before and not successor.exists()
+                  and study._coding_events(root, plan)[-1]["data"]["liability_cny"] == "3.20",
+                  "stop liability retained unchanged and no successor claimed")
+            ledger.write_bytes(raw)
+            checks += ["torn_coding_ledger_refused", "stopped_parent_refused_whole_liability_unchanged"]
+            bad = json.loads(json.dumps(extension))
+            bad["rows"] = bad["rows"][:-1]
+            expect_error(lambda: prepare_extension(candidate=bad), "incomplete extension")
+            bad = json.loads(json.dumps(extension))
+            bad["system_prompt"] += " changed"
+            expect_error(lambda: prepare_extension(candidate=bad), "changed extension prompt")
+            checks += ["extension_fixed_16_no_cherry_pick", "extension_keeps_first_draft_protocol"]
+
+            prepared = prepare_extension()
+            alternate = directory / "extension-alternative"
+            other = prepare_extension(output=alternate)
+            check(study.head() == head_before, "prepare remains inert")
+            check(batch.read_json(successor / "plan.json")["dev_ids"] == [16, 99, 18, 31], "fixed extension ids")
+            activate(successor, prepared, review)
+            expect_error(lambda: activate(alternate, other, review), "second branch activation refused")
+            expect_error(lambda: activate(successor, prepared, review), "duplicate extension activation refused")
+            expect_error(lambda: study.prepare_coding_extension16(successor, directory / "second-extension", extension,
+                         provenance, historical_sources=archive), "no extension after extension")
+            expect_error(lambda: study.assert_active(root, plan), "old parent inactive")
+            checks += ["prepare_inert_atomic_unique_successor", "no_duplicate_branch_or_second_extension", "old_head_cannot_dispatch"]
+            new_plan = batch.read_json(successor / "plan.json")
+            result = asyncio.run(pilot.execute_admitted(successor, execute_paid=False,
+                inner=all_parsed_backend(tasks, new_plan["rows"]), evaluate=False))
+            total = Decimal(basis["opening"]["known_cny"]) + Decimal(result["study_settlement"]["batch_cost_cny"])
+            check(result["study_settlement"]["status"] == "known_settled"
+                  and Decimal(result["study_settlement"]["study_known_cny"]) == total
+                  and len(result["rows"]) == 16 and result["all_16_responses_received"],
+                  "real extension generator runs 16 under same inherited study")
+            check((study._files(original), study._files(revised), study._files(root)) == legacy_before,
+                  "all original evidence bytes preserved")
+            checks += ["real_execute_admitted_extension16_same_budget", "all_legacy_artifacts_unchanged"]
+        report = {"status": "passed", "scope": "coding-extension-only", "checks": checks, "check_count": len(checks),
+                  "provider_calls": 0, "judge_containers": 0, "judge_evidence": "explicit synthetic schema fixtures",
+                  "code_sha256": {name: batch.file_hash(batch.ROOT / "research" / name) for name in
+                                  ("timely_study.py", "coding_study_fake_e2e.py", *study.CODING_FILES, "timely_batch.py")}}
+        batch.write_new(parent / "summary.json", report)
+        print(batch.canonical({"summary": str(parent / "summary.json"), **report}).decode())
+        return 0
 
     with fixture("known") as (directory, original, revised, archive, review):
         before = (study._files(original), study._files(revised))

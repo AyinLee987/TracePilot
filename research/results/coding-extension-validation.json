@@ -1,0 +1,375 @@
+{
+  "schema": 1,
+  "recorded_on": "2026-10-06",
+  "scope": "Reviewed fixed extension16 preparation under the existing cumulative study; no real extension model results",
+  "coding_stage": "extension16",
+  "dev_ids": [
+    16,
+    99,
+    18,
+    31
+  ],
+  "planned_denominator": 16,
+  "model_calls_actual": 0,
+  "api_spend_cny_actual": "0",
+  "paid_extension_execution_completed": false,
+  "real_extension_prepare_identity_check": "Independent read-only inspection confirmed F2 paid/output/canonical plan identity; real prepare enforcement remains pending.",
+  "code_sha256": {
+    "research/coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+    "research/coding_pilot_e2e.py": "974aa1457c9eee0d7b22618e305729968864f6d81fafa2dc8f12d5a591b6e96b",
+    "research/timely_study.py": "0748f5b138d301465eae49bf0f971b107960389bd8f390a5e05304063a8abf6d",
+    "research/coding_study_fake_e2e.py": "37826be3db086ed3875676344c985e72f9e50327c7d6eaec8b0dac3b931f1b43"
+  },
+  "reviewed_hashes_match_current": true,
+  "protocol": {
+    "models": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "repeats": 2,
+    "order": "repeat 1 then 2; within each repeat task 16,99,18,31; Flash then Pro for each task",
+    "temperature": 0.7,
+    "max_tokens": 2048,
+    "thinking": {
+      "type": "disabled"
+    },
+    "retries": 0,
+    "whole_batch_reservation_cny": "3.20",
+    "per_request_reservation_cap_cny": "0.20",
+    "same_generation_parser_error_and_judging_policies": true,
+    "hidden_scores_used_for_extension_admission": false,
+    "common_deadline_experiment": false,
+    "new_study_allowance_created": false
+  },
+  "reviews": [
+    {
+      "source": ".local/overnight/coding-extension-review-20261006.json",
+      "source_sha256": "316e33028bbf8c29674c6db57ff2483b0ce8d5be2b4f2928746b9fc91eb19c6b",
+      "hash_sidecar": {
+        "source": ".local/overnight/coding-extension-review-20261006.hashes.json",
+        "source_sha256": "fbf886511ee6d954112e18b19ff1f3383ca6521b914603d50453745e4cdd0ca0"
+      },
+      "actual_model": "claude-opus-5-5",
+      "terminal_reason": "completed",
+      "is_error": false,
+      "reviewed_code_sha256": {
+        "research/timely_study.py": "4ea235eb8addf8cbda9cac76dd58254c74b27e77357d1898a3ca8e85095241db",
+        "research/coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "research/coding_study_fake_e2e.py": "4c4c7e9ba3ae7e5d06946dab440f661179f7d8be96b696663c0647386cf1113a",
+        "research/coding_pilot_e2e.py": "974aa1457c9eee0d7b22618e305729968864f6d81fafa2dc8f12d5a591b6e96b"
+      },
+      "verdict": "No code blocker for the first extension16; operational conditions and evidence limits retained."
+    },
+    {
+      "source": ".local/overnight/coding-extension-delta-review-20261006.json",
+      "source_sha256": "7817da3dc0423ee000e600b87151220433d896290143f1c8f4db4424fefb0929",
+      "hash_sidecar": {
+        "source": ".local/overnight/coding-extension-delta-review-20261006.hashes.json",
+        "source_sha256": "a01ecdaef5dea16e393f248bc336325f7e5893a34e27c70549eb03f54d5ba19c"
+      },
+      "actual_model": "claude-opus-5-5",
+      "terminal_reason": "completed",
+      "is_error": false,
+      "reviewed_code_sha256": {
+        "research/timely_study.py": "0748f5b138d301465eae49bf0f971b107960389bd8f390a5e05304063a8abf6d",
+        "research/coding_study_fake_e2e.py": "37826be3db086ed3875676344c985e72f9e50327c7d6eaec8b0dac3b931f1b43"
+      },
+      "verdict": "No code blocker for the first extension16; operational conditions and evidence limits retained."
+    }
+  ],
+  "evidence": {
+    "pilot_fixed_stages": {
+      "source": ".local/coding-research-env/first-draft-e2e/2daf6e8db43544d096aa877a0cc9b68c/summary.json",
+      "source_sha256": "571816e14ded6972a69cb868bea7b157371bf1b5b18b90309b1391d0ae108011",
+      "passed": true,
+      "check_count": 7,
+      "cases": [
+        {
+          "name": "first16_fixed_order_16_requests",
+          "passed": true,
+          "numbers": [
+            55,
+            32,
+            7,
+            56
+          ],
+          "dispatches": 16
+        },
+        {
+          "name": "extension16_fixed_order_16_requests",
+          "passed": true,
+          "numbers": [
+            16,
+            99,
+            18,
+            31
+          ],
+          "dispatches": 16
+        },
+        {
+          "name": "factories_reject_arbitrary_tasks_or_stage",
+          "passed": true
+        },
+        {
+          "name": "wrong-stage_rejected_before_admission_and_dispatch",
+          "passed": true,
+          "dispatches": 0
+        },
+        {
+          "name": "unknown-stage_rejected_before_admission_and_dispatch",
+          "passed": true,
+          "dispatches": 0
+        },
+        {
+          "name": "arbitrary-task_rejected_before_admission_and_dispatch",
+          "passed": true,
+          "dispatches": 0
+        },
+        {
+          "name": "dev-ids-only_rejected_before_admission_and_dispatch",
+          "passed": true,
+          "dispatches": 0
+        }
+      ],
+      "scripts_sha256": {
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d"
+      },
+      "provider_calls": 0,
+      "judge_containers": 0,
+      "meaning": "Both stages retain fixed ordering and 16 slots; arbitrary stage/task/row changes rejected before dispatch."
+    },
+    "study_final": {
+      "source": ".local/coding-study-fixture-m16fb5zu/summary.json",
+      "source_sha256": "7b6aecd5712b4d5e309ba676db09908b9334af82a5165e98313429d8bfe6376e",
+      "check_count": 21,
+      "checks": [
+        "coding_terminal_six_source_version_migration",
+        "known_cost_once_inherited_unknown_preserved",
+        "unreaped_parent_refused",
+        "uncertain_public_cleanup_refused",
+        "hidden_cleanup_checked_without_hidden_score",
+        "public_failure_blocks_no_error_extension",
+        "partial_cannot_mean_no_errors",
+        "summary_paid_identity_bound",
+        "summary_plan_digest_bound",
+        "terminal_billing_artifact_tamper",
+        "archive_plan_file_hash_required",
+        "archived_source_bytes_tamper_refused",
+        "torn_coding_ledger_refused",
+        "stopped_parent_refused_whole_liability_unchanged",
+        "extension_fixed_16_no_cherry_pick",
+        "extension_keeps_first_draft_protocol",
+        "prepare_inert_atomic_unique_successor",
+        "no_duplicate_branch_or_second_extension",
+        "old_head_cannot_dispatch",
+        "real_execute_admitted_extension16_same_budget",
+        "all_legacy_artifacts_unchanged"
+      ],
+      "code_sha256": {
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_study_fake_e2e.py": "37826be3db086ed3875676344c985e72f9e50327c7d6eaec8b0dac3b931f1b43",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "timely_batch.py": "d9bbdab7e9fc6a961cbfc489f9e30b6bd50333437fd73f26a7c004af6a19d296",
+        "timely_study.py": "0748f5b138d301465eae49bf0f971b107960389bd8f390a5e05304063a8abf6d",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d"
+      },
+      "judge_containers": 0,
+      "judge_evidence": "explicit synthetic schema fixtures",
+      "provider_calls": 0,
+      "scope": "coding-extension-only",
+      "status": "passed",
+      "meaning": "MockTransport integration and synthetic judge schema fixtures; not extension candidate scoring."
+    },
+    "current_reference_smoke": {
+      "source": ".local/coding-research-env/extension-reference-current/4d04ce87a2c2425d8e3897bfc6c27fb1/summary.json",
+      "source_sha256": "c5908cf864d8e38153c227ea626f15eb8965b1be37d86f6445d08b4a631b6697",
+      "passed": true,
+      "case_count": 8,
+      "cases": [
+        {
+          "task_id": "HumanEval/16",
+          "mode": "public",
+          "status": "pass",
+          "reason": "public_checks_complete",
+          "checked": 2,
+          "passed": 2,
+          "total": 2,
+          "wall_s": 0.7410954439999955,
+          "source_sha256": "e6cd8d1a96817d45f819a790025e872131ea982a94c75484791d0c9a92212108"
+        },
+        {
+          "task_id": "HumanEval/16",
+          "mode": "hidden",
+          "status": "pass",
+          "reason": "hidden_checks_complete",
+          "checked": 1005,
+          "passed": 1005,
+          "total": 1005,
+          "wall_s": 1.3408787320000002,
+          "source_sha256": "e6cd8d1a96817d45f819a790025e872131ea982a94c75484791d0c9a92212108"
+        },
+        {
+          "task_id": "HumanEval/99",
+          "mode": "public",
+          "status": "pass",
+          "reason": "public_checks_complete",
+          "checked": 4,
+          "passed": 4,
+          "total": 4,
+          "wall_s": 0.5436644720000032,
+          "source_sha256": "7a9c805c74ffe559b72d49793d82382ef3b10a784e5ad2a655c8f79641a0da43"
+        },
+        {
+          "task_id": "HumanEval/99",
+          "mode": "hidden",
+          "status": "pass",
+          "reason": "hidden_checks_complete",
+          "checked": 715,
+          "passed": 715,
+          "total": 715,
+          "wall_s": 1.3658121120000004,
+          "source_sha256": "7a9c805c74ffe559b72d49793d82382ef3b10a784e5ad2a655c8f79641a0da43"
+        },
+        {
+          "task_id": "HumanEval/18",
+          "mode": "public",
+          "status": "pass",
+          "reason": "public_checks_complete",
+          "checked": 3,
+          "passed": 3,
+          "total": 3,
+          "wall_s": 0.5759793129999977,
+          "source_sha256": "c1e9e634a2b0588fe6bc02c2acb1223e511b8352fbcd2da2e68e04b33b944d82"
+        },
+        {
+          "task_id": "HumanEval/18",
+          "mode": "hidden",
+          "status": "pass",
+          "reason": "hidden_checks_complete",
+          "checked": 1004,
+          "passed": 1004,
+          "total": 1004,
+          "wall_s": 1.2663067439999978,
+          "source_sha256": "c1e9e634a2b0588fe6bc02c2acb1223e511b8352fbcd2da2e68e04b33b944d82"
+        },
+        {
+          "task_id": "HumanEval/31",
+          "mode": "public",
+          "status": "pass",
+          "reason": "public_checks_complete",
+          "checked": 7,
+          "passed": 7,
+          "total": 7,
+          "wall_s": 0.5707132240000021,
+          "source_sha256": "a3847688c558796dcee9a9709b6a9fe9e4b67e58a0f7b7f963fd302b15c99ae8"
+        },
+        {
+          "task_id": "HumanEval/31",
+          "mode": "hidden",
+          "status": "pass",
+          "reason": "hidden_checks_complete",
+          "checked": 167,
+          "passed": 167,
+          "total": 167,
+          "wall_s": 1.2627438439999992,
+          "source_sha256": "a3847688c558796dcee9a9709b6a9fe9e4b67e58a0f7b7f963fd302b15c99ae8"
+        }
+      ],
+      "runtime_sha256": {
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68"
+      },
+      "image_id": "sha256:83712435c2675d4426381b7ac449347f834a1f0b820c945b4cb9b92ab46b9e8d",
+      "native_wsl_daemon_verified": true,
+      "timeout_s": 30,
+      "source_policy": "unchanged original task prompt plus canonical_solution; full file",
+      "executions": 12,
+      "cleanup_verified": true,
+      "residual_owned_containers": [],
+      "execution_artifact_hashes": {
+        "he16-hidden/candidate/execution.json": "6e5c17dbf4af595d3d20e25835a5371cc6c6bb28bd45c229e4314b8710f0321f",
+        "he16-hidden/reference/execution.json": "4477d4893667c02ec563eecec586336e6ba1256e14583f85525145534bdd6623",
+        "he16-public/candidate/execution.json": "21289e3ea124d151cf6d33b30170c4276e1f129db96bb305900e2355d719e71f",
+        "he18-hidden/candidate/execution.json": "0fec997949699d51a5c133cc81b21c0a59fb804fa9baae3966f24c87d784f943",
+        "he18-hidden/reference/execution.json": "be0c4c2a0866f27db8ed52ea6a5ce6c8dbbf32839053486f5ead63f610356805",
+        "he18-public/candidate/execution.json": "c58b23db2c4ec1e18579cf7865e79c088397d09c75cdde866dfaba27b95c996d",
+        "he31-hidden/candidate/execution.json": "ac47888ec18498d36cd8362c1c86c19db4debf74bfe36aa1e5264beed4b1232e",
+        "he31-hidden/reference/execution.json": "df05040ed9b4eaad6c0e592bc1bbc2ca9c344c80a9b9e277d96e834ade1ec228",
+        "he31-public/candidate/execution.json": "b346ca029265a1321f10477e7458985be2fa71fe8aa320f6b74db1be861f48a7",
+        "he99-hidden/candidate/execution.json": "3a4023a62f59a64b727339e474d7c0045e27d955a90e30b42ab4edb966b68bbe",
+        "he99-hidden/reference/execution.json": "ab311047be24c70682b0bd4f0cc92ebf3a92e8239423995b70bd1b450cc2c68b",
+        "he99-public/candidate/execution.json": "2d395605463d29fd54d9df2fc23d313f3ee73b4a9e96ce3c6b48d64c3bb561f6"
+      },
+      "source_artifact_hashes_verified": 109,
+      "provider_calls": 0,
+      "blocked_network_attempts": 0,
+      "meaning": "Unchanged canonical references only; does not establish wrong-candidate discrimination."
+    },
+    "zero_api_preflight": {
+      "source": ".local/coding-research-env/request-preflight-3f200fbfe1d247a0b0d60d2d8c21730d/summary.json",
+      "source_sha256": "6caf45d16d7d4accecc1a49a12add8145ad5b03f8f8eef9213ccaeeacbee6967",
+      "accepted": true,
+      "planned_requests": 16,
+      "total_reservation_cny": "1.03196064",
+      "largest_request_reservation_cny": "0.10373088",
+      "per_request_cap_cny": "0.20",
+      "batch_cap_cny": "3.20",
+      "calls_dispatched": 0,
+      "active_calls": 0,
+      "committed_cny": "0",
+      "code_sha256": {
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d"
+      },
+      "dotenv_available": true,
+      "credential_format_accepted_by_root": true,
+      "meaning": "Request/budget and local configuration readiness only; no provider balance or response compatibility claim."
+    }
+  },
+  "review_disposition": [
+    {
+      "id": "N1",
+      "status": "fixed_and_reviewed",
+      "detail": "Only a known-settled first16 parent may advance; stopped/unknown parent liability and artifacts remain unchanged."
+    },
+    {
+      "id": "C1",
+      "status": "verified_on_current_hashes",
+      "detail": "Four extension canonical references passed public and hidden checks, 8/8; 12 executions cleaned."
+    },
+    {
+      "id": "C2",
+      "status": "fixed_and_reviewed",
+      "detail": "Fixture asserts its patched study registry is inside the fixture tree and differs from the real registry before mutation."
+    },
+    {
+      "id": "summary_binding",
+      "status": "fixed_and_reviewed",
+      "detail": "Parent summary paid, plan_sha256 and output are bound to its frozen plan/root."
+    },
+    {
+      "id": "F1",
+      "status": "accepted_nonblocking_evidence_precision_limit",
+      "detail": "Rejection fixtures do not assert exact reason codes. Independent static inspection confirmed _coding_refs includes only requests/result/generation-closed, so the review conjecture about summary/public being intercepted by that artifact set does not apply. Do not claim branch-specific dynamic coverage without exact reason assertions."
+    },
+    {
+      "id": "F2",
+      "status": "read_only_identity_match_actual_prepare_pending",
+      "detail": "Independent read-only inspection confirmed historical summary paid, canonical plan_sha256 and exact WSL output path match. Real prepare will enforce these checks. If rejected, preserve the paid parent bytes; do not edit historical results to pass."
+    }
+  ],
+  "boundaries": [
+    "No real extension16 model requests have run as of this record.",
+    "Validation model-call counts exclude the separately recorded Claude review process.",
+    "The 7-case and 21-case results are offline fixtures; neither is an extension model result.",
+    "Canonical reference smoke proves current-checker executability for these four input sets, not a full EvalPlus evaluation or wrong-solution discrimination.",
+    "This remains development first-draft sampling, not a shared-deadline, feedback-repair, or held-out prediction experiment.",
+    "Historical source archives remain required and must retain their verified bytes."
+  ]
+}

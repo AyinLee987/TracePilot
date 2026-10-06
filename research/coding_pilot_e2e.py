@@ -62,11 +62,11 @@ def parser_checks(tasks: dict, output: Path) -> list[str]:
             "surrogate_and_truncation_rejected", "provider_shape_distinct_from_python_error", "forged_or_missing_paid_admission_refused"]
 
 
-def inspect_generation(directory: Path, summary: dict, expected_dispatch: int) -> None:
+def inspect_generation(directory: Path, summary: dict, expected_dispatch: int, stage: str = "first16") -> None:
     assert summary["finished"] and summary["denominator_retained"] and len(summary["rows"]) == 16
     plan = json.loads((directory / "plan.json").read_text())
-    assert plan["rows"] == pilot.rows() and plan["planned_denominator"] == 16
-    assert {row["number"] for row in plan["rows"]} == set(pilot.coding.DEV_IDS)
+    assert plan["coding_stage"] == stage and plan["rows"] == pilot.rows(stage) and plan["planned_denominator"] == 16
+    assert {row["number"] for row in plan["rows"]} == set(pilot.STAGE_IDS[stage])
     assert plan["paid"] is False and plan["model_calls_actual"] == 0
     events = [json.loads(line) for line in (directory / "requests.jsonl").read_text().splitlines()]
     dispatched = [item for item in events if item["event"] == "request_dispatch"]
@@ -221,6 +221,91 @@ async def control_flow_checks(output: Path) -> dict:
     return report
 
 
+async def stage_checks(output: Path) -> dict:
+    """Run the two fixed sampling stages; reject changed IDs before dispatch."""
+    import timely_study as study
+    tasks, provenance = pilot.coding.load_tasks()
+    report = {"output": str(output), "passed": False, "model_calls_actual": 0,
+              "api_spend_cny_actual": "0", "docker_requested": False, "cases": [],
+              "scripts_sha256": pilot.identities()}
+    # Explicit legacy sequence, including repeat/model interleaving.
+    original = [(55, "deepseek-flash"), (55, "deepseek-v4-pro"),
+                (32, "deepseek-flash"), (32, "deepseek-v4-pro"),
+                (7, "deepseek-flash"), (7, "deepseek-v4-pro"),
+                (56, "deepseek-flash"), (56, "deepseek-v4-pro")] * 2
+    assert pilot.rows() == pilot.rows("first16")
+    assert [(r["number"], r["model"]) for r in pilot.rows()] == original
+    assert [r["repeat"] for r in pilot.rows()] == [1] * 8 + [2] * 8
+    assert [r["run_id"] for r in pilot.rows()] == [
+        f"draft-{i:02d}-he{number}-{model}-rep{1 if i <= 8 else 2}"
+        for i, (number, model) in enumerate(original, 1)]
+    plans = {}
+    for stage, numbers in (("first16", (55, 32, 7, 56)), ("extension16", (16, 99, 18, 31))):
+        directory = output / stage
+        summary = await pilot.run_offline(directory, stage=stage)
+        inspect_generation(directory, summary, 16, stage)
+        plan = json.loads((directory / "plan.json").read_text())
+        plans[stage] = plan
+        assert plan["dev_ids"] == list(numbers)
+        assert [r["number"] for r in summary["rows"]] == [n for n in numbers for _ in range(2)] * 2
+        assert [r["model"] for r in summary["rows"]] == list(pilot.MODELS) * 8
+        assert [r["repeat"] for r in summary["rows"]] == [1] * 8 + [2] * 8
+        assert Counter(r["generation_status"] for r in summary["rows"]) == {"parsed": 8, "parse_failed": 8}
+        assert summary["all_16_responses_received"] and not list(directory.rglob("execution.json"))
+        assert all(r["public"]["status"] == r["hidden"]["status"] == "not_evaluated" for r in summary["rows"])
+        assert set(plan["dev_ids"]).isdisjoint(pilot.coding.HELDOUT_IDS)
+        report["cases"].append({"name": stage + "_fixed_order_16_requests", "passed": True,
+                                "numbers": list(numbers), "dispatches": 16})
+    for field in ("request_contract", "parse_policy", "system_prompt", "preflight_policy", "models"):
+        assert plans["first16"][field] == plans["extension16"][field]
+
+    for invalid in ("arbitrary", "HumanEval/43", [55, 32, 7, 56]):
+        for factory in (pilot.rows, lambda value: pilot.make_plan(paid=False, stage=value)):
+            try:
+                factory(invalid)
+            except ValueError as exc:
+                assert str(exc) == "unsupported_coding_stage"
+            else:
+                raise AssertionError("factory accepted an arbitrary task/stage")
+    report["cases"].append({"name": "factories_reject_arbitrary_tasks_or_stage", "passed": True})
+
+    for mutation in ("wrong-stage", "unknown-stage", "arbitrary-task", "dev-ids-only"):
+        plan = pilot.make_plan(paid=False, stage="extension16")
+        plan["provenance_sha256"] = study.batch.digest(provenance)
+        if mutation == "wrong-stage":
+            plan["coding_stage"] = "first16"
+        elif mutation == "unknown-stage":
+            plan["coding_stage"] = "unapproved16"
+        elif mutation == "arbitrary-task":
+            plan["rows"][0].update(number=43, task_id="HumanEval/43")
+        else:
+            plan["dev_ids"][0] = 43
+        directory = output / mutation
+        directory.mkdir()
+        pilot.dump(directory / "plan.json", plan)
+        with patch.object(study, "coding_session", side_effect=AssertionError("invalid plan reached study session")):
+            try:
+                await pilot.execute_admitted(directory, execute_paid=False,
+                    inner=pilot.httpx.MockTransport(lambda request: None))
+            except pilot.PaidNotAdmitted:
+                pass
+            else:
+                raise AssertionError("admitted executor accepted a changed frozen stage/rows")
+
+        def must_not_dispatch(request):
+            raise AssertionError("invalid stage dispatched")
+
+        records, accounting = await pilot.generate(directory, tasks, plan,
+            inner=pilot.httpx.MockTransport(must_not_dispatch))
+        assert accounting["calls_dispatched"] == 0 and Decimal(accounting["committed_cny"]) == 0
+        assert len(records) == 16 and all(r["generation_status"] == "not_attempted" for r in records)
+        assert not json.loads((directory / "preflight.json").read_text())["accepted"]
+        report["cases"].append({"name": mutation + "_rejected_before_admission_and_dispatch", "passed": True,
+                                "dispatches": 0})
+    report["passed"] = True
+    return report
+
+
 async def checks(output: Path, docker: bool, review_delta: bool = False) -> dict:
     tasks, _ = pilot.coding.load_tasks()
     report = {"output": str(output), "passed": False, "model_calls_actual": 0, "api_spend_cny_actual": "0",
@@ -336,9 +421,12 @@ def main() -> int:
     parser.add_argument("--execute-docker", action="store_true")
     parser.add_argument("--review-delta", action="store_true", help="only three new Docker executions; do not repeat the original 22")
     parser.add_argument("--control-flow-delta", action="store_true", help="only cancellation/error/known-delivery-timeout fake checks")
+    parser.add_argument("--stage-delta", action="store_true", help="only first16/extension16 fixed-stage fake checks")
     args = parser.parse_args()
     if args.control_flow_delta and args.execute_docker:
         parser.error("--control-flow-delta is fake-only")
+    if args.stage_delta and (args.execute_docker or args.control_flow_delta):
+        parser.error("--stage-delta is a separate fake-only check")
     output = pilot.coding.sandbox.LOCAL / "first-draft-e2e" / uuid.uuid4().hex
     output.mkdir(parents=True)
     blocked = []
@@ -346,8 +434,9 @@ def main() -> int:
     try:
         with asyncio.Runner() as runner:
             blocked = pilot.install_offline_guard()
-            report = runner.run(control_flow_checks(output) if args.control_flow_delta
-                                else checks(output, args.execute_docker, args.review_delta))
+            report = runner.run(stage_checks(output) if args.stage_delta else
+                                control_flow_checks(output) if args.control_flow_delta else
+                                checks(output, args.execute_docker, args.review_delta))
         assert not blocked, "unexpected network attempt in the offline executor"
     except BaseException as exc:
         report.update({"passed": False, "error_type": type(exc).__name__, "error": str(exc)[:300]})

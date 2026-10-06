@@ -4,7 +4,8 @@
 ``activate`` requires its exact plan digest and a separately reviewed file hash.
 The original registry, plans, ledgers and raw runs are never rewritten. The
 transition chain is published atomically under the existing study lock. There
-is one small-matrix revision, then one explicitly admitted coding batch.
+is one small-matrix revision, one coding first-draft batch, and at most one
+predefined coding extension. Shared-deadline execution is not admitted here.
 Historical version migration requires archived source bytes for a terminal
 parent; active execution always checks the current code hashes.
 """
@@ -27,6 +28,8 @@ import timely_batch as batch
 REVISION = "r2-small-revision-1"
 EXTENSIONS = ("r2-four-game-v1", "r3-coding-v1")
 CODING_STAGE = "r3-coding-first-draft-16-v1"
+CODING_EXTENSION = "r3-coding-first-draft-extension16-v1"
+CODING_IDS = {"first16": (55, 32, 7, 56), "extension16": (16, 99, 18, 31)}
 CODING_CAP = Decimal("3.20")
 CODING_FILES = ("coding_pilot.py", "coding_tasks.py", "coding_environment_smoke.py", "timely_transport.py")
 
@@ -59,7 +62,9 @@ def head() -> dict:
         revision = event["kind"] == "revise-small" and event["stage_name"] == REVISION and not result["revision_used"]
         coding = (event["kind"] == "advance-coding-first-draft" and event["stage_name"] == CODING_STAGE
                   and result["stage_name"] == REVISION and result["revision_used"])
-        batch.require(event["parent_root"] == result["root"] and (revision or coding),
+        extension = (event["kind"] == "advance-coding-extension16" and event["stage_name"] == CODING_EXTENSION
+                     and result["stage_name"] == CODING_STAGE and result["revision_used"])
+        batch.require(event["parent_root"] == result["root"] and (revision or coding or extension),
                       "invalid_or_duplicate_study_transition")
         previous = event["sha256"]
         result = {"sha256": previous, "root": event["root"], "revision_used": True,
@@ -324,7 +329,7 @@ def activate(root: Path, *, plan_sha256: str, review: Path, review_sha256: str) 
     root, review = batch.local_path(root), batch.local_path(review)
     with batch.exclusive(batch.PAID_STUDY_ROOT), batch.exclusive(root):
         plan = batch.read_json(root / "plan.json")
-        if plan.get("study_admission", {}).get("kind") == "advance-coding-first-draft":
+        if plan.get("study_admission", {}).get("kind") in {"advance-coding-first-draft", "advance-coding-extension16"}:
             return _activate_coding(root, plan, plan_sha256, review, review_sha256)
         admission = plan["study_admission"]
         parent = batch.local_path(Path(admission["parent_root"]))
@@ -388,24 +393,28 @@ def assert_active(root: Path, plan: dict) -> None:
         batch.require(batch.file_hash(Path(__file__)) == event["module_sha256"], "active_study_module_changed")
 
 
-def _coding_rows() -> list[dict]:
+def _coding_rows(stage: str = "first16") -> list[dict]:
+    batch.require(stage in CODING_IDS, "unknown_coding_stage")
     return [{"run_id": f"draft-{index:02d}-he{number}-{model}-rep{repeat}", "task_id": f"HumanEval/{number}",
              "number": number, "model": model, "repeat": repeat}
             for index, (repeat, number, model) in enumerate(
-                ((repeat, number, model) for repeat in (1, 2) for number in (55, 32, 7, 56) for model in batch.MODELS), 1)]
+                ((repeat, number, model) for repeat in (1, 2) for number in CODING_IDS[stage] for model in batch.MODELS), 1)]
 
 
-def _coding_contract(plan: dict) -> None:
+def _coding_contract(plan: dict, *, historical: bool = False) -> None:
+    stage = plan.get("coding_stage", "first16")
+    batch.require(stage in CODING_IDS, "unknown_coding_stage")
     expected = {"endpoint": "https://api.deepseek.com/chat/completions", "temperature": 0.7, "max_tokens": 2048,
                 "thinking": {"type": "disabled"}, "stream": False, "n": 1, "requests_per_draft": 1, "retries": 0,
                 "http_operation_timeout_s": 60, "whole_request_timeout_s": 65, "per_request_reservation_cap_cny": "0.20"}
     batch.require(plan.get("scope") == "R3-development-natural-first-draft-check-only"
-                  and plan.get("rows") == _coding_rows() and plan.get("planned_denominator") == 16
-                  and plan.get("models") == list(batch.MODELS) and plan.get("dev_ids") == [55, 32, 7, 56]
+                  and plan.get("rows") == _coding_rows(stage) and plan.get("planned_denominator") == 16
+                  and plan.get("models") == list(batch.MODELS) and plan.get("dev_ids") == list(CODING_IDS[stage])
                   and plan.get("heldout_used") is False and plan.get("request_contract") == expected,
                   "coding_requires_frozen_16_first_drafts")
-    batch.require(plan.get("code_sha256") == {name: batch.file_hash(batch.ROOT / "research" / name) for name in CODING_FILES},
-                  "coding_executor_source_changed")
+    if not historical:
+        batch.require(plan.get("code_sha256") == {name: batch.file_hash(batch.ROOT / "research" / name) for name in CODING_FILES},
+                      "coding_executor_source_changed")
     batch.require(not plan.get("paid") or not any(key in plan for key in ("fake_scenario", "simulated_transport_cap_cny")),
                   "paid_coding_plan_contains_fake_fields")
 
@@ -450,20 +459,37 @@ def _coding_append(root: Path, plan: dict, event: str, data: dict) -> None:
 
 def prepare_coding16(parent: Path, root: Path, coding_plan: dict, provenance: dict, *, historical_sources: Path) -> dict:
     """Prepare only; caller supplies the coding executor's frozen plan/data identity."""
+    return _prepare_coding(parent, root, coding_plan, provenance, historical_sources, extension=False)
+
+
+def prepare_coding_extension16(parent: Path, root: Path, coding_plan: dict, provenance: dict, *, historical_sources: Path) -> dict:
+    """The sole predefined extension, admitted only from the completed first 16."""
+    return _prepare_coding(parent, root, coding_plan, provenance, historical_sources, extension=True)
+
+
+def _prepare_coding(parent: Path, root: Path, coding_plan: dict, provenance: dict,
+                    historical_sources: Path, *, extension: bool) -> dict:
     parent, root = batch.local_path(parent), batch.local_path(root)
     batch.require(not root.exists() and not root.is_relative_to(parent) and not parent.is_relative_to(root),
                   "coding_requires_fresh_root")
     with batch.exclusive(batch.PAID_STUDY_ROOT), batch.exclusive(parent):
-        seal = _basis(parent, "advance-coding-first-draft", CODING_STAGE, historical_sources=historical_sources)
+        kind = "advance-coding-extension16" if extension else "advance-coding-first-draft"
+        stage = CODING_EXTENSION if extension else CODING_STAGE
+        seal = (_coding_parent_basis(parent, historical_sources) if extension else
+                _basis(parent, kind, stage, historical_sources=historical_sources))
         registry, _ = _registry()
         _coding_contract(coding_plan)
+        batch.require(coding_plan.get("coding_stage", "first16") == ("extension16" if extension else "first16"),
+                      "coding_plan_stage_mismatch")
+        if extension:
+            _same_coding_protocol(batch.read_json(parent / "plan.json"), coding_plan, provenance)
         batch.require(coding_plan.get("paid") is registry.get("paid", True), "coding_paid_fake_mismatch")
         batch.require(batch.money(seal["committed_cny"]) + CODING_CAP <= 200, "whole_coding_batch_does_not_fit")
-        plan = {**coding_plan, "stage": CODING_STAGE, "cap_cny": "200", "imports": registry["imports"],
+        plan = {**coding_plan, "stage": stage, "cap_cny": "200", "imports": registry["imports"],
                 "study_batch_cap_cny": str(CODING_CAP), "study_opening": seal["opening"],
                 "provenance_sha256": batch.digest(provenance),
                 "study_runtime": {"python": sys.version, "executable": str(Path(sys.executable).resolve())},
-                "study_admission": {"kind": "advance-coding-first-draft", "stage_name": CODING_STAGE,
+                "study_admission": {"kind": kind, "stage_name": stage,
                     "previous_head_sha256": seal["previous_head_sha256"], "parent_root": str(parent),
                     "parent_seal_sha256": batch.digest(seal), "module_sha256": batch.file_hash(Path(__file__)),
                     "batch_module_sha256": batch.file_hash(Path(batch.__file__))}}
@@ -481,7 +507,10 @@ def _coding_identity(root: Path, plan: dict) -> None:
     if plan["paid"]:
         registry, _ = _registry()
         batch.require(plan["imports"] == registry["imports"] == batch.r1_inventory(), "coding_historical_inventory_changed")
-    batch.require(plan["stage"] == CODING_STAGE and batch.money(plan["cap_cny"]) == 200
+    stage = CODING_EXTENSION if plan.get("coding_stage") == "extension16" else CODING_STAGE
+    kind = "advance-coding-extension16" if stage == CODING_EXTENSION else "advance-coding-first-draft"
+    batch.require(plan["stage"] == plan["study_admission"]["stage_name"] == stage
+                  and plan["study_admission"]["kind"] == kind and batch.money(plan["cap_cny"]) == 200
                   and batch.money(plan["study_batch_cap_cny"]) == CODING_CAP
                   and plan["study_admission"]["module_sha256"] == batch.file_hash(Path(__file__))
                   and plan["study_admission"]["batch_module_sha256"] == batch.file_hash(Path(batch.__file__))
@@ -500,9 +529,14 @@ def _activate_coding(root: Path, plan: dict, plan_sha256: str, review: Path, rev
         _coding_identity(root, plan)
         seal = batch.read_json(root / "parent-seal.json")
         sources = Path(seal["source_archive"]["manifest"]["path"])
+        extension = admission["kind"] == "advance-coding-extension16"
+        basis = (_coding_parent_basis(parent, sources) if extension else
+                 _basis(parent, "advance-coding-first-draft", CODING_STAGE, historical_sources=sources))
         batch.require(batch.digest(seal) == admission["parent_seal_sha256"]
-                      and _basis(parent, "advance-coding-first-draft", CODING_STAGE, historical_sources=sources) == seal
+                      and basis == seal
                       and plan["study_opening"] == seal["opening"], "coding_parent_or_opening_changed")
+        if extension:
+            _same_coding_protocol(batch.read_json(parent / "plan.json"), plan, batch.read_json(root / "provenance.json"))
         registry, _ = _registry()
         batch.require(plan["paid"] is registry.get("paid", True) and plan["imports"] == registry["imports"]
                       and batch.money(seal["committed_cny"]) + CODING_CAP <= 200, "coding_study_budget_mismatch")
@@ -511,7 +545,7 @@ def _activate_coding(root: Path, plan: dict, plan_sha256: str, review: Path, rev
         current = head()
         batch.require(current["sha256"] == admission["previous_head_sha256"], "coding_parent_head_changed")
         payload = {"schema": 1, "seq": current["count"], "previous_sha256": current["sha256"],
-                   "kind": "advance-coding-first-draft", "stage_name": CODING_STAGE, "parent_root": str(parent),
+                   "kind": admission["kind"], "stage_name": admission["stage_name"], "parent_root": str(parent),
                    "root": str(root), "plan_sha256": plan_sha256, "plan_file_sha256": batch.file_hash(root / "plan.json"),
                    "parent_seal_sha256": admission["parent_seal_sha256"], "opening": seal["opening"],
                    "module_sha256": admission["module_sha256"], "source_archive": seal["source_archive"],
@@ -573,6 +607,144 @@ def _coding_closed_cost(root: Path, plan: dict) -> Decimal:
 def _coding_refs(root: Path) -> dict:
     return {name: batch.file_hash(root / name) for name in ("requests.jsonl", "result.json", "generation-closed.json")
             if (root / name).is_file()}
+
+
+def _coding_source_archive(path: Path, plan: dict, event: dict) -> dict:
+    """Audit the six explicit historical source files; never execute old code."""
+    path = batch.local_path(path)
+    manifest = batch.read_json(path)
+    expected = {"timely_study.py": event["module_sha256"],
+                "timely_batch.py": plan["study_admission"]["batch_module_sha256"], **plan["code_sha256"]}
+    commit = manifest.get("source_commit", "")
+    batch.require(manifest.get("schema") == 2 and manifest.get("kind") == "coding-terminal-source-archive"
+                  and manifest.get("source_plan_file_sha256") == event["plan_file_sha256"]
+                  and manifest.get("source_plan_canonical_sha256") == event["plan_sha256"] == batch.digest(plan)
+                  and manifest.get("activation_review") == event["review"]
+                  and len(commit) == 40 and all(c in "0123456789abcdef" for c in commit)
+                  and set(manifest.get("files", {})) == set(expected)
+                  and set(plan["code_sha256"]) == set(CODING_FILES), "coding_historical_manifest_mismatch")
+    refs = {}
+    for name, wanted in expected.items():
+        source, record = path.parent / name, manifest["files"][name]
+        batch.require(not source.is_symlink(), "historical_source_symlink_not_allowed")
+        normalized = source.read_bytes().replace(b"\r\n", b"\n")
+        blob = hashlib.sha1(b"blob " + str(len(normalized)).encode() + b"\0" + normalized).hexdigest()
+        batch.require(batch.file_hash(source) == record.get("sha256") == wanted
+                      and record.get("git_blob") == blob and record.get("source_repository_path") == f"research/{name}",
+                      "coding_historical_source_bytes_mismatch")
+        refs[str(source)] = wanted
+    return {"manifest": {"path": str(path), "sha256": batch.file_hash(path)}, "files": refs,
+            "source_commit": commit, "source_plan_file_sha256": event["plan_file_sha256"],
+            "source_plan_canonical_sha256": event["plan_sha256"], "from_module_sha256": event["module_sha256"]}
+
+
+def _same_coding_protocol(parent: dict, plan: dict, provenance: dict) -> None:
+    unchanged = ("scope", "system_prompt", "parse_policy", "request_contract", "models", "planned_denominator",
+                 "heldout_used", "independence", "judging", "judge_boundaries", "preflight_policy", "timing_claim",
+                 "runtime_identity")
+    batch.require(all(plan.get(key) == parent.get(key) for key in unchanged)
+                  and batch.digest(provenance) == parent["provenance_sha256"], "extension_changed_first_draft_protocol")
+
+
+def _coding_public_extension_evidence(root: Path, plan: dict) -> dict:
+    """Require all first drafts publicly pass; inspect hidden cleanup, not scores."""
+    closed = batch.read_json(root / "execution-process-closed.json")
+    batch.require(closed.get("pilot_root") == str(root) and closed.get("paid") is plan["paid"]
+                  and closed.get("child_reaped") is True and type(closed.get("child_pid")) is int
+                  and closed["child_pid"] > 0 and closed.get("child_returncode") == 0,
+                  "coding_parent_process_not_terminal")
+    summary = batch.read_json(root / "summary.json")
+    batch.require(summary.get("paid") is plan["paid"] and summary.get("plan_sha256") == batch.digest(plan)
+                  and summary.get("output") == str(root), "coding_parent_summary_identity_changed")
+    rows = summary.get("rows", [])
+    batch.require(summary.get("finished") is True and summary.get("denominator_retained") is True
+                  and summary.get("all_16_responses_received") is True and len(rows) == 16
+                  and not summary.get("error_type") and not summary.get("generation_error_type"),
+                  "coding_parent_public_denominator_incomplete")
+    generations, evidence, executions = [], [], set()
+    for expected, row in zip(plan["rows"], rows):
+        directory = root / "drafts" / expected["run_id"]
+        generation = batch.read_json(directory / "generation.json")
+        batch.require(all(row.get(key) == generation.get(key) == value for key, value in expected.items())
+                      and all(row.get(key) == value for key, value in generation.items() if key not in {"public", "hidden"})
+                      and row.get("generation_status") == "parsed"
+                      and batch.file_hash(directory / "candidate.py") == row["parse"]["code_sha256"],
+                      "coding_parent_candidate_changed_or_unparsed")
+        public = batch.read_json(directory / "public-summary.json")
+        batch.require(public == row.get("public") == batch.read_json(directory / "public" / "public-result.json")
+                      and public.get("task_id") == expected["task_id"] and public.get("visibility") == "public"
+                      and public.get("status") == "pass" and public.get("reason") == "public_checks_complete"
+                      and type(public.get("total")) is int and public["total"] > 0
+                      and public.get("checked") == public.get("passed") == public["total"]
+                      and len(public.get("checks", [])) == public["total"]
+                      and all(check.get("passed") is True for check in public["checks"]),
+                      "extension_requires_all_16_public_pass")
+        # The archived checker uses the fixed polynomial residual for task 32;
+        # all other first16 tasks launch a separate reference worker.
+        expected_executions = ["public/candidate/execution.json", "hidden/candidate/execution.json"]
+        if expected["number"] != 32:
+            expected_executions.append("hidden/reference/execution.json")
+        for relative in expected_executions:
+            path = directory / relative
+            execution = batch.read_json(path)
+            batch.require(execution.get("worker_cli_reaped") is True and execution.get("cleanup", {}).get("removed") is True,
+                          "coding_judge_cleanup_not_confirmed")
+            if relative == "public/candidate/execution.json":
+                batch.require(execution.get("source_sha256") == row["parse"]["code_sha256"], "public_judge_candidate_changed")
+            executions.add(path)
+        generations.append(generation)
+        evidence.append({"run_id": expected["run_id"], "candidate_sha256": row["parse"]["code_sha256"],
+                         "public_summary_sha256": batch.file_hash(directory / "public-summary.json")})
+    batch.require(set((root / "drafts").glob("*/**/execution.json")) == executions,
+                  "coding_unregistered_judge_execution")
+    batch.require(batch.digest(generations) == batch.read_json(root / "generation-closed.json").get("records_sha256"),
+                  "coding_generation_records_changed")
+    return {"rule": "complete_first16_parsed_and_public_pass_v1", "planned_denominator": 16,
+            "parsed": 16, "public_pass": 16, "hidden_scores_used": False, "candidates": evidence,
+            "process_closed_sha256": batch.file_hash(root / "execution-process-closed.json"),
+            "summary_sha256": batch.file_hash(root / "summary.json")}
+
+
+def _coding_parent_basis(root: Path, historical_sources: Path) -> dict:
+    """Caller owns study/parent locks. Only first16 may admit the sole extension."""
+    current = head()
+    batch.require(current["root"] == str(root) and current["stage_name"] == CODING_STAGE,
+                  "coding_extension_requires_first16_head")
+    plan = batch.read_json(root / "plan.json")
+    event = _assert_active_record(root, plan)
+    _coding_contract(plan, historical=True)
+    batch.require(plan["stage"] == CODING_STAGE and plan.get("coding_stage", "first16") == "first16"
+                  and batch.money(plan["cap_cny"]) == 200 and batch.money(plan["study_batch_cap_cny"]) == CODING_CAP,
+                  "coding_parent_stage_changed")
+    archive = _coding_source_archive(historical_sources, plan, event)
+    batch.require(plan["provenance_sha256"] == batch.digest(batch.read_json(root / "provenance.json")),
+                  "coding_parent_provenance_changed")
+    registry, genesis = _registry()
+    if plan["paid"]:
+        batch.require(plan["imports"] == registry["imports"] == batch.r1_inventory(), "coding_historical_inventory_changed")
+    for item in plan["imports"]:
+        batch.check_refs(Path(item["directory"]), item["artifacts"])
+    events = _coding_events(root, plan)
+    batch.require(len(events) == 3 and _http_closed(root, plan), "coding_parent_billing_not_terminal")
+    terminal = events[-1]
+    batch.require(terminal["event"] == "settle", "coding_extension_requires_known_settled_parent")
+    batch.require(terminal["data"]["artifacts"] == _coding_refs(root), "coding_terminal_artifacts_changed")
+    known, liabilities = batch.money(plan["study_opening"]["known_cny"]), list(plan["study_opening"]["liabilities"])
+    cost = _coding_closed_cost(root, plan)
+    batch.require(cost == batch.money(terminal["data"]["cost_cny"]), "coding_parent_settled_cost_changed")
+    known += cost
+    origins = [(item["origin_plan_sha256"], item["run_id"]) for item in liabilities]
+    batch.require(len(origins) == len(set(origins)), "duplicate_carried_liability")
+    decision = _coding_public_extension_evidence(root, plan)
+    committed = known + sum((batch.money(item["held_cny"]) for item in liabilities), Decimal(0))
+    batch.require(committed + CODING_CAP <= 200, "whole_coding_batch_does_not_fit")
+    return {"schema": 1, "root": str(root), "genesis_sha256": genesis, "previous_head_sha256": current["sha256"],
+            "kind": "advance-coding-extension16", "stage_name": CODING_EXTENSION,
+            "terminal": terminal["event"], "plan_sha256": batch.digest(plan), "ledger_tip_sha256": terminal["sha256"],
+            "files": _files(root), "source_archive": archive, "public_decision": decision,
+            "opening": {"known_cny": str(known), "liabilities": liabilities},
+            "committed_cny": str(committed), "remaining_cny": str(Decimal(200) - committed),
+            "scientific_use": "one predefined first-draft extension; hidden scores do not choose the branch"}
 
 
 class CodingAdmission:
@@ -657,12 +829,13 @@ def main() -> int:
     prepare.add_argument("--parent", type=Path, required=True)
     prepare.add_argument("--pilot-root", type=Path, required=True)
     prepare.add_argument("--tool-format", choices=("official", "single-json-v1", "single-json-v2"), required=True)
-    coding_prepare = commands.add_parser("prepare-coding16")
-    coding_prepare.add_argument("--parent", type=Path, required=True)
-    coding_prepare.add_argument("--pilot-root", type=Path, required=True)
-    coding_prepare.add_argument("--coding-plan", type=Path, required=True)
-    coding_prepare.add_argument("--provenance", type=Path, required=True)
-    coding_prepare.add_argument("--historical-sources", type=Path, required=True)
+    for command in ("prepare-coding16", "prepare-coding-extension16"):
+        coding_prepare = commands.add_parser(command)
+        coding_prepare.add_argument("--parent", type=Path, required=True)
+        coding_prepare.add_argument("--pilot-root", type=Path, required=True)
+        coding_prepare.add_argument("--coding-plan", type=Path, required=True)
+        coding_prepare.add_argument("--provenance", type=Path, required=True)
+        coding_prepare.add_argument("--historical-sources", type=Path, required=True)
     activate_parser = commands.add_parser("activate")
     activate_parser.add_argument("--pilot-root", type=Path, required=True)
     activate_parser.add_argument("--plan-sha256", required=True)
@@ -675,8 +848,9 @@ def main() -> int:
     try:
         if args.command == "prepare-revision":
             result = prepare_revision(args.parent, args.pilot_root, tool_format=args.tool_format)
-        elif args.command == "prepare-coding16":
-            result = prepare_coding16(args.parent, args.pilot_root, batch.read_json(args.coding_plan),
+        elif args.command in {"prepare-coding16", "prepare-coding-extension16"}:
+            prepare_function = prepare_coding16 if args.command == "prepare-coding16" else prepare_coding_extension16
+            result = prepare_function(args.parent, args.pilot_root, batch.read_json(args.coding_plan),
                                       batch.read_json(args.provenance), historical_sources=args.historical_sources)
         elif args.command == "activate":
             result = activate(args.pilot_root, plan_sha256=args.plan_sha256, review=args.review, review_sha256=args.review_sha256)

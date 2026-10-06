@@ -30,6 +30,7 @@ import timely_transport as budget
 
 
 MODELS = ("deepseek-flash", "deepseek-v4-pro")
+STAGE_IDS = {"first16": (55, 32, 7, 56), "extension16": (16, 99, 18, 31)}
 ENDPOINT = "https://api.deepseek.com/chat/completions"
 REQUEST_CAP_CNY = Decimal("0.20")
 SIMULATED_CAP_CNY = "3.20"
@@ -109,11 +110,13 @@ def identities() -> dict:
             for module in (sys.modules[__name__], coding, coding.sandbox, budget)}
 
 
-def rows() -> list[dict]:
+def rows(stage: str = "first16") -> list[dict]:
+    if not isinstance(stage, str) or stage not in STAGE_IDS:
+        raise ValueError("unsupported_coding_stage")
     return [{"run_id": f"draft-{len_index:02d}-he{number}-{model}-rep{repeat}",
              "task_id": f"HumanEval/{number}", "number": number, "model": model, "repeat": repeat}
             for len_index, (repeat, number, model) in enumerate(
-                ((repeat, number, model) for repeat in (1, 2) for number in coding.DEV_IDS for model in MODELS), 1)]
+                ((repeat, number, model) for repeat in (1, 2) for number in STAGE_IDS[stage] for model in MODELS), 1)]
 
 
 def request_body(row: dict, task: dict) -> dict:
@@ -235,8 +238,11 @@ async def preflight_requests(output: Path, tasks: dict, plan: dict, client: http
               "per_request_cap_cny": str(REQUEST_CAP_CNY), "batch_cap_cny": "3.20"}
     requests = []
     try:
-        if plan["rows"] != rows():
+        stage = plan.get("coding_stage", "first16")
+        if plan["rows"] != rows(stage):
             raise ValueError("fixed_16_rows_changed")
+        if "dev_ids" in plan and plan["dev_ids"] != list(STAGE_IDS[stage]):
+            raise ValueError("fixed_16_task_ids_changed")
         for row in plan["rows"]:
             payload = request_body(row, tasks[row["number"]])
             request = client.build_request("POST", ENDPOINT, json=payload)
@@ -409,10 +415,12 @@ def judge_after_generation(output: Path, tasks: dict, plan: dict, records: list[
         event(output, mode + "_evaluation_closed")
 
 
-def make_plan(*, paid: bool, scenario: str = "mixed", simulated_cap: str = SIMULATED_CAP_CNY) -> dict:
+def make_plan(*, paid: bool, stage: str = "first16", scenario: str = "mixed",
+              simulated_cap: str = SIMULATED_CAP_CNY) -> dict:
+    planned_rows = rows(stage)
     plan = {"schema": 1, "scope": "R3-development-natural-first-draft-check-only", "paid": paid, "planned_denominator": 16,
-            "created_at": datetime.now(timezone.utc).isoformat(), "rows": rows(),
-            "models": list(MODELS), "dev_ids": list(coding.DEV_IDS), "heldout_used": False,
+            "created_at": datetime.now(timezone.utc).isoformat(), "coding_stage": stage, "rows": planned_rows,
+            "models": list(MODELS), "dev_ids": list(STAGE_IDS[stage]), "heldout_used": False,
             "independence": "fresh messages; no previous draft/result/hidden data in any request; no provider seed guarantee",
             "request_contract": {"endpoint": ENDPOINT, "temperature": 0.7, "max_tokens": 2048,
                                  "thinking": {"type": "disabled"}, "stream": False, "n": 1,
@@ -431,12 +439,12 @@ def make_plan(*, paid: bool, scenario: str = "mixed", simulated_cap: str = SIMUL
 
 
 async def run_offline(output: Path, *, evaluate: bool = False, scenario: str = "mixed",
-                      simulated_cap: str = SIMULATED_CAP_CNY) -> dict:
+                      simulated_cap: str = SIMULATED_CAP_CNY, stage: str = "first16") -> dict:
     if output.exists():
         raise ValueError("fresh output directory required")
     output.mkdir(parents=True)
     tasks, provenance = coding.load_tasks()
-    plan = make_plan(paid=False, scenario=scenario, simulated_cap=simulated_cap)
+    plan = make_plan(paid=False, stage=stage, scenario=scenario, simulated_cap=simulated_cap)
     dump(output / "plan.json", plan)
     dump(output / "provenance.json", provenance)
     summary = {"output": str(output), "planned_denominator": 16, "paid": False,
@@ -481,8 +489,10 @@ async def execute_admitted(output: Path, *, execute_paid: bool, env_file: Path |
         raise PaidNotAdmitted("study_mode_mismatch")
     if plan.get("runtime_identity") != runtime_identity(require_wsl=execute_paid):
         raise PaidNotAdmitted("frozen_python_identity_changed")
-    expected = make_plan(paid=execute_paid)
-    for field in ("scope", "planned_denominator", "rows", "models", "dev_ids", "heldout_used",
+    if not isinstance(plan.get("coding_stage"), str) or plan["coding_stage"] not in STAGE_IDS:
+        raise PaidNotAdmitted("frozen_coding_stage_invalid")
+    expected = make_plan(paid=execute_paid, stage=plan["coding_stage"])
+    for field in ("scope", "planned_denominator", "coding_stage", "rows", "models", "dev_ids", "heldout_used",
                   "request_contract", "parse_policy", "system_prompt", "code_sha256", "preflight_policy"):
         if plan.get(field) != expected[field]:
             raise PaidNotAdmitted("frozen_coding_plan_changed")
@@ -546,12 +556,13 @@ def main() -> int:
     mode.add_argument("--prepare-paid-plan", action="store_true", help="write plan/provenance only; no admission or calls")
     parser.add_argument("--pilot-root", type=Path)
     parser.add_argument("--env-file", type=Path)
+    parser.add_argument("--stage", choices=tuple(STAGE_IDS), help="prepare/offline only; paid execution uses the frozen plan stage")
     parser.add_argument("--evaluate", action="store_true", help="public/hidden checks after HTTP closure and study settlement/hold")
     parser.add_argument("--scenario", choices=("mixed", "missing-usage", "missing-usage-second", "http-error", "bad-shape"), default="mixed")
     args = parser.parse_args()
     if args.prepare_paid_plan:
         try:
-            plan = make_plan(paid=True)
+            plan = make_plan(paid=True, stage=args.stage or "first16")
             _, provenance = coding.load_tasks()
             output = coding.sandbox.LOCAL / "first-draft-plans" / uuid.uuid4().hex
             output.mkdir(parents=True)
@@ -563,6 +574,8 @@ def main() -> int:
             print(json.dumps({"status": "refused", "reason": type(exc).__name__, "model_calls_actual": 0}))
             return 2
     if args.execute_paid:
+        if args.stage is not None:
+            parser.error("paid execution reads coding_stage from the frozen plan; do not pass --stage")
         if args.pilot_root is None or args.env_file is None:
             print(json.dumps({"status": "refused", "reason": "activated_pilot_root_and_explicit_env_file_required", "model_calls_actual": 0}))
             return 2
@@ -585,7 +598,8 @@ def main() -> int:
     output = coding.sandbox.LOCAL / "first-drafts" / uuid.uuid4().hex
     with asyncio.Runner() as runner:
         blocked = install_offline_guard()
-        summary = runner.run(run_offline(output, evaluate=args.evaluate, scenario=args.scenario))
+        summary = runner.run(run_offline(output, evaluate=args.evaluate, scenario=args.scenario,
+                                         stage=args.stage or "first16"))
     print(json.dumps({"output": str(output), "finished": summary["finished"],
                       "denominator_retained": summary["denominator_retained"],
                       "model_calls_actual": 0, "api_spend_cny_actual": "0", "blocked_network_attempts": len(blocked)}))

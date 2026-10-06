@@ -190,6 +190,13 @@
 - **费用**：新增 0.084681216 元，当前研究累计 0.296871136 元，所有实验估算 0.459382432 元，未知为零；非账单，不含 Claude 审查。完整分母、usage、状态和原文件 hash 见 [结果](../research/results/coding-first16.json)。独立分析的第一版因额外 usage 元数据误报 usage 不一致，五个计费字段逐条一致；原报告保留，修正版无完整性问题，未改 paid 根。
 - **下一步**：依据公开检查全部通过，执行此前已规定的四题扩展（/16、/99、/18、/31），需要继承同一 study 的 coding ledger；不重建额度、不重复首16。共同 deadline、反馈修复、留出预测仍未完成。详见 [首批报告](research/coding-first16-results.md)。本条结果文件已由实际 Claude Opus 5.5 审查，无文档提交阻断；已澄清 /32 判定局限、12 次参考执行的构成与执行时源码身份，见 [处置](reviews/2026-10-06-coding-first16-results.md)。验证命令：python .local/overnight/publish_coding16_result.py 构建数值结果；cleanup 字段另由 document_coding16_result.py 从已哈希的 coding16-analysis-agent-v2.json 并入。随后独立核对所有原始产物 hash、16 条 public 状态、73 个文档链接及英文 README，均通过。
 
+## 2026-10-06：预定编程扩展完成实现与审查
+
+- **实现**：首稿执行器复用固定 `first16`/`extension16` 阶段；新增首批到唯一扩展的同预算准入，核验六份历史源码、结算、全部公开通过及 CLI/worker/container 清理。stop/unknown 父批拒绝并保留原负债，summary 绑定 paid、计划摘要及输出目录；隐藏成绩不参与分支。
+- **验证**：当前 pilot 7 项 fake 流程和最终 study 21 项合成流程通过；四题参考解公开/隐藏 8 项实际 Docker 检查通过，12 个容器清理。WSL 整批请求预检 16/16 接受，保守预留 1.03196064 元；以上均零实际模型调用，不改变累计费用。
+- **审查**：初审与增量复审均实际 Claude Opus 5.5 / exit0 / is_error=false，无当前提交或执行阻断。落实 stop 父批拒绝、fixture 目录隔离与 summary 绑定。记录拒绝原因未逐项断言的证据限制；真实父 summary 由 prepare 再核验，不为通过而修改历史文件。见 [扩展审查](reviews/2026-10-06-coding-extension.md)。
+- **下一步**：提交后在相同 WSL 环境 prepare/activate，继承研究累计 0.296871136 元，再真实执行固定扩展；尚无扩展结果，共同 deadline、反馈与留出预测仍待完成。README 的首批状态仍准确；修正复现计划中旧的两条轨迹描述为三条。
+
 ## 后续记录格式
 
 每次任务新增一条记录，至少包含：日期、范围、实际完成内容、验证命令与结果、Claude 审查及处置、已知限制、下一步。代码功能的记录应附对应端到端场景；只读评审不单独触发提交循环。
