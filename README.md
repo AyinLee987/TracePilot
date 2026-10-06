@@ -18,13 +18,13 @@ See the [experiment plan](docs/research/timely-reproduction.md) and [related wor
 | --- | --- |
 | Existing Python harness adapter and local Langfuse setup | Available; see [setup and limitations](docs/langfuse-pilot.md) |
 | Timely code audit and Pi/mini-SWE-agent smoke runs | Available; [earlier results](docs/research/pilot-results.md) are engineering checks |
-| Timely evaluation with real benchmark tasks | Three real Zork1 runs recorded; both batch conditions stopped on tool-format failures; no valid model comparison yet |
+| Timely evaluation with real benchmark tasks | Four-game official-prompt sweep prepared; previous batches stopped at our stricter format gate; [protocol and status](docs/research/timely-official.md) |
 | Coding first-draft and public/hidden checks | 32 real drafts complete; one public code failure and one format failure; [latest results](docs/research/coding-extension16-results.md) |
 | Shared-deadline repair and resampling | 144 trajectories scored; reference-answer and clock limitations disclosed in the [results](docs/research/coding-deadline-results.md) |
 | Offline analysis and figures | Real trace tables available; [results and figures](docs/research/coding-deadline-results.md) separate reference agreement from semantic correctness |
 | Runtime JSONL, routing, and held-out selection experiments | Planned; [R4 candidate protocol](docs/research/coding-prefix-prediction.md) is not frozen or admitted for execution |
 
-R3 has not established a feedback-driven advantage for the faster model. Reference-answer and external-clock validation remain open before held-out prediction.
+Current priority: finish the original Timely four-game evaluation with the available API models. R3 has not established a feedback-driven advantage for the faster model; coding extensions and routing experiments are deferred.
 
 ## Getting started
 

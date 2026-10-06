@@ -5,7 +5,8 @@
 The original registry, plans, ledgers and raw runs are never rewritten. The
 transition chain is published atomically under the existing study lock. There
 is one small-matrix revision, one coding first-draft batch, one predefined
-coding extension, and one explicitly reviewed deadline development batch.
+ coding extension, one explicitly reviewed deadline development batch, and one
+ official Timely successor after that batch has settled.
 Historical version migration requires archived source bytes for a terminal
 parent; active execution always checks the current code hashes.
 """
@@ -31,6 +32,7 @@ EXTENSIONS = ("r2-four-game-v1", "r3-coding-v1")
 CODING_STAGE = "r3-coding-first-draft-16-v1"
 CODING_EXTENSION = "r3-coding-first-draft-extension16-v1"
 DEADLINE_STAGE = "r3-coding-deadline-dev-v1"
+OFFICIAL_STAGE = "timely-official-four-game-v1"
 DEADLINE_CAP = Decimal("120")
 DEADLINE_KNOWN_STOPS = (None, "budget_censored", "public_infrastructure_failure", "request_or_context_failure")
 DEADLINE_REQUEST_GUARDS = ("per_request_cap", "message_limit_no_code_truncation", "feedback_projection_limit")
@@ -72,7 +74,9 @@ def head() -> dict:
                      and result["stage_name"] == CODING_STAGE and result["revision_used"])
         deadline = (event["kind"] == "advance-coding-deadline" and event["stage_name"] == DEADLINE_STAGE
                     and result["stage_name"] == CODING_EXTENSION and result["revision_used"])
-        batch.require(event["parent_root"] == result["root"] and (revision or coding or extension or deadline),
+        official = (event["kind"] == "advance-timely-official" and event["stage_name"] == OFFICIAL_STAGE
+                    and result["stage_name"] == DEADLINE_STAGE and result["revision_used"])
+        batch.require(event["parent_root"] == result["root"] and (revision or coding or extension or deadline or official),
                       "invalid_or_duplicate_study_transition")
         previous = event["sha256"]
         result = {"sha256": previous, "root": event["root"], "revision_used": True,
@@ -337,6 +341,8 @@ def activate(root: Path, *, plan_sha256: str, review: Path, review_sha256: str) 
     root, review = batch.local_path(root), batch.local_path(review)
     with batch.exclusive(batch.PAID_STUDY_ROOT), batch.exclusive(root):
         plan = batch.read_json(root / "plan.json")
+        if plan.get("study_admission", {}).get("kind") == "advance-timely-official":
+            return _activate_official(root, plan, plan_sha256, review, review_sha256)
         if plan.get("study_admission", {}).get("kind") == "advance-coding-deadline":
             return _activate_deadline(root, plan, plan_sha256, review, review_sha256)
         if plan.get("study_admission", {}).get("kind") in {"advance-coding-first-draft", "advance-coding-extension16"}:
@@ -619,8 +625,8 @@ def _coding_refs(root: Path) -> dict:
             if (root / name).is_file()}
 
 
-def _coding_source_archive(path: Path, plan: dict, event: dict) -> dict:
-    """Audit the six explicit historical source files; never execute old code."""
+def _coding_source_archive(path: Path, plan: dict, event: dict, *, deadline: bool = False) -> dict:
+    """Audit the explicit historical source set; never execute old code."""
     path = batch.local_path(path)
     manifest = batch.read_json(path)
     expected = {"timely_study.py": event["module_sha256"],
@@ -632,7 +638,8 @@ def _coding_source_archive(path: Path, plan: dict, event: dict) -> dict:
                   and manifest.get("activation_review") == event["review"]
                   and len(commit) == 40 and all(c in "0123456789abcdef" for c in commit)
                   and set(manifest.get("files", {})) == set(expected)
-                  and set(plan["code_sha256"]) == set(CODING_FILES), "coding_historical_manifest_mismatch")
+                  and set(plan["code_sha256"]) == set(DEADLINE_FILES if deadline else CODING_FILES),
+                  "coding_historical_manifest_mismatch")
     refs = {}
     for name, wanted in expected.items():
         source, record = path.parent / name, manifest["files"][name]
@@ -1145,6 +1152,125 @@ def _deadline_closed_cost(root: Path, plan: dict) -> Decimal:
                       and batch.money(account["batch_budget_cny"]) == DEADLINE_CAP, "deadline_accounting_mismatch")
     batch.require(cost <= DEADLINE_CAP, "deadline_cost_exceeds_guard")
     return cost
+
+
+def _official_parent_basis(root: Path, historical_sources: Path) -> dict:
+    """Seal a settled deadline parent; caller holds the study and parent locks."""
+    current = head()
+    batch.require(current["root"] == str(root) and current["stage_name"] == DEADLINE_STAGE,
+                  "official_requires_deadline_head")
+    plan = batch.read_json(root / "plan.json")
+    event = _assert_active_record(root, plan)
+    batch.require(plan.get("stage") == DEADLINE_STAGE and batch.money(plan["cap_cny"]) == 200,
+                  "official_parent_stage_changed")
+    archive = _coding_source_archive(historical_sources, plan, event, deadline=True)
+    registry, genesis = _registry()
+    if plan["paid"]:
+        batch.require(plan["imports"] == registry["imports"] == batch.r1_inventory(),
+                      "official_historical_inventory_changed")
+    for item in plan["imports"]:
+        batch.check_refs(Path(item["directory"]), item["artifacts"])
+    events = _deadline_events(root, plan)
+    batch.require(len(events) == 3 and events[-1]["event"] == "settle",
+                  "official_requires_known_settled_parent")
+    terminal = events[-1]
+    batch.require(terminal["data"]["artifacts"] == _deadline_refs(root), "official_parent_artifacts_changed")
+    cost = _deadline_closed_cost(root, plan)
+    batch.require(cost == batch.money(terminal["data"]["cost_cny"]), "official_parent_settled_cost_changed")
+    known = batch.money(plan["study_opening"]["known_cny"]) + cost
+    liabilities = list(plan["study_opening"]["liabilities"])
+    origins = [(item["origin_plan_sha256"], item["run_id"]) for item in liabilities]
+    batch.require(len(origins) == len(set(origins)), "duplicate_carried_liability")
+    committed = known + sum((batch.money(item["held_cny"]) for item in liabilities), Decimal(0))
+    batch.require(committed < 200, "official_no_remaining_study_budget")
+    return {"schema": 1, "root": str(root), "genesis_sha256": genesis,
+            "previous_head_sha256": current["sha256"], "kind": "advance-timely-official",
+            "stage_name": OFFICIAL_STAGE, "terminal": "settle", "plan_sha256": batch.digest(plan),
+            "ledger_tip_sha256": terminal["sha256"], "files": _files(root), "source_archive": archive,
+            "opening": {"known_cny": str(known), "liabilities": liabilities},
+            "committed_cny": str(committed), "remaining_cny": str(Decimal(200) - committed)}
+
+
+def _official_identity(plan: dict) -> None:
+    admission = plan["study_admission"]
+    batch.require(plan.get("stage") == admission.get("stage_name") == OFFICIAL_STAGE
+                  and admission.get("kind") == "advance-timely-official" and batch.money(plan["cap_cny"]) == 200
+                  and admission.get("module_sha256") == batch.file_hash(Path(__file__))
+                  and admission.get("batch_module_sha256") == batch.file_hash(Path(batch.__file__)),
+                  "official_prepared_code_changed")
+    batch.require(isinstance(plan.get("source"), str) and bool(plan["source"])
+                  and all(isinstance(plan.get(key), list) and plan[key] for key in ("games", "models", "rows"))
+                  and plan.get("tool_format") == "official", "official_protocol_missing")
+    rows = plan["rows"]
+    batch.require(all(isinstance(row, dict) and isinstance(row.get("run_id"), str) and row["run_id"] for row in rows)
+                  and len({row["run_id"] for row in rows}) == len(rows), "official_duplicate_or_missing_run_id")
+    sources = plan.get("runner_sha256")
+    batch.require(isinstance(sources, dict) and "timely_official.py" in sources, "official_runner_identity_missing")
+    for name, sha in sources.items():
+        batch.require(isinstance(name, str) and Path(name).name == name and name.endswith(".py")
+                      and isinstance(sha, str) and len(sha) == 64
+                      and batch.file_hash(Path(__file__).parent / name) == sha, "official_runner_source_changed")
+
+
+def prepare_official(parent: Path, root: Path, protocol: dict) -> dict:
+    """Prepare one inert official successor; its runner owns execution accounting.
+
+    protocol contains the runner's frozen configuration and a historical_sources
+    manifest path. No row template or new budget is imposed by this admission.
+    """
+    parent, root = batch.local_path(parent), batch.local_path(root)
+    batch.require(not root.exists() and not root.is_relative_to(parent) and not parent.is_relative_to(root),
+                  "official_requires_fresh_root")
+    config = dict(protocol)
+    historical_sources = Path(config.pop("historical_sources"))
+    with batch.exclusive(batch.PAID_STUDY_ROOT), batch.exclusive(parent):
+        seal = _official_parent_basis(parent, historical_sources)
+        registry, _ = _registry()
+        paid = registry.get("paid", True)
+        batch.require(config.get("paid", paid) is paid and batch.money(config.get("cap_cny", "200")) == 200,
+                      "official_mode_or_budget_changed")
+        plan = {**config, "stage": OFFICIAL_STAGE, "paid": paid, "cap_cny": "200", "imports": registry["imports"],
+                "study_opening": seal["opening"],
+                "study_admission": {"kind": "advance-timely-official", "stage_name": OFFICIAL_STAGE,
+                    "previous_head_sha256": seal["previous_head_sha256"], "parent_root": str(parent),
+                    "parent_seal_sha256": batch.digest(seal), "module_sha256": batch.file_hash(Path(__file__)),
+                    "batch_module_sha256": batch.file_hash(Path(batch.__file__))}}
+        _official_identity(plan)
+        root.mkdir(parents=True, exist_ok=False)
+        batch.write_new(root / "parent-seal.json", seal)
+        batch.write_new(root / "plan.json", plan)
+        return {"status": "prepared_not_active", "pilot_root": str(root), "plan_sha256": batch.digest(plan),
+                "plan_file_sha256": batch.file_hash(root / "plan.json"), "opening": seal["opening"],
+                "committed_cny": seal["committed_cny"], "remaining_cny": seal["remaining_cny"], "model_calls": 0}
+
+
+def _activate_official(root: Path, plan: dict, plan_sha256: str, review: Path, review_sha256: str) -> dict:
+    admission = plan["study_admission"]
+    parent = batch.local_path(Path(admission["parent_root"]))
+    with batch.exclusive(parent):
+        batch.require(batch.digest(plan) == plan_sha256 and review.is_file() and review.stat().st_size > 0
+                      and batch.file_hash(review) == review_sha256, "official_plan_or_review_hash_mismatch")
+        _official_identity(plan)
+        seal = batch.read_json(root / "parent-seal.json")
+        batch.require(batch.digest(seal) == admission["parent_seal_sha256"]
+                      and seal == _official_parent_basis(parent, Path(seal["source_archive"]["manifest"]["path"]))
+                      and plan["study_opening"] == seal["opening"], "official_parent_or_opening_changed")
+        batch.require(set(_files(root)) == {"parent-seal.json", "plan.json"}, "official_successor_not_pristine")
+        current = head()
+        registry, _ = _registry()
+        batch.require(current["sha256"] == admission["previous_head_sha256"]
+                      and plan["paid"] is registry.get("paid", True) and plan["imports"] == registry["imports"],
+                      "official_parent_head_changed")
+        payload = {"schema": 1, "seq": current["count"], "previous_sha256": current["sha256"],
+            "kind": admission["kind"], "stage_name": OFFICIAL_STAGE, "parent_root": str(parent), "root": str(root),
+            "plan_sha256": plan_sha256, "plan_file_sha256": batch.file_hash(root / "plan.json"),
+            "parent_seal_sha256": admission["parent_seal_sha256"], "opening": seal["opening"],
+            "module_sha256": admission["module_sha256"], "source_archive": seal["source_archive"],
+            "review": {"path": str(review), "sha256": review_sha256}, "utc": datetime.now(timezone.utc).isoformat()}
+        record = {**payload, "sha256": batch.digest(payload)}
+        _publish(record)
+        return {"status": "activated_no_model_calls", "head_sha256": record["sha256"], "pilot_root": str(root),
+                "opening": seal["opening"], "model_calls": 0}
 
 
 _DEADLINE_TOKEN = object()

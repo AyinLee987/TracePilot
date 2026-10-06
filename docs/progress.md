@@ -232,6 +232,13 @@
 - **计时发现**：生成阶段 89.401 秒，单条 timer 合计22.743秒，其余66.658秒为尚未细分的编排开销；timer 不含前置逐调用准入/请求写盘，不能拿它冻结共同deadline。后续先按完整循环校准；两种timer口径在JSON分列。
 - **产物与审查**：[脱敏结果](../research/results/coding-extension16.json)、[实验报告](research/coding-extension16-results.md)。两批共32首稿中30份公开pass、1份代码fail、1份格式未评估。数值由 `.local/overnight/publish_coding_extension_result.py` 汇总，原始文件hash与独立分析来源保留；实际Claude Opus 5.5审查 exit0/is_error=false，无提交阻断。补齐公开错误/格式证据、45个worker exit0计数、脚本hash和完整循环计时限制；详见 [结果审查](reviews/2026-10-06-coding-extension-results.md)。后续源码修改前，六份执行源码已归档在 `.local/study-code-archives/bceaead150216a8047531123a36e75e8167bc60c/`，manifest SHA `d3ef3907d5bc064c417c810608bf558a8aea640da1f7f61c1ab3f7933bcd14c8`，与实际Git/计划/激活记录相符。
 
+## 2026-10-06：回到原文四游戏 benchmark
+
+- 范围：原文四游戏、两种现有 API 模型、官方提示/解析/评分/工具时延；64 条测速和 320 条计时轨迹，最多 6 条并发。同一 200 元 study 继承历史费用。
+- 修正：旧批次额外的零格式错误校准门槛不属于官方协议；新条件接受官方正常返回的正步数轨迹，保留格式错误及旧失败结果，不调提示筛选。
+- 验证：WSL `research/timely_official.py check` 的真实 Jericho + 合成 HTTP 四并发场景完成，6 个无有效调用步骤均继续；未知用量场景停止并保留预留。准入接缝 9 项检查通过；两次实际 Claude Opus 5.5 审查无阻断，已修复汇总失败时结果保存问题。零 API 花费。实际模型结果仍待运行；[审查记录](reviews/2026-10-06-timely-official.md)。
+- 下一步：审查、提交推送后立即运行冻结矩阵；暂不开展新选题或编程扩展。详情见 [协议](research/timely-official.md)。
+
 ## 后续记录格式
 
 每次任务新增一条记录，至少包含：日期、范围、实际完成内容、验证命令与结果、Claude 审查及处置、已知限制、下一步。代码功能的记录应附对应端到端场景；只读评审不单独触发提交循环。
