@@ -116,6 +116,14 @@
 - **状态与边界**：同步相关工作、当前决定与 `agent.md`；英文 README 已检查，现有入口准确。此次文献任务无新增付费模型实验，不纳入准备中的 runner/batch 代码。
 - **验证与审查**：Claude CLI 退出码 0、`is_error=false`、实际模型 `claude-opus-5-5`，未发现阻断问题。已修正预印本小节计数、Findings 标题范围和选择效应措辞，补齐模型族限制与原文章节；详见 [处置记录](reviews/2026-10-06-concurrent-followup.md)。文档链接、31 条参考编号、英文 README、敏感模式与 diff 检查通过；无新增运行时 E2E 声明。
 
+## 2026-10-06：Timely 真实环境单回合 runner 就绪
+
+- **完成**：新增固定源码验证、单回合官方 evaluator 适配、预算 HTTP 边界与真实环境观察；保留官方提示/虚拟时间/判停语义，额外区分技术、协议、校准和真实游戏终态。R0 完成，R1 真实调用尚未启动。
+- **验证**：WSL 专用 Python 执行 `research/timely_transport_fake_e2e.py`，27/27 通过；执行 `research/timely_reproduction_fake_e2e.py --source .local/timely-machine-audit --game <本地zork1.z5>`，15/15 通过。覆盖未知计费、取消、流响应上界、SDK、真实动作进程池正常/异常清理，以及 dummy 凭证下真实 HTTP 客户端的联网前拦截。Provider 请求/费用均为 0，脱敏证据见 [validation](../research/results/timely-runner-validation.json)。
+- **审查**：两轮 Claude CLI 退出码 0、`is_error=false`、实际模型均 `claude-opus-5-5`，无首跑阻断；修复已知 usage 超预留的负债低估、重试字段歧义，补运行参数和网络设置路径验证。七个复审输入 hash 与落盘文件一致。处置见 [runner review](reviews/2026-10-06-timely-runner.md)。
+- **文档**：同步实验 README、执行计划与 `agent.md`；根 README 仍为简短英文，模型评测 pending 的状态准确。AST、相对链接、忽略规则、敏感模式和 diff 检查通过。
+- **边界与下一步**：首条 R1 独立 8 步、默认官方延迟、5 元/12 requests；不把其 τ 用作 R2 校准。批次代码保留为未交付，须处理共享预算、子孙进程退出和完成后的校准复核后，再做独立 E2E/Claude 审查。原 checkpoint 不可用，不能声称论文数值复现。
+
 ## 后续记录格式
 
 每次任务新增一条记录，至少包含：日期、范围、实际完成内容、验证命令与结果、Claude 审查及处置、已知限制、下一步。代码功能的记录应附对应端到端场景；只读评审不单独触发提交循环。

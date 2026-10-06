@@ -2,6 +2,27 @@
 
 These are independent research tools, not TracePilot routing features. Start with the [direction note](../docs/research/decision.md).
 
+## Timely evaluation with a real Jericho game
+
+See the [reproduction scope and budget](../docs/research/timely-reproduction.md). Use a dedicated Linux/WSL Python 3.12 environment, a locally obtained supported ROM, and the unmodified official source at `e13af2b8c98d799857ace789ebcfdfd4ea6c2985`. Build tools are needed to install Jericho. The [requirements](requirements-timely.txt) pin the validated SDK, HTTP transport, and game dependencies; a complete environment freeze is retained with each local setup.
+
+```bash
+python -m pip install -r research/requirements-timely.txt
+python -B research/timely_transport_fake_e2e.py
+python -B research/timely_reproduction_fake_e2e.py --source .local/timely-machine-audit --game /path/to/zork1.z5
+python -B research/timely_reproduce.py --source .local/timely-machine-audit --game /path/to/zork1.z5 --output .local/timely-reproduction-runs/unique-fake-run --steps 8
+```
+
+The default uses a fake model and a real game, with zero API spend. Output directories must be new. The first paid speed run uses `--steps 8 --execute-paid --env-file /path/to/provider.env --budget-cny 5 --max-calls 12`; run it only after the code-review gate in the reproduction plan. It sends at most eight expected model calls to the official DeepSeek endpoint, with no retries. The env file contains `DEEPSEEK_API_KEY`. Keep it and raw responses out of Git. This standalone run does not provide the later shared pilot ledger; import its expenses before any batch runs.
+
+Each invocation runs one serial episode in its own process. `manifest.json` pins the inputs and source; `requests.jsonl` records dispatch, completion and budget evidence; `official/` preserves upstream output; `environment.json` observes real signed scores and game termination without changing actions; `result.json` separates technical completion, protocol validity, and calibration usability. A zero exit code is not a solved game. The official evaluator's `success` flag can be set by a model conclusion, so use the independent environment observation for victory.
+
+Unknown requests stop further dispatch and retain their reservation. Valid reported usage above the estimate increases the retained liability; a configured cap is not a provider-side spending limit. The legacy `paid_call_count` field counts dispatched calls, including synthetic and unresolved calls; check the run's `paid` flag. The full offline suite includes a generated dummy credential through the real network-client setup, with socket access blocked, and verifies worker cleanup after normal and failed game operations.
+
+The calibration gate also excludes output truncation and model-declared conclusions: upstream includes conclusion generation time in elapsed time but excludes that response from its step denominator. The original value is retained, alongside explicit exclusion reasons. Preserve every planned calibration run, including failures; do not cherry-pick successful runs to form the calibration set.
+
+The environment observer temporarily wraps the upstream environment class and closes each instance and any action-discovery worker pool on exit. It is restricted to this isolated runner, not a concurrent library integration. Observer overhead is included in measured time. Upstream virtual tool durations, noisy timing, step caps and after-action deadline checks remain unchanged; these outputs are not the later common-wall-clock experiments or the paper's unavailable checkpoints. Network timeouts apply per operation, not as an absolute task deadline.
+
 ## Pinned evaluator audit (no API or extra packages)
 
 Use a separate checkout of the [official repository](https://github.com/Entarochuan/Timely-Machine) at `e13af2b8c98d799857ace789ebcfdfd4ea6c2985`:
@@ -14,7 +35,7 @@ The script verifies the source revision and file contents. It exercises unchange
 
 ## Exploratory timing pilot
 
-Python 3.12; paid modes require `httpx==0.28.1` and, when using an env file, `python-dotenv==1.2.4`. Install into a separate environment. The fake mode uses only the standard library.
+Python 3.12; paid modes require `httpx==0.28.1` and, when using an env file, `python-dotenv==1.2.4`. This earlier pilot uses a separate environment from Timely/Jericho. The fake mode uses only the standard library.
 
 ```powershell
 python -B research/timing_pilot.py dry-run

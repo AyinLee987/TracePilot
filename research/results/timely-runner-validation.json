@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "evidence": "offline_validation_only",
+  "date": "2026-10-06",
+  "provider_requests": 0,
+  "provider_spend_cny": "0",
+  "paper_result_reproduced": false,
+  "upstream_commit": "e13af2b8c98d799857ace789ebcfdfd4ea6c2985",
+  "runtime": {
+    "os": "Ubuntu 24.04 WSL",
+    "python": "3.12.3",
+    "jericho": "3.2.1"
+  },
+  "transport": {
+    "passed_cases": 27,
+    "evidence_directory": ".local/timely-transport-checks/1542cb6267cf402eb574edd1927f0bb6"
+  },
+  "full_runner": {
+    "passed_cases": 15,
+    "evidence_directory": ".local/timely-reproduction-checks/83178ef9ab17427fb7aea0b484ced5fe",
+    "cases": [
+      {
+        "name": "valid-speed",
+        "passed": true,
+        "exit_code": 0
+      },
+      {
+        "name": "timed-after-action",
+        "passed": true,
+        "exit_code": 0
+      },
+      {
+        "name": "no-tool",
+        "passed": true,
+        "exit_code": 0
+      },
+      {
+        "name": "conclusion",
+        "passed": true,
+        "exit_code": 0
+      },
+      {
+        "name": "tool-error",
+        "passed": true,
+        "exit_code": 1
+      },
+      {
+        "name": "http-error",
+        "passed": true,
+        "exit_code": 1
+      },
+      {
+        "name": "missing-usage",
+        "passed": true,
+        "exit_code": 1
+      },
+      {
+        "name": "max-calls",
+        "passed": true,
+        "exit_code": 1
+      },
+      {
+        "name": "budget",
+        "passed": true,
+        "exit_code": 1
+      },
+      {
+        "name": "length",
+        "passed": true,
+        "exit_code": 0
+      },
+      {
+        "name": "conclusion-after-tool",
+        "passed": true,
+        "exit_code": 0
+      },
+      {
+        "name": "invalid-finish-reason",
+        "passed": true,
+        "exit_code": 1
+      },
+      {
+        "name": "action-discovery",
+        "passed": true,
+        "exit_code": 0
+      },
+      {
+        "name": "paid-network-guard",
+        "passed": true,
+        "exit_code": 1
+      },
+      {
+        "name": "pool-abort",
+        "passed": true,
+        "exit_code": 0
+      }
+    ]
+  },
+  "script_sha256": {
+    "timely_transport.py": "aa5f802664bbb251abde55412cd920d83590b813fd6ef7ab4dd7ce5c5790e868",
+    "timely_transport_fake_e2e.py": "7c2b436705486727390eb0b51fccaccada1ca801b717a2be468eac1ddab49a75",
+    "timely_reproduce.py": "c46090f4cbfdac6b644bbf3577d5191a650ded97f4f24f6cbe3b98b1846cc27d",
+    "timely_evidence.py": "efb053f6921555a38820a901990981b439c0d592fd860432568527f0b169f784",
+    "timely_reproduction_fake_e2e.py": "051291d5db4439976bec290cd7e684e537fb42ada72b40c4d467d453843ce892"
+  },
+  "limits": [
+    "Python socket guard is not an OS network sandbox",
+    "Fake response usage is synthetic accounting",
+    "No live model behavior or paper checkpoint results are claimed",
+    "Batch coordinator is excluded"
+  ]
+}
