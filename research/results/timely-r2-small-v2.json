@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "stage": "R2 revised small matrix v2; stopped after 1/24",
+  "code_commit": "6601c11310d1c65124872efd3794c5e67b61e407",
+  "paid": true,
+  "pilot_id": "timely-r2-small-v2-paid-20261006",
+  "planned_episodes": 24,
+  "executed_episodes": 1,
+  "unexecuted_episodes": 23,
+  "usable_calibrations": 0,
+  "stop_reason": "calibration_not_usable",
+  "row": {
+    "block": "speed-repeat-1",
+    "cap_cny": "10",
+    "mode": "speed",
+    "model": "deepseek-v4-pro",
+    "repeat": 1,
+    "run_id": "r001-speed-deepseek-v4-pro-d0-s32-rep1",
+    "seed": 20261007,
+    "steps": 32,
+    "tool_delay": 0
+  },
+  "technical_ok": true,
+  "protocol_ok": false,
+  "calibration_usable": false,
+  "calibration_exclusions": [
+    "invalid_tool_protocol"
+  ],
+  "counts": {
+    "model_responses": 32,
+    "recorded_steps": 32,
+    "request_dispatch": 32,
+    "request_complete": 32,
+    "request_rejected": 0,
+    "request_unknown": 0,
+    "sdk_error_responses": 0,
+    "conclusion_responses": 0,
+    "no_tool_steps": 1,
+    "malformed_tool_blocks": 1,
+    "invalid_tool_arguments": 0,
+    "executed_tools": 31,
+    "discarded_tool_calls": 0,
+    "tools_by_name": {
+      "step": 29,
+      "get_available_actions": 2
+    },
+    "finish_reasons": {
+      "stop": 32
+    }
+  },
+  "game": {
+    "official_score": 40,
+    "official_success_flag": false,
+    "signed_score": 40,
+    "max_score": 350,
+    "normalized_score": 0.11428571428571428,
+    "victory": false,
+    "game_over": false
+  },
+  "wall_s": 42.109538563,
+  "timing": {
+    "official_logical_total_s": 42.49868266184293,
+    "official_virtual_tool_s": 0.0,
+    "official_time_limit_s": null,
+    "http_completed_total_s": 40.54394543000012
+  },
+  "excluded_calibration": {
+    "mode": "speed",
+    "official_tau": 1.3280838331825915,
+    "numerator_official_time_s": 42.49868266184293,
+    "denominator_recorded_steps": 32,
+    "recomputed_tau": 1.3280838331825915
+  },
+  "malformed_steps_redacted": [
+    {
+      "step_zero_based": 23,
+      "has_open_tag": true,
+      "has_close_tag": true,
+      "json_error": "Expecting ':' delimiter",
+      "visible_characters": 128,
+      "completion_tokens": 36
+    }
+  ],
+  "usage_totals": {
+    "prompt_tokens": 70872,
+    "completion_tokens": 1165,
+    "total_tokens": 72037,
+    "prompt_cache_hit_tokens": 66304,
+    "prompt_cache_miss_tokens": 4568
+  },
+  "inherited_known_cny": "0.103705632",
+  "matrix_estimated_cny": "0.108484288",
+  "current_pilot_estimated_cny": "0.212189920",
+  "all_experimental_estimated_cny": "0.374701216",
+  "unknown_reserved_cny": "0",
+  "cost_semantics": "peak-price usage estimate; not invoice or account balance",
+  "cleanup_verified": true,
+  "paper_result_reproduced": false,
+  "supports_model_ranking": false,
+  "supports_prompt_causal_effect": false,
+  "allowed_small_revision_exhausted": true,
+  "remaining_goal": "R2 four-game comparison remains incomplete. Admit later R3 coding work under the SAME cumulative CNY 200 study, preserving all costs and both failed matrices; no further prompt shopping.",
+  "study_head_sha256": "2cff47511dce23d43bf975030b4b4fb47beb16462363ee111b6fa33495f78e52",
+  "raw_artifacts": {
+    "directory": ".local/timely-r2-small-v2-paid-20261006/runs/r001-speed-deepseek-v4-pro-d0-s32-rep1",
+    "sha256": {
+      "environment.json": "f281641d99a01c5f2aab2f677ff8e1d4113d7127d4ba9658895b1648a97634d3",
+      "manifest.json": "843541e766d1690c9cf56e3a64970a503223b2d0c6003953103c637798c71c11",
+      "official/speed_summary.json": "8e83c91a462b1992e184a00216cfb4cde0aa770b2b9535271e82d461e17a4d45",
+      "official/trajectories_max_steps_32.jsonl": "e0386e655a9df6004cd42d24cfb13d028d074a0dabba10721e8501ac40dde972",
+      "requests.jsonl": "dbd1d18b5669f5a3050f0bd7b4c1b38602b41956395f0fae9a8d3c91cce52eee",
+      "result.json": "8dc6dc1304d2bd8ac014909f5c3c98f385edf5ebc940d6bd7354a8fa2cd71669"
+    }
+  },
+  "batch_artifacts_sha256": {
+    "plan.json": "53c28aa8b17906585702b81b3b524893010441b7a8afcd40d27d2f63bcc7cd49",
+    "parent-seal.json": "7479c84fd54190bdc3ca2d91f9336f7d3779e1e70758cb5b148373c6cc3a0725",
+    "ledger.jsonl": "2fb2b05cd1e7f0b8de7f5f264bdf1568877476647032b676a02f0dc4c6d96d15",
+    "processes/r001-speed-deepseek-v4-pro-d0-s32-rep1.closed.json": "5d36bdf1c158758d944dbb13f539fad8ca837d619d7241cf519c2b2534c88223"
+  },
+  "outer_clock": {
+    "sha256": "35751c141bb77131c8f286fe4e02e796442fc7ce52dee126d01ce20ca99b9aa3",
+    "offset_change_s": 0.0,
+    "interpretation": "whole command only; not a per-request causal diagnosis"
+  }
+}

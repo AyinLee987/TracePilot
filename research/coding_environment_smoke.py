@@ -316,7 +316,8 @@ def oracle(arguments: list) -> bool:
     return any(abs(numbers[i] - numbers[j]) < threshold for i in range(len(numbers)) for j in range(i))
 
 
-def run_worker(name: str, payload: bytes, timeout: float, case_dir: Path, record: dict) -> bytes:
+def run_worker(name: str, payload: bytes, timeout: float, case_dir: Path, record: dict,
+               *, worker_code: str = WORKER) -> bytes:
     """Bound all three pipes of this preset-candidate smoke subprocess."""
     caps = {"stdout": 256 * 1024, "stderr": 64 * 1024}
     captured = {stream: bytearray() for stream in caps}
@@ -329,7 +330,7 @@ def run_worker(name: str, payload: bytes, timeout: float, case_dir: Path, record
                    "output_limits_bytes": caps, "worker_cli_reaped": False})
     try:
         process = subprocess.Popen(
-            ["docker", "exec", "-i", name, "python", "-I", "-S", "-c", WORKER],
+            ["docker", "exec", "-i", name, "python", "-I", "-S", "-c", worker_code],
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             bufsize=0, env=process_env())
         record["worker_cli_pid"] = process.pid
@@ -408,11 +409,23 @@ def run_worker(name: str, payload: bytes, timeout: float, case_dir: Path, record
     return bytes(captured["stdout"])
 
 
-def run_case(label: str, source: str, task: dict, image_id: str, output: Path, timeout: float) -> dict:
+def execute_isolated(label: str, source: str, entry_point: str, arguments: list,
+                     image_id: str, output: Path, timeout: float, *,
+                     worker_code: str = WORKER) -> tuple[dict, bytes]:
+    """Run one fresh candidate container; no correctness or smoke verdict here.
+
+    worker_code is trusted harness code supplied by callers, never a candidate
+    option. The caller owns correctness; this function owns Docker and cleanup.
+    """
+    if not label or len(label) > 80 or any(c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_" for c in label):
+        raise ValueError("invalid evidence label")
+    if not math.isfinite(timeout) or not 0 < timeout <= 90:
+        raise ValueError("worker timeout must be finite and in (0, 90]")
+    stdout = b""
     case_dir = output / label
     case_dir.mkdir()
     name = "tracepilot-coding-" + uuid.uuid4().hex
-    record = {"name": label, "container": name, "source_sha256": sha(source.encode()), "passed": False}
+    record = {"name": label, "container": name, "source_sha256": sha(source.encode()), "execution_ok": False, "candidate_started": False}
     cleanup = {"attempted": False, "removed": False}
     try:
         args = ["docker", "create", "--rm", "--name", name, "--network=none", "--read-only",
@@ -451,35 +464,15 @@ def run_case(label: str, source: str, task: dict, image_id: str, output: Path, t
                 or probe["docker_socket_visible"] or probe["credential_names_present"]
                 or probe["dataset_visible"] or probe["work_entries"]):
             raise ValueError("in-container controls or hidden-data boundary failed before candidate execution")
-        arguments = task["base_input"] + task["plus_input"]
-        expected = [oracle(item) for item in arguments]
-        payload = json.dumps({"source": source, "entry_point": task["entry_point"]}) + "\n"
+        payload = json.dumps({"source": source, "entry_point": entry_point}) + "\n"
         payload += "".join(json.dumps({"index": index, "arguments": item}) + "\n" for index, item in enumerate(arguments))
-        record.update({"base_inputs": len(task["base_input"]), "plus_inputs": len(task["plus_input"]),
-                       "input_count": len(arguments), "expected_results_sent_to_worker": False,
+        record.update({"input_count": len(arguments), "expected_results_sent_to_worker": False,
                        "worker_header_fields": ["source", "entry_point"],
-                       "worker_case_fields": ["index", "arguments"], "worker_sha256": sha(WORKER.encode()),
-                       "limits_verified_before_code": True, "timeout_s": timeout})
-        stdout = run_worker(name, payload.encode(), timeout, case_dir, record)
-        if record["output_limit_exceeded"]:
-            stream = record["output_limit_stream"]
-            record["passed"] = label == f"{stream}-flood"
-            record["judge_result"] = "output_limit"
-        elif record["timed_out"]:
-            record["passed"] = label == "infinite-loop"
-            record["judge_result"] = "timeout"
-        else:
-            rows = [json.loads(line) for line in stdout.splitlines() if line.strip()]
-            if len(rows) != len(expected) or any(row.get("index") != index for index, row in enumerate(rows)):
-                raise ValueError("worker returned incomplete or forged result sequence")
-            correct = [row.get("value") is value and "error_type" not in row for row, value in zip(rows, expected)]
-            record["correct_inputs"] = sum(correct)
-            record["judge_result"] = "pass" if all(correct) else "fail"
-            record["passed"] = (label == "canonical" and all(correct)) or (label == "known-wrong" and not all(correct))
-            if record["worker_cli_exit_code"] != 0:
-                record["passed"] = False
-        if not record["worker_cli_reaped"]:
-            record["passed"] = False
+                       "worker_case_fields": ["index", "arguments"], "worker_sha256": sha(worker_code.encode()),
+                       "limits_verified_before_code": True, "timeout_s": timeout,
+                       "candidate_started": True})
+        stdout = run_worker(name, payload.encode(), timeout, case_dir, record, worker_code=worker_code)
+        record["execution_ok"] = record["worker_cli_reaped"]
     except KeyboardInterrupt:
         record["error"] = "KeyboardInterrupt"
         raise
@@ -500,9 +493,52 @@ def run_case(label: str, source: str, task: dict, image_id: str, output: Path, t
             except Exception as exc:
                 cleanup["error_type"] = type(exc).__name__
             if not cleanup["removed"]:
-                record["passed"] = False
+                record["execution_ok"] = False
             record["cleanup"] = cleanup
-            dump(case_dir / "check.json", record)
+            dump(case_dir / "execution.json", record)
+    return record, stdout
+
+
+
+def run_case(label: str, source: str, task: dict, image_id: str, output: Path, timeout: float) -> dict:
+    """Keep the original HumanEval/0 preset smoke verdict separate from execution."""
+    arguments = task["base_input"] + task["plus_input"]
+    expected = [oracle(item) for item in arguments]
+    try:
+        record, stdout = execute_isolated(label, source, task["entry_point"], arguments,
+                                         image_id, output, timeout)
+    except KeyboardInterrupt:
+        # Preserve the smoke's original interruption artifact in addition to
+        # the reusable execution evidence written after exact-owner cleanup.
+        record = json.loads((output / label / "execution.json").read_text())
+        record["passed"] = False
+        dump(output / label / "check.json", record)
+        raise
+    record.update({"passed": False, "base_inputs": len(task["base_input"]),
+                   "plus_inputs": len(task["plus_input"])})
+    try:
+        if not record["execution_ok"]:
+            return record
+        if record["output_limit_exceeded"]:
+            record["passed"] = label == f"{record['output_limit_stream']}-flood"
+            record["judge_result"] = "output_limit"
+        elif record["timed_out"]:
+            record["passed"] = label == "infinite-loop"
+            record["judge_result"] = "timeout"
+        else:
+            rows = [json.loads(line) for line in stdout.splitlines() if line.strip()]
+            if len(rows) != len(expected) or any(row.get("index") != index for index, row in enumerate(rows)):
+                raise ValueError("worker returned incomplete or forged result sequence")
+            correct = [row.get("value") is value and "error_type" not in row for row, value in zip(rows, expected)]
+            record["correct_inputs"] = sum(correct)
+            record["judge_result"] = "pass" if all(correct) else "fail"
+            record["passed"] = (label == "canonical" and all(correct)) or (label == "known-wrong" and not all(correct))
+            if record["worker_cli_exit_code"] != 0:
+                record["passed"] = False
+    except Exception as exc:
+        record["error"] = f"{type(exc).__name__}: {exc}"
+    finally:
+        dump(output / label / "check.json", record)
     return record
 
 

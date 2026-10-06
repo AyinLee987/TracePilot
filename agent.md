@@ -126,7 +126,7 @@ TracePilot 计划成为一个基于任务特征与 Agent 执行轨迹进行路�
 
 用户已授权夜间小实验及 Pi 等开源 Agent 的本地试跑，使用当前 Agent 项目的 API key；余额不足时报告，不自动购买额度。研究在独立 worktree / 分支 `research/acl-feasibility-20261005` 进行，原 `main@dadab3f` 不修改、不合并、不强推。10 月 5 日夜间批次已结束，当时上限 200 元不额外结转；总研究预算约 2,000 元，当前批次以执行计划为准。原始输出及凭证留在忽略目录。Pi 与 mini-SWE-agent 已隔离部署并完成真实小任务；mini 首轮适配器提示词问题导致未正常提交，修正后通过，首轮记录保留。两框架加 E1 共 207 次请求，峰值价格估算约 0.163 元；无未知计费或余额不足报错。详细范围、审查和结果见 [`docs/research/open-agent-plan.md`](docs/research/open-agent-plan.md)。
 
-**当前执行：** 用户已授权先完善 README，再从 Timely Machine 复现开始并按计划开展实验。R0 已完成，R1 原提示真实 Zork1 已运行；R2 首个完整 24 条计划在第一条 Pro / delay=0 / 32 步后按规则停止，余下 23 条未执行。原 R1 有 DSML/多调用不兼容，R2 前六条输出缺闭合标签；两次技术证据完整但均不能用于时间校准或模型排名。首批 R2 花费估算 0.095050560 元，当前先导累计 0.103705632 元，所有实验合计 0.266216928 元，未知费用为零，均非账单。保留失败矩阵完整分母、账本和原始产物；按预写规则最多一次重新冻结全部 8 条校准+16 条 timed 的修订，不拼接成功片段。`single-json-v2` 的 6 项真实 Jericho/fake HTTP 检查通过；预算迁移 26 项聚焦检查已通过，实际 Claude Opus 5.5 审查无代码阻断；真实 prepare 的 opening/封存及零 API dry 仍须核验后激活付费。首版批次历史验证为 43 项 fixture、30 项 transport、19 项 runner、24 条真实环境离线集成，不能替新改动背书。完整论文数值复现仍缺作者 checkpoint。阶段 R0–R4 及边界见 [执行计划](docs/research/timely-reproduction.md)，数值见 [R1](research/results/timely-r1.json)与 [R2 首批](research/results/timely-r2-small-v1.json)。这不改变 P1–P5 运行时能力状态。
+**当前执行：** R0 已完成；R1 原提示及 R2 的 v1/v2 真实轨迹均保留。v1 与唯一允许的 v2 完整 24 条计划均在首条 Pro32 校准后停止，分别剩余 23 条未执行；v2 虽所有标签闭合，第 24 条 JSON 损坏，31 次工具执行得分 40/350，仍不能用于校准。禁止继续改提示试到成功、拼接成功片段或据此排名。v2 新增估算 0.108484288 元，当前先导累计 0.212189920 元，所有实验估算合计 0.374701216 元，未知费用为零，所属进程退出证据闭合；均非账单。迁移 26 项、提示 6 项离线检查和实际 Claude Opus 5.5 审查通过，真实 prepare/activate/dry 门槛也已核验。R2 有效曲线及四游戏仍未完成；独立推进 [R3 开发协议](docs/research/coding-pilot.md)，但付费前必须正式迁移同一累计 200 元预算，不能另开额度。原作者 checkpoint 仍缺失。阶段与边界见 [执行计划](docs/research/timely-reproduction.md)，结果见 [R1](research/results/timely-r1.json)、[v1](research/results/timely-r2-small-v1.json)、[v2](research/results/timely-r2-small-v2.json)。这不改变 P1–P5 运行时能力状态。
 
 同日按用户要求补查同期工作，文献表扩充至 25 篇：AutoLab 已覆盖真实工程轨迹与 pi 等框架对照，AgentOpt 已有跨框架记录和模型组合搜索；EdgeBench 已有同任务集早段曲线预测后段的实验。候选贡献继续限定为决策时可得特征对新任务、变化延迟下共同 deadline 选型的额外预测价值，不能把轨迹分析、框架扩展或曲线外推概括为无人研究。
 
@@ -134,7 +134,7 @@ TracePilot 计划成为一个基于任务特征与 Agent 执行轨迹进行路�
 
 补充核验将文献表扩充至 32 篇：Apple/EPFL 的 MLE harness 研究已有墙钟时间曲线和代码检查点分析，其附录在改变告知预算及回合末剩余时间提醒时观察到同时间点的 oracle ceiling 差异。后续对看到预算的策略应独立运行不同 deadline 条件；主结果使用实际选择的提交，隐藏最优候选仅作为上界。本轮只补充文献和实验设计约束，不改变付费实验或代码审查状态。
 
-R3 编程环境准备已完成固定 HumanEval/0 的零模型检查：5 项真实容器场景及 9 项增量验证通过，实际 Claude Opus 5.5 两轮审查无该范围内阻断。当前只覆盖预设候选、资源隔离和清理，尚非完整 EvalPlus、任意模型代码 judge 或共同 deadline 实验。来源、已知边界和下一步见 [编程环境](docs/research/coding-environment.md)。
+R3 编程准备现支持固定 8 个开发题的公开/隐藏判定与 16 槽独立首稿流程。初版 27 项 Docker 判定、11 项修订检查、6 项 fake HTTP 场景及 22 容器的生成后评分集成通过；均为零模型验证，各版本证据单列。实际 Claude Opus 5.5 对当前准备功能无提交阻断；真实付费前仍要补退出码/容器提前消失分类、整批预留预检和共享预算准入。原 /0 smoke 证据保留，未把准备写成完整 EvalPlus、共同 deadline 或模型能力结果。来源与边界见 [编程环境](docs/research/coding-environment.md)和 [开发协议](docs/research/coding-pilot.md)。
 
 **下一步：** 先跑通官方 evaluator 的真实任务路径并测量两模型延迟曲线，再推进共同 deadline、原生/共同状态、盲重采样/反馈修复及留出预测；各付费批次前冻结范围与费用上限。工程按实验需求补足记录和 Provider attempt 边界。Agent 内部状态不迁移为 Langfuse schema；完整 router 和通用 checkpoint 不作为先导前置条件。
 

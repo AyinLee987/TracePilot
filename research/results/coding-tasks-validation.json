@@ -1,0 +1,520 @@
+{
+  "schema": 2,
+  "scope": "eight selected development tasks; preparation for R3; not full EvalPlus or a common-deadline experiment",
+  "model_calls": 0,
+  "api_spend_cny": "0",
+  "heldout_used": false,
+  "source_summary_sha256": "329f9022382004e58a6c503e176ddada200679689c285de66649dd26bf6e0a66",
+  "script_sha256": {
+    "coding_tasks_e2e.py": "dd00bb2f7878a312a6ac739646c98dab8b3b3c335a589a8ea9c2d8676d611ed9",
+    "coding_tasks.py": "b28d31b6fa3889b21c9f0755289c6bd7ffcf9a500c8f437521f939ca1d03cdec",
+    "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68"
+  },
+  "passed_checks": 27,
+  "cases": [
+    {
+      "name": "public-canonical-55",
+      "task_id": "HumanEval/55",
+      "mode": "public",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 3,
+      "candidate_passed": 3,
+      "passed": true
+    },
+    {
+      "name": "hidden-canonical-55",
+      "task_id": "HumanEval/55",
+      "mode": "hidden",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 50,
+      "candidate_passed": 50,
+      "passed": true
+    },
+    {
+      "name": "public-canonical-32",
+      "task_id": "HumanEval/32",
+      "mode": "public",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 2,
+      "candidate_passed": 2,
+      "passed": true
+    },
+    {
+      "name": "hidden-canonical-32",
+      "task_id": "HumanEval/32",
+      "mode": "hidden",
+      "expected_status": "fail",
+      "actual_status": "fail",
+      "checked": 888,
+      "candidate_passed": 881,
+      "passed": true
+    },
+    {
+      "name": "public-canonical-7",
+      "task_id": "HumanEval/7",
+      "mode": "public",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 2,
+      "candidate_passed": 2,
+      "passed": true
+    },
+    {
+      "name": "hidden-canonical-7",
+      "task_id": "HumanEval/7",
+      "mode": "hidden",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 182,
+      "candidate_passed": 182,
+      "passed": true
+    },
+    {
+      "name": "public-canonical-56",
+      "task_id": "HumanEval/56",
+      "mode": "public",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 4,
+      "candidate_passed": 4,
+      "passed": true
+    },
+    {
+      "name": "hidden-canonical-56",
+      "task_id": "HumanEval/56",
+      "mode": "hidden",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 1012,
+      "candidate_passed": 1012,
+      "passed": true
+    },
+    {
+      "name": "public-canonical-16",
+      "task_id": "HumanEval/16",
+      "mode": "public",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 2,
+      "candidate_passed": 2,
+      "passed": true
+    },
+    {
+      "name": "hidden-canonical-16",
+      "task_id": "HumanEval/16",
+      "mode": "hidden",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 1005,
+      "candidate_passed": 1005,
+      "passed": true
+    },
+    {
+      "name": "public-canonical-99",
+      "task_id": "HumanEval/99",
+      "mode": "public",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 4,
+      "candidate_passed": 4,
+      "passed": true
+    },
+    {
+      "name": "hidden-canonical-99",
+      "task_id": "HumanEval/99",
+      "mode": "hidden",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 715,
+      "candidate_passed": 715,
+      "passed": true
+    },
+    {
+      "name": "public-canonical-18",
+      "task_id": "HumanEval/18",
+      "mode": "public",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 3,
+      "candidate_passed": 3,
+      "passed": true
+    },
+    {
+      "name": "hidden-canonical-18",
+      "task_id": "HumanEval/18",
+      "mode": "hidden",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 1004,
+      "candidate_passed": 1004,
+      "passed": true
+    },
+    {
+      "name": "public-canonical-31",
+      "task_id": "HumanEval/31",
+      "mode": "public",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 7,
+      "candidate_passed": 7,
+      "passed": true
+    },
+    {
+      "name": "hidden-canonical-31",
+      "task_id": "HumanEval/31",
+      "mode": "hidden",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 167,
+      "candidate_passed": 167,
+      "passed": true
+    },
+    {
+      "name": "public-example-memorizer",
+      "task_id": "HumanEval/55",
+      "mode": "public",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 3,
+      "candidate_passed": 3,
+      "passed": true
+    },
+    {
+      "name": "hidden-example-memorizer",
+      "task_id": "HumanEval/55",
+      "mode": "hidden",
+      "expected_status": "fail",
+      "actual_status": "fail",
+      "checked": 50,
+      "candidate_passed": 7,
+      "passed": true
+    },
+    {
+      "name": "wrong-list",
+      "task_id": "HumanEval/7",
+      "mode": "public",
+      "expected_status": "fail",
+      "actual_status": "fail",
+      "checked": 2,
+      "candidate_passed": 1,
+      "passed": true
+    },
+    {
+      "name": "wrong-root",
+      "task_id": "HumanEval/32",
+      "mode": "public",
+      "expected_status": "fail",
+      "actual_status": "fail",
+      "checked": 2,
+      "candidate_passed": 0,
+      "passed": true
+    },
+    {
+      "name": "alternative-valid-root",
+      "task_id": "HumanEval/32",
+      "mode": "public",
+      "expected_status": "pass",
+      "actual_status": "pass",
+      "checked": 2,
+      "candidate_passed": 2,
+      "passed": true
+    },
+    {
+      "name": "clean-state-first",
+      "task_id": "HumanEval/55",
+      "mode": "public",
+      "expected_status": "fail",
+      "actual_status": "fail",
+      "checked": 3,
+      "candidate_passed": 0,
+      "passed": true
+    },
+    {
+      "name": "clean-state-second",
+      "task_id": "HumanEval/55",
+      "mode": "public",
+      "expected_status": "fail",
+      "actual_status": "fail",
+      "checked": 3,
+      "candidate_passed": 0,
+      "passed": true
+    },
+    {
+      "name": "stdout-flood",
+      "task_id": "HumanEval/55",
+      "mode": "public",
+      "expected_status": "fail",
+      "actual_status": "fail",
+      "checked": 0,
+      "candidate_passed": 0,
+      "passed": true
+    },
+    {
+      "name": "stderr-flood",
+      "task_id": "HumanEval/55",
+      "mode": "public",
+      "expected_status": "fail",
+      "actual_status": "fail",
+      "checked": 0,
+      "candidate_passed": 0,
+      "passed": true
+    },
+    {
+      "name": "infinite-loop",
+      "task_id": "HumanEval/55",
+      "mode": "public",
+      "expected_status": "timeout",
+      "actual_status": "timeout",
+      "checked": 0,
+      "candidate_passed": 0,
+      "passed": true
+    },
+    {
+      "name": "hidden-candidate-input-echo",
+      "task_id": "HumanEval/32",
+      "mode": "hidden",
+      "expected_status": "fail",
+      "actual_status": "fail",
+      "checked": 888,
+      "candidate_passed": 0,
+      "passed": true
+    }
+  ],
+  "static_checks": [
+    "three_sources_parse",
+    "heldout_ids_rejected_without_execution",
+    "public_allowlist_and_prompt_provenance",
+    "official_numeric_root_and_exact_equality_boundaries",
+    "candidate_protocol_cannot_supply_verdict_fields",
+    "source_size_bounded_before_execution",
+    "candidate_timeout_output_failure_and_infra_are_distinct"
+  ],
+  "boundaries": {
+    "scope": "eight development tasks; no held-out task execution; not a full R3 experiment",
+    "timeouts": "worker-batch wall time only; not EvalPlus per-input limits or the future common agent deadline",
+    "outputs": "finite JSON-native scalar/list values; no arbitrary object deserialization",
+    "hidden_visibility": "aggregate verdict only; raw hidden worker evidence is parent-only",
+    "state": "fresh container/module per evaluation; module state persists between inputs as in EvalPlus",
+    "security": "worker and candidate share a container/process; protocol is not resistant to introspective forgery",
+    "infrastructure": "verified setup/cleanup failures are infra; nonzero candidate-worker exit is fail unless Docker reports execution setup failure",
+    "timing": "reference generation and Docker startup are recorded separately; this bridge does not make deadline-comparison claims"
+  },
+  "legacy_smoke": {
+    "summary_sha256": "45962f3d594202da74f1e94e79cae94ce7273c01af8c3f57710c6df6e92eab66",
+    "passed": true,
+    "case_count": 5,
+    "interrupt": {
+      "passed": true,
+      "cli_exit": 2,
+      "evidence": ".local/coding-research-env/task-checks/94e8cde121324b1089f3b848cddedfa3",
+      "execution": {
+        "name": "candidate",
+        "container": "tracepilot-coding-ad46254b4d3b4b8a85ee5a4422c993c8",
+        "source_sha256": "374cf847438c02ddbbbecd6f616c4f4aa840e5bf7656babb95773eb0ae3ee1e7",
+        "execution_ok": false,
+        "candidate_started": true,
+        "input_count": 3,
+        "expected_results_sent_to_worker": false,
+        "worker_header_fields": [
+          "source",
+          "entry_point"
+        ],
+        "worker_case_fields": [
+          "index",
+          "arguments"
+        ],
+        "worker_sha256": "659083fbd54d2e3483aca095563cec606edb1ce6c53eaec41b11c9dbe76a1670",
+        "limits_verified_before_code": true,
+        "timeout_s": 30.0,
+        "timed_out": false,
+        "output_limit_exceeded": false,
+        "output_limits_bytes": {
+          "stdout": 262144,
+          "stderr": 65536
+        },
+        "worker_cli_reaped": true,
+        "worker_cli_pid": 5897,
+        "worker_io_error_type": "KeyboardInterrupt",
+        "worker_cli_exit_code": -9,
+        "worker_wall_s": 0.5089922450000017,
+        "output_bytes_observed": {
+          "stdout": 0,
+          "stderr": 0
+        },
+        "output_bytes_retained": {
+          "stdout": 0,
+          "stderr": 0
+        },
+        "error": "KeyboardInterrupt",
+        "cleanup": {
+          "attempted": true,
+          "removed": true,
+          "auto_remove_fallback": true,
+          "interrupt_policy": "ignore SIGINT during bounded exact-owner cleanup",
+          "remove_exit_code": 0
+        }
+      }
+    },
+    "observed_source_sha256": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+    "hash_provenance": "Hash reported at completion and matched both Claude snapshots; the original regression summary did not embed a source hash."
+  },
+  "known_numeric_limitation": "HumanEval/32 canonical: 881/888 under fixed official polynomial residual comparison. A guarded fixture also failed 3 cases and was archived; no further hidden-input solver tuning. No universal solvability claim.",
+  "earlier_failed_checks_preserved": [
+    "382653ddf9b44fed8e06d235fd9c3ac4",
+    "5a998224cab943eaa1f5284c1f2c6100"
+  ],
+  "initial_scope_note": "The 27-case suite applies to the initial hashes above; subsequent changes are covered by the explicit delta below.",
+  "delta": {
+    "source_summary_sha256": "363fd2498a3c70cd8b6b66494b5c54b11666ffee02462e22f487ff6d9c419e29",
+    "script_sha256": {
+      "coding_tasks_e2e.py": "fcf3f4446ec30525c4305d838126be70877fbc7cd184e3d0c904c46fe48a9542",
+      "coding_tasks.py": "47c65cda5b0b94718296410eb8f920e8f11effb96e69cab5642a2dd54cd573b7",
+      "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68"
+    },
+    "passed_checks": 11,
+    "cases": [
+      {
+        "name": "delta-valid",
+        "task_id": "HumanEval/55",
+        "mode": "public",
+        "expected_status": "pass",
+        "actual_status": "pass",
+        "checked": 3,
+        "candidate_passed": 3,
+        "passed": true
+      },
+      {
+        "name": "delta-before-ready",
+        "task_id": "HumanEval/55",
+        "mode": "public",
+        "expected_status": "infra",
+        "actual_status": "infra",
+        "checked": 0,
+        "candidate_passed": 0,
+        "passed": true
+      },
+      {
+        "name": "delta-runtime-error",
+        "task_id": "HumanEval/55",
+        "mode": "public",
+        "expected_status": "fail",
+        "actual_status": "fail",
+        "checked": 3,
+        "candidate_passed": 0,
+        "passed": true
+      },
+      {
+        "name": "delta-custom-error",
+        "task_id": "HumanEval/55",
+        "mode": "public",
+        "expected_status": "fail",
+        "actual_status": "fail",
+        "checked": 3,
+        "candidate_passed": 0,
+        "passed": true
+      },
+      {
+        "name": "delta-init-error",
+        "task_id": "HumanEval/55",
+        "mode": "public",
+        "expected_status": "fail",
+        "actual_status": "fail",
+        "checked": 0,
+        "candidate_passed": 0,
+        "passed": true
+      },
+      {
+        "name": "delta-surrogate",
+        "task_id": "HumanEval/55",
+        "mode": "public",
+        "expected_status": "fail",
+        "actual_status": "fail",
+        "checked": 3,
+        "candidate_passed": 0,
+        "passed": true
+      },
+      {
+        "name": "delta-exit",
+        "task_id": "HumanEval/55",
+        "mode": "public",
+        "expected_status": "fail",
+        "actual_status": "fail",
+        "checked": 0,
+        "candidate_passed": 0,
+        "passed": true
+      },
+      {
+        "name": "delta-timeout",
+        "task_id": "HumanEval/55",
+        "mode": "public",
+        "expected_status": "timeout",
+        "actual_status": "timeout",
+        "checked": 0,
+        "candidate_passed": 0,
+        "passed": true
+      },
+      {
+        "name": "delta-stderr-cap",
+        "task_id": "HumanEval/55",
+        "mode": "public",
+        "expected_status": "fail",
+        "actual_status": "fail",
+        "checked": 0,
+        "candidate_passed": 0,
+        "passed": true
+      },
+      {
+        "name": "delta-root-input-mutation",
+        "task_id": "HumanEval/32",
+        "mode": "public",
+        "expected_status": "fail",
+        "actual_status": "fail",
+        "checked": 2,
+        "candidate_passed": 0,
+        "passed": true
+      },
+      {
+        "name": "delta-hidden-error",
+        "task_id": "HumanEval/32",
+        "mode": "hidden",
+        "expected_status": "fail",
+        "actual_status": "fail",
+        "checked": 888,
+        "candidate_passed": 0,
+        "passed": true
+      }
+    ],
+    "static_checks": [
+      "three_sources_parse",
+      "heldout_ids_rejected_without_execution",
+      "public_allowlist_and_prompt_provenance",
+      "official_numeric_root_and_exact_equality_boundaries",
+      "candidate_protocol_cannot_supply_verdict_fields",
+      "source_size_bounded_before_execution",
+      "candidate_timeout_output_failure_and_infra_are_distinct"
+    ],
+    "fake_checks": [
+      "pre_ready_infra_vs_post_ready_failure_timeout_output",
+      "source_encoding_syntax_and_directory_collisions_fail_before_docker",
+      "safe_initialization_diagnostic_and_lossless_surrogate_result",
+      "root_atol_matches_public_but_original_vs_mutated_input_policy_differs"
+    ],
+    "boundaries": {
+      "scope": "eight development tasks; no held-out task execution; not a full R3 experiment",
+      "timeouts": "worker-batch wall time only; not EvalPlus per-input limits or the future common agent deadline",
+      "outputs": "finite JSON-native scalar/list values; no arbitrary object deserialization",
+      "hidden_visibility": "aggregate verdict only; raw hidden worker evidence is parent-only",
+      "state": "each checker call requires a fresh empty directory; fresh container/module per evaluation; module state persists between inputs",
+      "security": "worker and candidate share a container/process; protocol is not resistant to introspective forgery",
+      "infrastructure": "missing pre-candidate ready handshake or verified setup/cleanup failures are infra; after ready, nonzero exit is candidate failure unless Docker reports ambiguous execution failure",
+      "public_diagnostics": "parent compile-only syntax location/message and allowlisted builtin exception classes; no exception messages from candidate execution",
+      "input_mutation": "comparisons use original parent inputs; pinned EvalPlus find_zero instead checks the candidate-mutated in-worker copy; not full evaluator equivalence",
+      "timing": "reference generation and Docker startup are recorded separately; this bridge does not make deadline-comparison claims"
+    },
+    "model_calls": 0,
+    "api_spend_cny": "0"
+  }
+}

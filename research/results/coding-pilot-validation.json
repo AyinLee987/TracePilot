@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "scope": "16-slot independent first-draft preparation; fake HTTP with real Docker checks, not a model capability or deadline experiment",
+  "model_calls_actual": 0,
+  "api_spend_cny_actual": "0",
+  "source_summary_sha256": "7faf295d7527eb183aeebd8b8fa36d10f705b0425e9d41ebdd5e9deba9e64932",
+  "code_sha256": {
+    "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+    "coding_tasks.py": "47c65cda5b0b94718296410eb8f920e8f11effb96e69cab5642a2dd54cd573b7",
+    "coding_tasks_e2e.py": "fcf3f4446ec30525c4305d838126be70877fbc7cd184e3d0c904c46fe48a9542",
+    "coding_pilot.py": "d43f9441601e5d54d9de5f573f6d32ca4076414e658c5131036460822568b297",
+    "coding_pilot_e2e.py": "9786a27172e672d479465838b5a2fb271b69b35dac8bd4e994f0748733499711"
+  },
+  "passed_scenarios": 6,
+  "cases": [
+    {
+      "name": "mixed_16",
+      "passed": true,
+      "denominator": 16,
+      "parsed": 8,
+      "parse_failed": 8
+    },
+    {
+      "name": "missing-usage",
+      "passed": true,
+      "denominator": 16,
+      "synthetic_dispatches": 1,
+      "stop_reason": "unknown_usage"
+    },
+    {
+      "name": "http-error",
+      "passed": true,
+      "denominator": 16,
+      "synthetic_dispatches": 1,
+      "stop_reason": "http_status_error"
+    },
+    {
+      "name": "budget-refused",
+      "passed": true,
+      "denominator": 16,
+      "synthetic_dispatches": 0,
+      "stop_reason": "budget_exhausted"
+    },
+    {
+      "name": "paid_cli_refused",
+      "passed": true,
+      "child_exit": 2
+    },
+    {
+      "name": "cancelled_generation_retains_16_and_closes",
+      "passed": true
+    }
+  ],
+  "parser_checks": [
+    "syntax_only_never_executes_candidate",
+    "public_scaffold_only",
+    "fixed_format_policy",
+    "surrogate_and_truncation_rejected",
+    "forged_or_missing_paid_admission_refused"
+  ],
+  "verification": {
+    "summary_sha256": "7faf295d7527eb183aeebd8b8fa36d10f705b0425e9d41ebdd5e9deba9e64932",
+    "code_sha256": {
+      "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+      "coding_tasks.py": "47c65cda5b0b94718296410eb8f920e8f11effb96e69cab5642a2dd54cd573b7",
+      "coding_tasks_e2e.py": "fcf3f4446ec30525c4305d838126be70877fbc7cd184e3d0c904c46fe48a9542",
+      "coding_pilot.py": "d43f9441601e5d54d9de5f573f6d32ca4076414e658c5131036460822568b297",
+      "coding_pilot_e2e.py": "9786a27172e672d479465838b5a2fb271b69b35dac8bd4e994f0748733499711"
+    },
+    "executions": 22,
+    "cleanup_removed": 22,
+    "worker_cli_reaped": 22,
+    "tracepilot_coding_containers_remaining": [],
+    "generation_closed_before_public": true,
+    "public_closed_before_hidden": true,
+    "suite_passed": true,
+    "model_calls_actual": 0,
+    "api_spend_cny_actual": "0"
+  },
+  "paid_admission": "refused until the existing cumulative study admits a coding stage"
+}
