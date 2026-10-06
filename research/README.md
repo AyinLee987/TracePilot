@@ -106,3 +106,22 @@ python -B research/timely_batch.py run --pilot-root .local/timely-r2-small-v2-pa
 Only after the dry check, use the existing paid `run` command with the provider env file and `--max-runs 4`. The genesis registry stays unchanged; a hash-linked transition identifies the sole active plan. Known cost and unresolved liabilities carry forward separately. Old files must stay sealed. The shared study lock serializes activation and paid execution. A second failed-small revision is rejected. `extension-basis` only audits a completed stage for a named subsequent executor; it does not implement or run four-game or coding experiments.
 
 Keep frozen Timely code unchanged until the active matrix is terminal. Later executors require a reviewed code-version migration. If activation errors after publication, inspect the actual study head before retrying. Retain the review artifact; its hash is checked at execution. Keep outer clock observations outside sealed batch roots. Aggregate by `(pilot_id, run_id)` and distinguish this matrix's spend from cumulative study spend.
+
+### Coding first-draft admission
+
+The v2 matrix stopped after its first row with invalid tool JSON; the one permitted revision is exhausted. Coding uses the same CNY 200 study and preserves both stopped matrices. After review, prepare the fixed 16-slot plan in the pinned WSL Python environment, then use `timely_study.py prepare-coding16` with the terminal v2 parent and archived historical source manifest. Activate the returned plan digest with the completed review artifact before using `coding_pilot.py --execute-paid --pilot-root PATH --env-file PATH --evaluate`. Preparation and activation send no model requests.
+
+The study reserves CNY 3.20 for the whole batch; the HTTP transport remains the only per-request accountant. All 16 request reservations are checked before dispatch. A failed or uncertain request stops further generation and retains liability. Once HTTP closure is confirmed, received candidates may be evaluated offline even if billing remains unresolved. An admitted batch cannot be executed twice. See the [frozen development protocol](../docs/research/coding-pilot.md); first drafts are not yet feedback-iteration or common-deadline experiments.
+
+Plan preparation, study preparation, activation and execution must all use the same pinned WSL interpreter and Linux path form. Confirm dotenv, credential parsing and all request reservations before activation; no network request is needed for these checks. Later stages require an explicit successor that reads this batch's `coding-ledger.jsonl` and carries both settlements and liabilities into the same study. The present admission does not authorize an extension or reset the budget.
+
+### Descriptive Timely trajectory
+
+[Redacted step records](results/timely-trajectory-diagnostic.json) distinguish error feedback, tool execution and score changes across the three real runs. Rebuild the [single-run diagnostic](figures/timely-v2-diagnostic.png) in a separate plotting environment:
+
+```sh
+python -m pip install -r research/requirements-plot.txt
+python research/plot_timely_diagnostic.py
+```
+
+The plot uses response index, not elapsed time. It shows a valid tool call after error feedback without an immediate score gain; it cannot identify feedback causality, prompt effects, or model rankings. The companion JSON records source and image hashes.

@@ -1,0 +1,16 @@
+# Coding first-draft study admission review
+
+Scope: terminal Timely code-version migration, one fixed 16-draft coding batch under the existing CNY 200 study, the judge corrections, and the descriptive trajectory plot. This is not approval of a complete common-deadline experiment or an extension batch.
+
+The actual Claude CLI review used `claude-opus-5-5`, returned exit code 0 and `is_error=false`, without a cost or turn cap. It found no submission blocker and required a pre-execution configuration check. It did not run the supplied tests. Raw review and file hashes are retained under `.local/overnight/coding-paid-admission-review-20261006.*`.
+
+## Disposition
+
+- **Zero-dispatch configuration failure:** retain the conservative one-attempt accounting policy. Before real admission, the same WSL interpreter successfully imported dotenv and validated the authorized key format without displaying it. The exact transport request preflight accepted all 16 slots with total reservation CNY 1.03431936, zero dispatches; native WSL Docker and the pinned image were also verified. These checks do not prove provider balance or response compatibility.
+- **Cancellation and completion status:** targeted corrections are complete and verified. Generation errors must not report successful completion; cancellation must propagate after HTTP closure, accounting and summary persistence.
+- **Local delivery timeout after transport completion:** stop the remaining slots on a transport/delivery exception, even if the transport has already recorded that request's usage. Preserve known costs and the full denominator.
+- **Final evidence identity:** the earlier `oqonpdlo` fixture was superseded by `vpzy0o9e`, whose integrated hashes match the final study, pilot, transport, judge and batch. The paid-focus Docker run precedes CLI/policy-only changes; final lightweight and study runs are recorded separately. No full-suite rerun is claimed.
+- **Operational boundaries:** documentation now requires the same WSL interpreter and path form for all admission steps. Later stages must carry the coding ledger into the same study; no successor executor is implied by this feature.
+- **Plot labels:** assertions now bind tool count, maximum score and the annotated score to the source records. Root rendered and visually inspected the PNG; the graph remains descriptive, without model ranking or causal claims.
+
+The final cancellation/timeout delta passed three focused fake checks in WSL. A new 21-case joint study run (`stuw2atz`) also passed with the final pilot hash `fdd487d82c0464ae5b73aaf3fbf2b00d3926e6484c1d9020057b3a281de780f1`; the E2E script hash is `1c7845b93066c7f6bae9ff8aaff25797b51769b1d0d327fcd7e5b54a38adea17`. The actual final Claude CLI review (`coding-paid-final-delta-review-20261006.*`) returned exit 0, `is_error=false`, model `claude-opus-5-5`, and no code blocker for submission or the first real batch. Preparation and activation have not yet occurred; they must follow the commit and freeze these reviewed bytes. Hashes and version-separated evidence are in [validation](../../research/results/coding-admission-validation.json). These checks made zero actual model calls. Remaining operational limits: skipped rows retain `generation_not_reached`; synchronous judging may delay the first Ctrl-C, while accounting has already closed.

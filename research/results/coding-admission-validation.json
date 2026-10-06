@@ -1,0 +1,362 @@
+{
+  "schema": 1,
+  "scope": "First 16 independent coding drafts admitted under existing cumulative CNY 200 study",
+  "model_calls_actual": 0,
+  "api_spend_cny_actual": "0",
+  "paid_execution_completed": false,
+  "evidence": {
+    "study_final": {
+      "source": ".local/coding-study-fixture-vpzy0o9e/summary.json",
+      "source_sha256": "cdfc282fdfcc74bebd6d28e4319d80097655caacfc4601a2f2f5987d17065e8d",
+      "status": "passed",
+      "check_count": 21,
+      "checks": [
+        "terminal_version_upgrade_requires_archived_source",
+        "old_code_cannot_execute_under_new_hash",
+        "two_failed_matrices_preserved_and_charged_once",
+        "unactivated_coding_cannot_reserve",
+        "fixed_3_20_reserved_before_http",
+        "single_study_lock_and_unforgeable_live_session",
+        "real_coding_generate_mock16_known_settlement",
+        "completed_batch_cannot_repeat",
+        "coding_does_not_reopen_timely_revision",
+        "recursive_ancestor_hash_guard",
+        "real_execute_admitted_known16",
+        "real_execute_admitted_second_unknown_preserves_first_candidate",
+        "unknown_whole_batch_liability_and_cleanup",
+        "overcap_whole_batch_liability_and_cleanup",
+        "partial_whole_batch_liability_and_cleanup",
+        "cancel_whole_batch_liability_and_cleanup",
+        "close-failure_whole_batch_liability_and_cleanup",
+        "missing-result_whole_batch_liability_and_cleanup",
+        "historical_source_tamper_refused",
+        "fixed_16_plan_cannot_cherry_pick",
+        "nonterminal_version_upgrade_refused"
+      ],
+      "code_sha256": {
+        "coding_study_fake_e2e.py": "01b40bf1a74fba6ec3d5df69d7bb8f8334b5157cecc19eecb2461579b0ef0a95",
+        "timely_study.py": "e816180264828e3e0de36aaa05aee5f45df39be3d4988e5c72d47ed289bb9239"
+      },
+      "integrated_code_sha256": {
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "coding_pilot.py": "2130db97d7c221c8d7e900ec0402fb6004d974bb364d425de5fd1abbf45703f4",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "timely_batch.py": "d9bbdab7e9fc6a961cbfc489f9e30b6bd50333437fd73f26a7c004af6a19d296",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d"
+      },
+      "provider_calls": 0,
+      "judge_containers": 0
+    },
+    "pilot_paid_focus": {
+      "source": ".local/coding-research-env/first-draft-e2e/b7d2fbf73163494495e85558fd8e7d7b/summary.json",
+      "source_sha256": "5bea5142ca9d2f028821ca9cd16762fc5c8c81895e8c0f288512cfe2925daf11",
+      "passed": true,
+      "cases": [
+        {
+          "name": "mixed_16",
+          "passed": true,
+          "denominator": 16,
+          "parsed": 8,
+          "parse_failed": 8
+        },
+        {
+          "name": "missing-usage",
+          "passed": true,
+          "denominator": 16,
+          "synthetic_dispatches": 1,
+          "stop_reason": "unknown_usage"
+        },
+        {
+          "name": "http-error",
+          "passed": true,
+          "denominator": 16,
+          "synthetic_dispatches": 1,
+          "stop_reason": "http_status_error"
+        },
+        {
+          "name": "budget-refused",
+          "passed": true,
+          "denominator": 16,
+          "synthetic_dispatches": 0,
+          "stop_reason": null
+        },
+        {
+          "name": "paid_cli_refused",
+          "passed": true,
+          "child_exit": 2
+        },
+        {
+          "name": "cancelled_generation_retains_16_and_closes",
+          "passed": true
+        },
+        {
+          "name": "short_timeout_first_slot_only_unknown_retained",
+          "passed": true
+        },
+        {
+          "name": "unfit_final_slot_prevents_every_dispatch",
+          "passed": true
+        },
+        {
+          "name": "response_shape_not_python_parse_failure",
+          "passed": true
+        },
+        {
+          "name": "closed_unknown_batch_scores_received_candidate_only",
+          "passed": true,
+          "executions_cleaned": 3
+        }
+      ],
+      "scripts_sha256": {
+        "coding_pilot.py": "1258e12987ce179e56af7bf91dc51cd5ff5a6a58f72f1b511926d53217bfac12",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d"
+      },
+      "parser_checks": [
+        "syntax_only_never_executes_candidate",
+        "public_scaffold_only",
+        "fixed_format_policy",
+        "surrogate_and_truncation_rejected",
+        "provider_shape_distinct_from_python_error",
+        "forged_or_missing_paid_admission_refused"
+      ],
+      "model_calls_actual": 0,
+      "api_spend_cny_actual": "0",
+      "blocked_network_attempts": 0
+    },
+    "pilot_final_cli_policy": {
+      "source": ".local/coding-research-env/first-draft-e2e/508c97f799d246d193a63b60147bd265/summary.json",
+      "source_sha256": "b6bc18ece7062a85abe3b7d0b1e567d61b169c63e842348ca27d921653bd6eda",
+      "passed": true,
+      "cases": [
+        {
+          "name": "mixed_16",
+          "passed": true,
+          "denominator": 16,
+          "parsed": 8,
+          "parse_failed": 8
+        },
+        {
+          "name": "missing-usage",
+          "passed": true,
+          "denominator": 16,
+          "synthetic_dispatches": 1,
+          "stop_reason": "unknown_usage"
+        },
+        {
+          "name": "http-error",
+          "passed": true,
+          "denominator": 16,
+          "synthetic_dispatches": 1,
+          "stop_reason": "http_status_error"
+        },
+        {
+          "name": "budget-refused",
+          "passed": true,
+          "denominator": 16,
+          "synthetic_dispatches": 0,
+          "stop_reason": null
+        },
+        {
+          "name": "paid_cli_refused",
+          "passed": true,
+          "child_exit": 2
+        },
+        {
+          "name": "cancelled_generation_retains_16_and_closes",
+          "passed": true
+        },
+        {
+          "name": "short_timeout_first_slot_only_unknown_retained",
+          "passed": true
+        },
+        {
+          "name": "unfit_final_slot_prevents_every_dispatch",
+          "passed": true
+        },
+        {
+          "name": "response_shape_not_python_parse_failure",
+          "passed": true
+        }
+      ],
+      "scripts_sha256": {
+        "coding_pilot.py": "2130db97d7c221c8d7e900ec0402fb6004d974bb364d425de5fd1abbf45703f4",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d"
+      },
+      "parser_checks": [
+        "syntax_only_never_executes_candidate",
+        "public_scaffold_only",
+        "fixed_format_policy",
+        "surrogate_and_truncation_rejected",
+        "provider_shape_distinct_from_python_error",
+        "forged_or_missing_paid_admission_refused"
+      ],
+      "model_calls_actual": 0,
+      "api_spend_cny_actual": "0",
+      "blocked_network_attempts": 0
+    },
+    "judge_delta": {
+      "source": ".local/coding-research-env/task-e2e/05067a0604314b0ca93d5784f27ce438/summary.json",
+      "source_sha256": "3436049decafdacc4442c0a2bbf5136dfb9b078b6187496327638d406292c654",
+      "passed": true,
+      "cases": [
+        {
+          "name": "judge-exit-126",
+          "task_id": "HumanEval/55",
+          "mode": "public",
+          "expected_status": "fail",
+          "actual_status": "fail",
+          "checked": 0,
+          "candidate_passed": 0,
+          "passed": true
+        },
+        {
+          "name": "judge-unsupported-tuple",
+          "task_id": "HumanEval/7",
+          "mode": "public",
+          "expected_status": "fail",
+          "actual_status": "fail",
+          "checked": 2,
+          "candidate_passed": 0,
+          "passed": true
+        }
+      ],
+      "script_sha256": {
+        "coding_tasks_e2e.py": "aed778610c45db44c9d888d44934aad950e41681dfe94cb05fbba47b73411567",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68"
+      },
+      "judge_delta_checks": [
+        "all_post_ready_exit_codes_fail_but_confirmed_early_container_loss_is_infra",
+        "unsupported_output_contract_is_distinct_from_candidate_typeerror",
+        "worker_and_parent_exception_allowlists_identical",
+        "zero_atol_and_recursive_exact_reference_scope_accepts_task7_strings"
+      ],
+      "model_calls": 0,
+      "api_spend_cny": "0"
+    },
+    "control_flow_delta": {
+      "source": ".local/coding-research-env/first-draft-e2e/1c54d98a72fd41ca8f44c097eb883327/summary.json",
+      "source_sha256": "775c55fede2729d5376c11c950b948b71597c642705a72bda4e4e2bdbee9ef7c",
+      "passed": true,
+      "model_calls_actual": 0,
+      "api_spend_cny_actual": "0",
+      "docker_requested": false,
+      "cases": [
+        {
+          "name": "known_completion_local_timeout_stops_remaining_15",
+          "passed": true,
+          "dispatches": 1,
+          "complete": 1,
+          "unknown": 0
+        },
+        {
+          "name": "cancelled_admitted_summary_unfinished",
+          "passed": true,
+          "cancellation_propagated": true,
+          "retained_rows": 16
+        },
+        {
+          "name": "generation-exception_admitted_summary_unfinished",
+          "passed": true,
+          "cancellation_propagated": false,
+          "retained_rows": 16
+        }
+      ],
+      "scripts_sha256": {
+        "coding_pilot.py": "fdd487d82c0464ae5b73aaf3fbf2b00d3926e6484c1d9020057b3a281de780f1",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d"
+      },
+      "study_session": "explicit_offline_stub",
+      "blocked_network_attempts": 0
+    },
+    "study_after_control_flow_delta": {
+      "source": ".local/coding-study-fixture-stuw2atz/summary.json",
+      "source_sha256": "0fc474f1f98a3d54c3143c2614b1043f60ea45add92caafcefa22f14497c79df",
+      "check_count": 21,
+      "checks": [
+        "terminal_version_upgrade_requires_archived_source",
+        "old_code_cannot_execute_under_new_hash",
+        "two_failed_matrices_preserved_and_charged_once",
+        "unactivated_coding_cannot_reserve",
+        "fixed_3_20_reserved_before_http",
+        "single_study_lock_and_unforgeable_live_session",
+        "real_coding_generate_mock16_known_settlement",
+        "completed_batch_cannot_repeat",
+        "coding_does_not_reopen_timely_revision",
+        "recursive_ancestor_hash_guard",
+        "real_execute_admitted_known16",
+        "real_execute_admitted_second_unknown_preserves_first_candidate",
+        "unknown_whole_batch_liability_and_cleanup",
+        "overcap_whole_batch_liability_and_cleanup",
+        "partial_whole_batch_liability_and_cleanup",
+        "cancel_whole_batch_liability_and_cleanup",
+        "close-failure_whole_batch_liability_and_cleanup",
+        "missing-result_whole_batch_liability_and_cleanup",
+        "historical_source_tamper_refused",
+        "fixed_16_plan_cannot_cherry_pick",
+        "nonterminal_version_upgrade_refused"
+      ],
+      "code_sha256": {
+        "coding_study_fake_e2e.py": "01b40bf1a74fba6ec3d5df69d7bb8f8334b5157cecc19eecb2461579b0ef0a95",
+        "timely_study.py": "e816180264828e3e0de36aaa05aee5f45df39be3d4988e5c72d47ed289bb9239"
+      },
+      "integrated_code_sha256": {
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "coding_pilot.py": "fdd487d82c0464ae5b73aaf3fbf2b00d3926e6484c1d9020057b3a281de780f1",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "timely_batch.py": "d9bbdab7e9fc6a961cbfc489f9e30b6bd50333437fd73f26a7c004af6a19d296",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d"
+      },
+      "judge_containers": 0,
+      "provider_calls": 0,
+      "status": "passed"
+    }
+  },
+  "version_note": "Historical suites retain their own versions. The final WSL control-flow delta has three fake cases; the final study joint run has 21 cases, including execute_admitted with MockHTTP and actual study accounting. No API or Docker calls occurred in these two final runs.",
+  "research_limits": [
+    "No real model quality result in these fixtures",
+    "No shared deadline or feedback repair loop yet",
+    "Selected-task bridge, not full EvalPlus equivalence"
+  ],
+  "current_source_sha256": {
+    "research/timely_study.py": "e816180264828e3e0de36aaa05aee5f45df39be3d4988e5c72d47ed289bb9239",
+    "research/timely_batch.py": "d9bbdab7e9fc6a961cbfc489f9e30b6bd50333437fd73f26a7c004af6a19d296",
+    "research/timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d",
+    "research/coding_pilot.py": "fdd487d82c0464ae5b73aaf3fbf2b00d3926e6484c1d9020057b3a281de780f1",
+    "research/coding_study_fake_e2e.py": "01b40bf1a74fba6ec3d5df69d7bb8f8334b5157cecc19eecb2461579b0ef0a95",
+    "research/coding_pilot_e2e.py": "1c7845b93066c7f6bae9ff8aaff25797b51769b1d0d327fcd7e5b54a38adea17",
+    "research/coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+    "research/coding_tasks_e2e.py": "aed778610c45db44c9d888d44934aad950e41681dfe94cb05fbba47b73411567",
+    "research/plot_timely_diagnostic.py": "4dc92622405e78ed7d88eff4978770fc86b45802c1899e3e06a2e7e3ab804de8"
+  },
+  "reviews": [
+    {
+      "raw_review": ".local/overnight/coding-paid-admission-review-20261006.json",
+      "sha256": "4fe76131bb2430cc1fec5a833d00bbe5a0d6f4174591ab3479de46cc350ad3dc",
+      "model": "claude-opus-5-5",
+      "is_error": false
+    },
+    {
+      "raw_review": ".local/overnight/coding-paid-final-delta-review-20261006.json",
+      "sha256": "f208ba1dd179a093c46eeabe7366256eea3fb14cebd3112c46b71aa2076da52b",
+      "model": "claude-opus-5-5",
+      "is_error": false
+    }
+  ],
+  "manual_readiness": {
+    "dotenv_and_key_format_accepted": true,
+    "credential_disclosed": false,
+    "request_preflight_source": ".local/coding-research-env/request-preflight-188c3d192cde44ed885f2f09c537e27f/summary.json",
+    "request_preflight_sha256": "a2a2d2ece1e864ffa72cfd875f54eaf5d87d372e162bfe547f587d67d4da98f4",
+    "total_request_reservation_cny": "1.03431936",
+    "actual_dispatches": 0,
+    "native_docker_source": ".local/coding-research-env/paid-preflight-07a9b969de33495b8368eb455f7b223e/summary.json",
+    "native_docker_sha256": "ea8028eef2ecaf64427c089c552e586701935ae8e647560d3381bcc911a3cefa"
+  }
+}

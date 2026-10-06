@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "source_sha256": "52757dd5b8fb65bf912106a7e0ced9dc62002ab2320875a4562d983271ee7218",
+  "script_sha256": "4dc92622405e78ed7d88eff4978770fc86b45802c1899e3e06a2e7e3ab804de8",
+  "matplotlib": "3.11.2",
+  "trajectory": "r2_pro_v2",
+  "response_count": 32,
+  "observed_score_points": 31,
+  "http_duration_sum_s": 40.54394543000012,
+  "score_timing": "observed after each executed tool; no score sample invented for response 24",
+  "x_axis": "response index, not wall clock",
+  "api_calls": 0,
+  "images": {
+    ".png": "9bf51ad641217cba16ccd7def6c9c7b3682883a356ec5402bea2b38939e357aa",
+    ".svg": "968a3f4a66173b35c3e932be74316bc6280bb36ed3b14550306c5bf9336f9ca9"
+  },
+  "svg_postprocessing": "Trailing line whitespace removed after rendering; SVG XML revalidated"
+}

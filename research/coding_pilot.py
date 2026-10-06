@@ -1,11 +1,11 @@
-"""Offline-only preparation of 16 independent coding first drafts.
+"""Study-admitted or offline preparation of 16 independent coding first drafts.
 
 Four development tasks x two fixed models x two independent requests. Public
 and hidden evaluation start only after the complete generation phase closes.
 There are no model repair calls, retries, shared deadlines, or held-out tasks.
-The paid entry is deliberately refused: the audited cumulative study has not
-admitted a coding executor. No credentials are read and no new paid allowance
-is created. Future admission must be supplied by that study, not a CLI budget.
+Paid execution requires a live locked admission from the cumulative study.
+This executor never creates a study allowance. Offline execution uses only
+MockTransport and reads no credentials.
 """
 
 from __future__ import annotations
@@ -16,6 +16,7 @@ import asyncio
 from datetime import datetime, timezone
 from decimal import Decimal
 import json
+import platform
 from pathlib import Path
 import re
 import sys
@@ -58,11 +59,24 @@ class PaidNotAdmitted(RuntimeError):
     pass
 
 
-def require_paid_admission(admission: object = None) -> None:
-    # timely_study currently exposes an audit-only extension basis, not a
-    # coding activation/settlement protocol. A user JSON/number cannot stand
-    # in for a live, sealed cumulative opening and exclusive stage admission.
-    raise PaidNotAdmitted("coding_executor_not_admitted_by_audited_cumulative_study")
+def runtime_identity(*, require_wsl: bool = False) -> dict:
+    kernel = platform.release()
+    if require_wsl and (sys.platform != "linux" or "microsoft" not in kernel.lower()):
+        raise PaidNotAdmitted("paid_coding_requires_frozen_native_wsl_python")
+    return {"python": sys.version, "executable": str(Path(sys.executable).resolve()),
+            "invoked_executable": str(Path(sys.executable).absolute()),
+            "prefix": str(Path(sys.prefix).resolve()), "platform": sys.platform,
+            "kernel": kernel, "machine": platform.machine(), "httpx_version": httpx.__version__}
+
+
+def require_paid_admission(admission: object = None, output: Path | None = None,
+                           plan: dict | None = None) -> None:
+    import timely_study as study
+    if type(admission) is not study.CodingAdmission or output is None or plan is None:
+        raise PaidNotAdmitted("coding_requires_live_audited_study_admission")
+    if plan.get("paid") is not True or plan.get("runtime_identity") != runtime_identity(require_wsl=True):
+        raise PaidNotAdmitted("paid_coding_runtime_or_mode_changed")
+    admission.assert_live(output, plan)
 
 
 def install_offline_guard() -> list[str]:
@@ -112,6 +126,12 @@ def request_body(row: dict, task: dict) -> dict:
 
 def parse_candidate(body: dict, task: dict) -> dict:
     """Parse syntax only. Candidate code is never evaluated/imported here."""
+    if (not isinstance(body, dict) or not isinstance(body.get("choices"), list)
+            or len(body["choices"]) != 1 or not isinstance(body["choices"][0], dict)
+            or not isinstance(body["choices"][0].get("message"), dict)
+            or not isinstance(body["choices"][0]["message"].get("content"), str)
+            or not isinstance(body["choices"][0].get("finish_reason"), str)):
+        return {"status": "response_failed", "reason": "unexpected_response_shape", "parser": PARSER_VERSION}
     try:
         choice = body["choices"][0]
         message = choice["message"]
@@ -196,8 +216,11 @@ def fake_backend(tasks: dict, planned_rows: list[dict], scenario: str = "mixed")
                 "choices": [{"index": 0, "message": {"role": "assistant", "content": content}, "finish_reason": finish}],
                 "usage": {"prompt_tokens": 200, "completion_tokens": 180, "total_tokens": 380,
                           "prompt_cache_hit_tokens": 0, "prompt_cache_miss_tokens": 200}}
-        if scenario == "missing-usage" and calls == 1:
+        if ((scenario == "missing-usage" and calls == 1)
+                or (scenario == "missing-usage-second" and calls == 2)):
             body.pop("usage")
+        if scenario == "bad-shape" and calls == 1:
+            body["choices"][0]["finish_reason"] = []
         if scenario == "http-error" and calls == 1:
             return httpx.Response(503, json={"error": "offline fixture"})
         return httpx.Response(200, json=body)
@@ -205,52 +228,109 @@ def fake_backend(tasks: dict, planned_rows: list[dict], scenario: str = "mixed")
     return httpx.MockTransport(reply)
 
 
-async def generate(output: Path, tasks: dict, plan: dict, *, inner: httpx.MockTransport,
-                   simulated_cap: str = SIMULATED_CAP_CNY) -> tuple[list[dict], dict]:
-    if type(inner) is not httpx.MockTransport:
-        raise ValueError("this unadmitted executor only accepts offline MockTransport")
+async def preflight_requests(output: Path, tasks: dict, plan: dict, client: httpx.AsyncClient,
+                             transport: budget.BudgetedTimelyTransport) -> tuple[list, dict]:
+    """Preview every fixed request before the first dispatch; never reserve here."""
+    report = {"accepted": False, "denominator": 16, "rows": [],
+              "per_request_cap_cny": str(REQUEST_CAP_CNY), "batch_cap_cny": "3.20"}
+    requests = []
+    try:
+        if plan["rows"] != rows():
+            raise ValueError("fixed_16_rows_changed")
+        for row in plan["rows"]:
+            payload = request_body(row, tasks[row["number"]])
+            request = client.build_request("POST", ENDPOINT, json=payload)
+            preview = await transport.preview_reservation(request)
+            report["rows"].append({"run_id": row["run_id"], **preview,
+                "request_body_sha256": coding.sandbox.sha(request.content)})
+            requests.append(request)
+        total = sum((Decimal(item["reservation_cny"]) for item in report["rows"]), Decimal(0))
+        report["total_reservation_cny"] = str(total)
+        report["accepted"] = (all(Decimal(item["reservation_cny"]) <= REQUEST_CAP_CNY for item in report["rows"])
+            and total <= Decimal("3.20") and total <= Decimal(transport.snapshot()["batch_budget_cny"]))
+        if not report["accepted"]:
+            report["reason"] = "whole_batch_preflight_cap"
+    except (ValueError, budget.TransportBlocked) as exc:
+        report["reason"] = "whole_batch_preflight_invalid_request"
+        report["error_type"] = type(exc).__name__
+    finally:
+        dump(output / "preflight.json", report)
+    return requests, report
+
+
+async def generate(output: Path, tasks: dict, plan: dict, *, inner: httpx.MockTransport | None = None,
+                   simulated_cap: str = SIMULATED_CAP_CNY, admission=None, env_file: Path | None = None,
+                   offline_request_timeout: float | None = None) -> tuple[list[dict], dict]:
+    paid = plan.get("paid", False)
+    if paid:
+        require_paid_admission(admission, output, plan)
+        if inner is not None or offline_request_timeout is not None:
+            raise PaidNotAdmitted("paid_execution_rejects_fake_overrides")
+        cap = admission.batch_cap_cny
+    else:
+        if type(inner) is not httpx.MockTransport:
+            raise ValueError("offline executor requires MockTransport")
+        if admission is not None:
+            admission.assert_live(output, plan)
+        cap = admission.batch_cap_cny if admission is not None else simulated_cap
     records = [{**row, "generation_status": "not_attempted", "reason": "generation_not_reached",
                 "parse": None, "public": {"status": "not_evaluated"}, "hidden": {"status": "not_evaluated"}}
                for row in plan["rows"]]
     for row in records:
         (output / "drafts" / row["run_id"]).mkdir(parents=True)
     transport = budget.BudgetedTimelyTransport(log_path=output / "requests.jsonl",
-        batch_budget_cny=simulated_cap, max_calls=16, inner=inner)
+        batch_budget_cny=cap, max_calls=16, inner=inner)
     client = httpx.AsyncClient(transport=transport, follow_redirects=False, trust_env=False, timeout=60)
-    interrupted = False
+    interrupted = http_closed = False
     event(output, "generation_started", denominator=16)
     try:
-        for row in records:
+        requests, preflight = await preflight_requests(output, tasks, plan, client, transport)
+        event(output, "preflight_complete", accepted=preflight["accepted"], calls_dispatched=transport.snapshot()["calls_dispatched"])
+        if preflight["accepted"] and paid:
+            require_paid_admission(admission, output, plan)
+            if env_file is None:
+                raise PaidNotAdmitted("explicit_env_file_required")
+            from dotenv import dotenv_values
+            key = dotenv_values(env_file, interpolate=False).get("DEEPSEEK_API_KEY")
+            if not isinstance(key, str) or not key or len(key) > 4096 or any(c in key for c in "\r\n"):
+                raise PaidNotAdmitted("explicit_env_file_missing_valid_deepseek_key")
+            for request in requests:
+                request.headers["Authorization"] = "Bearer " + key
+            del key
+        for index, row in enumerate(records):
             directory = output / "drafts" / row["run_id"]
+            if not preflight["accepted"]:
+                row["reason"] = "whole_batch_preflight_refused"
+                continue
             if transport.snapshot()["stop_reason"]:
                 row["reason"] = "transport_stopped"
                 continue
-            payload = request_body(row, tasks[row["number"]])
+            request = requests[index]
+            preview = preflight["rows"][index]
+            if coding.sandbox.sha(request.content) != preview["request_body_sha256"]:
+                raise ValueError("request_changed_after_preflight")
+            if paid:
+                require_paid_admission(admission, output, plan)
+            payload = json.loads(request.content)
             dump(directory / "request.json", payload)
             row["request_sha256"] = digest(payload)
+            row["request_reservation_upper_cny"] = preview["reservation_cny"]
             started = time.monotonic()
             row["generation_status"] = "attempt_started"
             try:
-                request = client.build_request("POST", ENDPOINT, json=payload)
-                input_upper = len(request.content) + len(payload["messages"]) * budget.MESSAGE_OVERHEAD_TOKENS
-                reservation = budget._cost(row["model"], input_upper, 0, payload["max_tokens"])
-                row["request_reservation_upper_cny"] = str(reservation)
-                if reservation > REQUEST_CAP_CNY:
-                    row.update({"generation_status": "not_attempted", "reason": "request_reservation_cap"})
-                    # This deterministic contract must fit every predeclared
-                    # slot; a mismatch is not a reason to sample a subset.
-                    raise ValueError("request_reservation_cap")
                 with budget.run_context(run_id=row["run_id"], task_id=row["task_id"], model=row["model"],
                                         repeat=row["repeat"], phase="independent_first_draft"):
-                    response = await asyncio.wait_for(client.send(request), timeout=65)
-                # The transport already enforces its wire/decoded size cap.
+                    response = await asyncio.wait_for(client.send(request),
+                        timeout=65 if offline_request_timeout is None else offline_request_timeout)
                 raw = response.content
                 (directory / "response.raw.json").write_bytes(raw)
                 row["raw_response_sha256"] = coding.sandbox.sha(raw)
                 row["raw_response_source"] = "returned_decoded_http_bytes"
                 body = response.json()
                 row["usage"] = body["usage"]
-                row["synthetic_usage_estimate_cny"] = str(budget._usage_amount(body, row["model"])[1])
+                row["cache_usage"] = {name: body["usage"][name] for name in
+                                      ("prompt_cache_hit_tokens", "prompt_cache_miss_tokens")}
+                row["usage_peak_estimate_cny"] = str(budget._usage_amount(body, row["model"])[1])
                 parsed = parse_candidate(body, tasks[row["number"]])
                 if parsed["status"] == "parsed":
                     (directory / "candidate.py").write_text(parsed.pop("code"), encoding="utf-8", newline="\n")
@@ -258,38 +338,45 @@ async def generate(output: Path, tasks: dict, plan: dict, *, inner: httpx.MockTr
             except (budget.TransportBlocked, httpx.HTTPError, TimeoutError) as exc:
                 row.update({"generation_status": "transport_failed", "reason": type(exc).__name__,
                             "raw_response_source": "see_transport_journal_if_body_was_decodable"})
+                # Delivery can time out after transport accounting completed.
+                # End this batch even when that leaves no transport stop reason.
+                break
             except asyncio.CancelledError:
                 row.update({"generation_status": "interrupted", "reason": "generation_cancelled"})
                 interrupted = True
                 raise
             finally:
                 row["generation_wall_s"] = time.monotonic() - started
-                row["synthetic_accounting_after_attempt"] = transport.snapshot()
+                row["accounting_after_attempt"] = transport.snapshot()
                 dump(directory / "generation.json", row)
     finally:
         try:
             await client.aclose()
+            http_closed = True
         finally:
             snapshot = transport.snapshot()
-            # The complete denominator persists even if cancellation/setup
-            # fails. The closure marker is not permission to resume requests.
             for row in records:
                 path = output / "drafts" / row["run_id"] / "generation.json"
                 if not path.exists():
                     dump(path, row)
-            closure = {"denominator": 16, "records_sha256": digest(records),
-                       "transport": snapshot, "interrupted": interrupted,
-                       "requests_sha256": coding.sandbox.sha((output / "requests.jsonl").read_bytes())}
+            requests_sha = coding.sandbox.sha((output / "requests.jsonl").read_bytes())
+            closure = {"denominator": 16, "records_sha256": digest(records), "http_closed": http_closed,
+                       "transport": snapshot, "interrupted": interrupted, "requests_sha256": requests_sha}
             dump(output / "generation-closed.json", closure)
+            # http_closed is true only after actual client close succeeds, not
+            # merely because the transport managed to append batch_close.
+            dump(output / "result.json", {"schema": 1, "paid": paid, "plan_sha256": digest(plan),
+                "denominator": 16, "http_closed": http_closed, "interrupted": interrupted,
+                "accounting": snapshot, "requests_sha256": requests_sha})
             event(output, "generation_closed", calls_dispatched=snapshot["calls_dispatched"],
-                  active_calls=snapshot["active_calls"], interrupted=interrupted)
+                  active_calls=snapshot["active_calls"], interrupted=interrupted, http_closed=http_closed)
     return records, snapshot
 
 
 def judge_after_generation(output: Path, tasks: dict, plan: dict, records: list[dict]) -> None:
     closure = json.loads((output / "generation-closed.json").read_text())
     if (closure["records_sha256"] != digest(records) or closure["transport"]["active_calls"] != 0
-            or not closure["transport"]["closing"] or closure["interrupted"]
+            or not closure["transport"]["closing"] or closure.get("http_closed") is not True
             or plan["code_sha256"] != identities()):
         raise ValueError("generation_or_code_not_closed_and_frozen")
     environment = {}
@@ -322,14 +409,8 @@ def judge_after_generation(output: Path, tasks: dict, plan: dict, records: list[
         event(output, mode + "_evaluation_closed")
 
 
-async def run_offline(output: Path, *, evaluate: bool = False, scenario: str = "mixed",
-                      simulated_cap: str = SIMULATED_CAP_CNY) -> dict:
-    if output.exists():
-        raise ValueError("fresh output directory required")
-    output.mkdir(parents=True)
-    tasks, provenance = coding.load_tasks()
-    plan = {"schema": 1, "scope": "R3-development-natural-first-draft-check-only", "paid": False,
-            "model_calls_actual": 0, "api_spend_cny_actual": "0", "planned_denominator": 16,
+def make_plan(*, paid: bool, scenario: str = "mixed", simulated_cap: str = SIMULATED_CAP_CNY) -> dict:
+    plan = {"schema": 1, "scope": "R3-development-natural-first-draft-check-only", "paid": paid, "planned_denominator": 16,
             "created_at": datetime.now(timezone.utc).isoformat(), "rows": rows(),
             "models": list(MODELS), "dev_ids": list(coding.DEV_IDS), "heldout_used": False,
             "independence": "fresh messages; no previous draft/result/hidden data in any request; no provider seed guarantee",
@@ -339,10 +420,23 @@ async def run_offline(output: Path, *, evaluate: bool = False, scenario: str = "
                                  "whole_request_timeout_s": 65,
                                  "per_request_reservation_cap_cny": str(REQUEST_CAP_CNY)},
             "parse_policy": PARSER_POLICY, "system_prompt": SYSTEM, "code_sha256": identities(),
-            "study_admission": "unavailable; paid execution always refused; no new study allowance",
-            "simulated_transport_cap_cny": simulated_cap, "fake_scenario": scenario,
+            "runtime_identity": runtime_identity(require_wsl=paid),
+            "preflight_policy": "validate all 16 unchanged request bodies before any dispatch; each <=0.20 and sum <=3.20 CNY",
             "judging": "after all generation ends and HTTP transport closes; public phase then independent hidden phase",
             "timing_claim": "not a shared-deadline/feedback-repair experiment", "judge_boundaries": coding.BOUNDARIES}
+    if not paid:
+        plan.update({"model_calls_actual": 0, "api_spend_cny_actual": "0",
+                     "simulated_transport_cap_cny": simulated_cap, "fake_scenario": scenario})
+    return plan
+
+
+async def run_offline(output: Path, *, evaluate: bool = False, scenario: str = "mixed",
+                      simulated_cap: str = SIMULATED_CAP_CNY) -> dict:
+    if output.exists():
+        raise ValueError("fresh output directory required")
+    output.mkdir(parents=True)
+    tasks, provenance = coding.load_tasks()
+    plan = make_plan(paid=False, scenario=scenario, simulated_cap=simulated_cap)
     dump(output / "plan.json", plan)
     dump(output / "provenance.json", provenance)
     summary = {"output": str(output), "planned_denominator": 16, "paid": False,
@@ -366,10 +460,81 @@ async def run_offline(output: Path, *, evaluate: bool = False, scenario: str = "
         summary["wall_s"] = time.monotonic() - started
         summary["denominator_retained"] = len(summary["rows"]) == 16
         summary["generation_counts"] = {status: sum(row["generation_status"] == status for row in summary["rows"])
-            for status in ("parsed", "parse_failed", "transport_failed", "not_attempted", "interrupted", "attempt_started")}
+            for status in ("parsed", "parse_failed", "response_failed", "transport_failed", "not_attempted", "interrupted", "attempt_started")}
         summary["all_16_responses_received"] = sum(summary["generation_counts"][key]
-            for key in ("parsed", "parse_failed")) == 16
+            for key in ("parsed", "parse_failed", "response_failed")) == 16
         dump(output / "summary.json", summary)
+    return summary
+
+
+async def execute_admitted(output: Path, *, execute_paid: bool, env_file: Path | None = None,
+                           inner: httpx.MockTransport | None = None, evaluate: bool = False) -> dict:
+    """Run one live study admission; leave the locked session before judging.
+
+    The study owns the single whole-batch reservation/settlement. The existing
+    HTTP transport remains the sole owner of every request's accounting.
+    """
+    import timely_study as study
+    output = study.batch.local_path(output)
+    plan = study.batch.read_json(output / "plan.json")
+    if plan.get("paid") is not execute_paid:
+        raise PaidNotAdmitted("study_mode_mismatch")
+    if plan.get("runtime_identity") != runtime_identity(require_wsl=execute_paid):
+        raise PaidNotAdmitted("frozen_python_identity_changed")
+    expected = make_plan(paid=execute_paid)
+    for field in ("scope", "planned_denominator", "rows", "models", "dev_ids", "heldout_used",
+                  "request_contract", "parse_policy", "system_prompt", "code_sha256", "preflight_policy"):
+        if plan.get(field) != expected[field]:
+            raise PaidNotAdmitted("frozen_coding_plan_changed")
+    if execute_paid and inner is not None:
+        raise PaidNotAdmitted("paid_execution_rejects_fake_transport")
+    if not execute_paid and type(inner) is not httpx.MockTransport:
+        raise ValueError("admitted offline execution requires MockTransport")
+    tasks, provenance = coding.load_tasks()
+    if study.batch.digest(provenance) != plan["provenance_sha256"]:
+        raise PaidNotAdmitted("dataset_provenance_changed")
+    summary = {"output": str(output), "planned_denominator": 16, "paid": execute_paid,
+               "rows": [], "finished": False, "evaluation_requested": evaluate,
+               "plan_sha256": study.batch.digest(plan)}
+    started, entered = time.monotonic(), False
+    cancellation = None
+    try:
+        with study.coding_session(output, execute_paid=execute_paid) as admission:
+            entered = True
+            try:
+                records, snapshot = await generate(output, tasks, plan, inner=inner,
+                    admission=admission, env_file=env_file)
+                summary.update({"rows": records, "accounting": snapshot})
+            except (Exception, asyncio.CancelledError) as exc:
+                summary["generation_error_type"] = type(exc).__name__
+                if isinstance(exc, asyncio.CancelledError):
+                    cancellation = exc
+                summary["rows"] = [json.loads(path.read_text()) for path in sorted((output / "drafts").glob("*/generation.json"))]
+            # finish either settles known complete accounting or holds the
+            # entire batch. Unconfirmed HTTP closure raises and retains locks.
+            summary["study_settlement"] = admission.finish()
+        if evaluate and cancellation is None:
+            judge_after_generation(output, tasks, plan, summary["rows"])
+        summary["finished"] = "generation_error_type" not in summary
+    except (Exception, asyncio.CancelledError) as exc:
+        if not entered:
+            raise
+        summary["error_type"] = type(exc).__name__
+        if isinstance(exc, asyncio.CancelledError):
+            cancellation = exc
+    finally:
+        if entered:
+            if (output / "result.json").exists():
+                summary["accounting"] = json.loads((output / "result.json").read_text())["accounting"]
+            summary["wall_s"] = time.monotonic() - started
+            summary["denominator_retained"] = len(summary["rows"]) == 16
+            summary["all_16_responses_received"] = sum(row["generation_status"] in
+                ("parsed", "parse_failed", "response_failed") for row in summary["rows"]) == 16
+            dump(output / "summary.json", summary)
+    if cancellation is not None:
+        # Preserve Ctrl-C/task cancellation after closing HTTP, recording the
+        # study liability, and persisting the incomplete 16-slot summary.
+        raise cancellation
     return summary
 
 
@@ -378,20 +543,47 @@ def main() -> int:
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--execute-offline", action="store_true")
     mode.add_argument("--execute-paid", action="store_true")
-    parser.add_argument("--evaluate", action="store_true", help="run public then hidden Docker checks after offline generation")
-    parser.add_argument("--scenario", choices=("mixed", "missing-usage", "http-error"), default="mixed")
+    mode.add_argument("--prepare-paid-plan", action="store_true", help="write plan/provenance only; no admission or calls")
+    parser.add_argument("--pilot-root", type=Path)
+    parser.add_argument("--env-file", type=Path)
+    parser.add_argument("--evaluate", action="store_true", help="public/hidden checks after HTTP closure and study settlement/hold")
+    parser.add_argument("--scenario", choices=("mixed", "missing-usage", "missing-usage-second", "http-error", "bad-shape"), default="mixed")
     args = parser.parse_args()
-    if args.execute_paid:
+    if args.prepare_paid_plan:
         try:
-            require_paid_admission()
-        except PaidNotAdmitted as exc:
-            print(json.dumps({"status": "refused", "reason": str(exc), "model_calls_actual": 0,
-                              "api_spend_cny_actual": "0"}))
+            plan = make_plan(paid=True)
+            _, provenance = coding.load_tasks()
+            output = coding.sandbox.LOCAL / "first-draft-plans" / uuid.uuid4().hex
+            output.mkdir(parents=True)
+            dump(output / "coding-plan.json", plan)
+            dump(output / "provenance.json", provenance)
+            print(json.dumps({"status": "prepared_plan_not_admitted", "output": str(output), "model_calls_actual": 0}))
+            return 0
+        except (PaidNotAdmitted, OSError, ValueError) as exc:
+            print(json.dumps({"status": "refused", "reason": type(exc).__name__, "model_calls_actual": 0}))
             return 2
+    if args.execute_paid:
+        if args.pilot_root is None or args.env_file is None:
+            print(json.dumps({"status": "refused", "reason": "activated_pilot_root_and_explicit_env_file_required", "model_calls_actual": 0}))
+            return 2
+        try:
+            summary = asyncio.run(execute_admitted(args.pilot_root, execute_paid=True,
+                                                  env_file=args.env_file, evaluate=args.evaluate))
+        except Exception as exc:
+            # A late artifact-write failure can occur after paid dispatch.
+            # Never label that uninspected case as zero calls or zero spend.
+            print(json.dumps({"status": "execution_failed_or_refused", "reason": type(exc).__name__,
+                              "model_calls_actual": None, "inspect_artifacts": str(args.pilot_root)}))
+            return 2
+        print(json.dumps({"output": str(args.pilot_root), "finished": summary["finished"],
+                          "study_settlement": summary.get("study_settlement"),
+                          "all_16_responses_received": summary.get("all_16_responses_received")}))
+        return 0 if (summary["finished"] and summary.get("all_16_responses_received")
+                     and summary.get("study_settlement", {}).get("status") == "known_settled") else 1
+    if args.env_file is not None or args.pilot_root is not None:
+        parser.error("offline mode does not read credentials or an activated paid root")
     output = coding.sandbox.LOCAL / "first-drafts" / uuid.uuid4().hex
     with asyncio.Runner() as runner:
-        # Windows asyncio creates its local wakeup socket pair when the loop
-        # starts. Install the provider-network guard after that initialization.
         blocked = install_offline_guard()
         summary = runner.run(run_offline(output, evaluate=args.evaluate, scenario=args.scenario))
     print(json.dumps({"output": str(output), "finished": summary["finished"],

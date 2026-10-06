@@ -148,6 +148,58 @@ def delta_fake_checks(tasks: dict, output: Path) -> list[str]:
     return passed
 
 
+def judge_delta_checks(tasks: dict, output: Path) -> list[str]:
+    """Only the paid-admission judge fixes, using controlled metadata."""
+    passed = []
+    base = {"execution_ok": True, "limits_verified_before_code": True,
+            "cleanup": {"removed": True, "remove_exit_code": 0},
+            "output_limit_exceeded": False, "timed_out": False, "worker_cli_exit_code": 126}
+    ready = b'{"kind":"ready"}\n'
+    source = "def fib(n):\n    return 1\n"
+    for code in (125, 126, 127):
+        with patch.object(coding.sandbox, "execute_isolated", return_value=({**base, "worker_cli_exit_code": code}, ready)):
+            result = coding.public_check(tasks[55], source, "fake-only", output / f"exit-{code}")
+        assert (result["status"], result["reason"]) == ("fail", "candidate_worker_exit")
+    vanished = {**base, "cleanup": {"removed": True, "remove_exit_code": 1}}
+    with patch.object(coding.sandbox, "execute_isolated", return_value=(vanished, ready)):
+        result = coding.public_check(tasks[55], source, "fake-only", output / "vanished")
+    assert (result["status"], result["reason"]) == ("infra", "container_vanished_before_cleanup")
+    passed.append("all_post_ready_exit_codes_fail_but_confirmed_early_container_loss_is_infra")
+    for error_type, expected in (("TypeError", "candidate_exception"), ("UnsupportedOutputType", "unsupported_output_type")):
+        raw = ready + b"".join((json.dumps({"index": i, "error_type": error_type}) + "\n").encode() for i in range(3))
+        with patch.object(coding.sandbox, "execute_isolated", return_value=({**base, "worker_cli_exit_code": 0}, raw)):
+            result = coding.public_check(tasks[55], source, "fake-only", output / error_type)
+        assert all(row["error"] == expected and row["error_type"] == error_type for row in result["checks"])
+    passed.append("unsupported_output_contract_is_distinct_from_candidate_typeerror")
+    worker_tree = ast.parse(coding.WORKER)
+    mapping = next(node.value for node in worker_tree.body if isinstance(node, ast.Assign)
+                   and any(isinstance(target, ast.Name) and target.id == "error_types" for target in node.targets))
+    builtin_names = set(ast.literal_eval(mapping.generators[0].iter))
+    extra_names = {ast.literal_eval(node.value) for node in worker_tree.body if isinstance(node, ast.Assign)
+                   and any(isinstance(target, ast.Subscript) and isinstance(target.value, ast.Name)
+                           and target.value.id == "error_types" for target in node.targets)}
+    assert builtin_names | extra_names | {"CandidateException"} == coding.SAFE_ERROR_TYPES
+    passed.append("worker_and_parent_exception_allowlists_identical")
+    assert all(tasks[n]["atol"] == 0 for n in coding.SELECTED_IDS if n != 32)
+    assert coding.exact_reference_supported(["a", "b", [1, True, "c"]])
+    assert not coding.exact_reference_supported(["a", [1.0]])
+    assert not coding.exact_reference_supported({"value": 1})
+    task = {**tasks[7], "base_input": [[["ab"], "a"]], "plus_input": []}
+    with patch.object(coding, "run_values") as run:
+        result = coding.hidden_check({**task, "atol": 0.1}, source, "fake-only", output / "nonzero-atol")
+        assert_hidden_aggregate(result)
+        assert (result["status"], result["reason"]) == ("infra", "unsupported_reference_tolerance")
+        run.assert_not_called()
+    for label, value, expected_status in (("strings-list", ["ab"], "pass"), ("nested-float", [[1.0]], "infra")):
+        with patch.object(coding, "run_values", return_value=({"status": "pass", "reason": "worker_values_received"}, [{"index": 0, "value": value}])) as run:
+            result = coding.hidden_check(task, source, "fake-only", output / label)
+            assert_hidden_aggregate(result)
+            assert result["status"] == expected_status
+            assert run.call_count == (2 if expected_status == "pass" else 1)
+    passed.append("zero_atol_and_recursive_exact_reference_scope_accepts_task7_strings")
+    return passed
+
+
 def verify_execution_artifacts(directory: Path) -> None:
     for path in directory.glob("*/execution.json"):
         execution = json.loads(path.read_text())
@@ -165,7 +217,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--execute-docker", action="store_true")
     parser.add_argument("--review-delta", action="store_true", help="Only targeted review fixes; skip the existing 27 Docker cases")
+    parser.add_argument("--judge-delta", action="store_true", help="Only later judge classification fixes; skip both previous Docker suites")
     args = parser.parse_args()
+    if args.review_delta and args.judge_delta:
+        parser.error("choose one delta scope")
     output = coding.sandbox.LOCAL / "task-e2e" / uuid.uuid4().hex
     output.mkdir(parents=True, mode=0o700)
     summary = {"output": str(output), "created_at": datetime.now(timezone.utc).isoformat(),
@@ -180,6 +235,8 @@ def main() -> int:
         summary["static_checks"] = static_checks(tasks)
         if args.review_delta:
             summary["delta_fake_checks"] = delta_fake_checks(tasks, output / "fake-delta")
+        if args.judge_delta:
+            summary["judge_delta_checks"] = judge_delta_checks(tasks, output / "judge-delta")
         if args.execute_docker:
             coding.sandbox.verify_daemon(output, summary)
             image_id = coding.existing_image(output)
@@ -199,6 +256,17 @@ def main() -> int:
                 print(json.dumps(summary["cases"][-1]), flush=True)
                 assert passed, label + " unexpected classification"
                 return result
+
+            if args.judge_delta:
+                result = check("judge-exit-126", 55, "import os\nos._exit(126)\n", "public", "fail")
+                assert result["reason"] == "candidate_worker_exit"
+                result = check("judge-unsupported-tuple", 7,
+                               "def filter_by_substring(strings, substring):\n    return tuple(s for s in strings if substring in s)\n",
+                               "public", "fail")
+                assert all(row["error_type"] == "UnsupportedOutputType" and row["error"] == "unsupported_output_type"
+                           for row in result["checks"])
+                summary["passed"] = True
+                return 0
 
             if args.review_delta:
                 # One correct result proves the ready envelope is accepted;

@@ -516,5 +516,59 @@
     },
     "model_calls": 0,
     "api_spend_cny": "0"
+  },
+  "prepaid_judge_delta": {
+    "raw_summary": ".local/coding-research-env/task-e2e/05067a0604314b0ca93d5784f27ce438/summary.json",
+    "raw_summary_sha256": "3436049decafdacc4442c0a2bbf5136dfb9b078b6187496327638d406292c654",
+    "passed": true,
+    "model_calls": 0,
+    "api_spend_cny": "0",
+    "heldout_used": false,
+    "cases": [
+      {
+        "name": "judge-exit-126",
+        "task_id": "HumanEval/55",
+        "mode": "public",
+        "expected_status": "fail",
+        "actual_status": "fail",
+        "checked": 0,
+        "candidate_passed": 0,
+        "passed": true
+      },
+      {
+        "name": "judge-unsupported-tuple",
+        "task_id": "HumanEval/7",
+        "mode": "public",
+        "expected_status": "fail",
+        "actual_status": "fail",
+        "checked": 2,
+        "candidate_passed": 0,
+        "passed": true
+      }
+    ],
+    "boundaries": {
+      "scope": "eight development tasks; no held-out task execution; not a full R3 experiment",
+      "timeouts": "worker-batch wall time only; not EvalPlus per-input limits or the future common agent deadline",
+      "outputs": "finite JSON-native scalar/list values; no arbitrary object deserialization",
+      "hidden_visibility": "aggregate verdict only; raw hidden worker evidence is parent-only",
+      "state": "each checker call requires a fresh empty directory; fresh container/module per evaluation; module state persists between inputs",
+      "security": "worker and candidate share a container/process; protocol is not resistant to introspective forgery",
+      "infrastructure": "missing ready, setup/cleanup failure, or container vanished before cleanup are infra; after ready all candidate nonzero exit codes are fail",
+      "public_diagnostics": "parent compile-only syntax location/message and allowlisted builtin exception classes; no exception messages from candidate execution",
+      "input_mutation": "comparisons use original parent inputs; pinned EvalPlus find_zero instead checks the candidate-mutated in-worker copy; not full evaluator equivalence",
+      "timing": "reference generation and Docker startup are recorded separately; this bridge does not make deadline-comparison claims"
+    },
+    "script_sha256": {
+      "coding_tasks_e2e.py": "aed778610c45db44c9d888d44934aad950e41681dfe94cb05fbba47b73411567",
+      "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+      "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68"
+    },
+    "judge_delta_checks": [
+      "all_post_ready_exit_codes_fail_but_confirmed_early_container_loss_is_infra",
+      "unsupported_output_contract_is_distinct_from_candidate_typeerror",
+      "worker_and_parent_exception_allowlists_identical",
+      "zero_atol_and_recursive_exact_reference_scope_accepts_task7_strings"
+    ],
+    "scope": "Two new real-Docker cases and four focused check groups. Earlier 27-case and 11-case results remain historical evidence for their recorded versions."
   }
 }

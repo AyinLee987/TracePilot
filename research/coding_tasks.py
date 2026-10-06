@@ -45,7 +45,7 @@ BOUNDARIES = {
     "hidden_visibility": "aggregate verdict only; raw hidden worker evidence is parent-only",
     "state": "each checker call requires a fresh empty directory; fresh container/module per evaluation; module state persists between inputs",
     "security": "worker and candidate share a container/process; protocol is not resistant to introspective forgery",
-    "infrastructure": "missing pre-candidate ready handshake or verified setup/cleanup failures are infra; after ready, nonzero exit is candidate failure unless Docker reports ambiguous execution failure",
+    "infrastructure": "missing ready, setup/cleanup failure, or container vanished before cleanup are infra; after ready all candidate nonzero exit codes are fail",
     "public_diagnostics": "parent compile-only syntax location/message and allowlisted builtin exception classes; no exception messages from candidate execution",
     "input_mutation": "comparisons use original parent inputs; pinned EvalPlus find_zero instead checks the candidate-mutated in-worker copy; not full evaluator equivalence",
     "timing": "reference generation and Docker startup are recorded separately; this bridge does not make deadline-comparison claims",
@@ -87,7 +87,7 @@ SAFE_ERROR_TYPES = frozenset({
     "OSError", "OverflowError", "RecursionError", "RuntimeError", "StopIteration", "SyntaxError",
     "IndentationError", "TabError", "SystemExit", "TypeError", "UnboundLocalError", "UnicodeError",
     "UnicodeDecodeError", "UnicodeEncodeError", "UnicodeTranslateError", "ValueError", "ZeroDivisionError",
-    "KeyboardInterrupt", "CandidateException",
+    "KeyboardInterrupt", "CandidateException", "UnsupportedOutputType",
 })
 
 WORKER = r'''
@@ -108,19 +108,24 @@ if header:
 with open("/work/candidate.py", "x") as stream:
     stream.write(source)
 namespace = {"__name__": "candidate"}
+
+class UnsupportedOutputType(TypeError):
+    pass
+error_types[UnsupportedOutputType] = "UnsupportedOutputType"
+
 def emit(value):
     out.write(encode(value, allow_nan=False) + "\n")
     out.flush()
 def plain(value, depth=0):
     if depth > 32:
-        raise ValueError("output nesting limit")
+        raise UnsupportedOutputType("output nesting limit")
     if type(value) in (type(None), bool, int, str):
         return value
     if type(value) is float and math.isfinite(value):
         return value
     if type(value) is list:
         return [plain(item, depth + 1) for item in value]
-    raise TypeError("unsupported output type")
+    raise UnsupportedOutputType("unsupported output type")
 emit({"kind": "ready"})
 try:
     with open(os.devnull, "w") as sink, contextlib.redirect_stdout(sink), contextlib.redirect_stderr(sink):
@@ -170,6 +175,8 @@ def load_tasks() -> tuple[dict[int, dict], dict]:
                 raise ValueError("duplicate selected task")
             if sandbox.sha(row["prompt"].encode()) != PUBLIC[number][0]:
                 raise ValueError("public prompt provenance differs")
+            if number != 32 and row["atol"] != 0:
+                raise ValueError("selected exact-match task requires atol zero")
             tasks[number] = row
     if set(tasks) != set(SELECTED_IDS):
         raise ValueError("missing selected task in the fixed dataset")
@@ -258,6 +265,9 @@ def parse_rows(raw: bytes, count: int) -> list[dict]:
 
 
 def execution_status(execution: dict) -> tuple[str | None, str | None]:
+    cleanup = execution.get("cleanup", {})
+    if cleanup.get("removed") and cleanup.get("remove_exit_code", 0) != 0:
+        return "infra", "container_vanished_before_cleanup"
     if (not execution.get("execution_ok") or execution.get("error")
             or not execution.get("limits_verified_before_code")
             or not execution.get("cleanup", {}).get("removed")):
@@ -268,8 +278,6 @@ def execution_status(execution: dict) -> tuple[str | None, str | None]:
         return "fail", "candidate_output_limit"
     if execution["timed_out"]:
         return "timeout", "candidate_worker_deadline"
-    if execution["worker_cli_exit_code"] in (125, 126, 127):
-        return "infra", "docker_exec_or_candidate_exit_ambiguous"
     if execution["worker_cli_exit_code"] != 0:
         return "fail", "candidate_worker_exit"
     return None, None
@@ -327,6 +335,13 @@ def dump_result(path: Path, value: dict) -> None:
         stream.write(encoded)
 
 
+def exact_reference_supported(value: object) -> bool:
+    """Selected exact-match references are ints/bools/strings or nested lists."""
+    if type(value) in (int, bool, str):
+        return True
+    return type(value) is list and all(exact_reference_supported(item) for item in value)
+
+
 def run_values(task: dict, source: str, arguments: list, image_id: str,
                output: Path, label: str, timeout: float) -> tuple[dict, list[dict]]:
     invalid = source_failure(source)
@@ -380,7 +395,7 @@ def public_check(task: dict, source: str, image_id: str, output: Path, *, timeou
             if "value" in row:
                 detail["observed"] = row["value"]
             else:
-                detail["error"] = "candidate_exception"
+                detail["error"] = "unsupported_output_type" if row["error_type"] == "UnsupportedOutputType" else "candidate_exception"
                 detail["error_type"] = row["error_type"]
             result["checks"].append(detail)
         result["passed"] = sum(case["passed"] for case in result["checks"])
@@ -409,6 +424,9 @@ def hidden_check(task: dict, source: str, image_id: str, output: Path, *, timeou
               "base_total": len(task["base_input"]), "plus_total": len(task["plus_input"]),
               "base_passed": 0, "plus_passed": 0, "reference_wall_s": 0.0}
     try:
+        if number != 32 and task["atol"] != 0:
+            result["reason"] = "unsupported_reference_tolerance"
+            return result
         invalid = source_failure(source)
         if invalid:
             # Public-only syntax details must not expand this aggregate schema.
@@ -425,7 +443,7 @@ def hidden_check(task: dict, source: str, image_id: str, output: Path, *, timeou
             expected = [row["value"] for row in reference_rows]
             # The selected exact-match tasks have no float-valued references;
             # fail closed if that scope changes instead of approximating np.allclose.
-            if any(type(value) not in (int, bool, list) for value in expected):
+            if any(not exact_reference_supported(value) for value in expected):
                 result["reason"] = "unsupported_reference_type"
                 return result
         poly = official_poly() if number == 32 else None

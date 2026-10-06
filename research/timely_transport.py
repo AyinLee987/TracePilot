@@ -291,6 +291,22 @@ class BudgetedTimelyTransport(httpx.AsyncBaseTransport):
         request.stream = httpx.ByteStream(raw)
         return body, message_bytes, input_upper
 
+    @staticmethod
+    def _reservation(body: dict[str, Any], input_upper: int) -> Decimal:
+        return _cost(body["model"], input_upper, 0, body["max_tokens"])
+
+    async def preview_reservation(self, request: httpx.Request) -> dict[str, Any]:
+        """Validate and preview one request without dispatch or accounting changes.
+
+        Uses exactly the dispatch validator and reservation function. The
+        restored request body can subsequently be sent unchanged. This is not
+        budget admission and neither reserves money nor bypasses _begin.
+        """
+        body, message_bytes, input_upper = await self._validate(request)
+        return {"model": body["model"], "message_utf8_bytes": message_bytes,
+                "input_tokens_upper": input_upper,
+                "reservation_cny": str(self._reservation(body, input_upper))}
+
     def _begin(self, body: dict[str, Any], message_bytes: int, input_upper: int,
                request_id: str, labels: dict[str, Any], dispatched: float) -> _Call:
         if self._closing or self._stop_reason:
@@ -298,7 +314,7 @@ class BudgetedTimelyTransport(httpx.AsyncBaseTransport):
         if self._calls >= self._max_calls:
             self._stop_reason = "max_calls_reached"
             raise TransportBlocked("max_calls_reached")
-        reservation = _cost(body["model"], input_upper, 0, body["max_tokens"])
+        reservation = self._reservation(body, input_upper)
         if self._spent + sum(self._reservations.values(), Decimal(0)) + reservation > self._budget:
             self._stop_reason = "budget_exhausted"
             raise TransportBlocked("budget_exhausted")
