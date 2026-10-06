@@ -117,6 +117,30 @@ Plan preparation, study preparation, activation and execution must all use the s
 
 The sole predefined extension uses `coding_pilot.py --prepare-paid-plan --stage extension16`, which prints a new `PLAN_DIRECTORY`, followed by `timely_study.py prepare-coding-extension16 --parent FIRST16_ROOT --pilot-root FRESH_EXTENSION_ROOT --coding-plan PLAN_DIRECTORY/coding-plan.json --provenance PLAN_DIRECTORY/provenance.json --historical-sources ARCHIVE_MANIFEST`. Use the actual six-file source archive from the first batch's reviewed commit. Preparation requires all 16 public checks to pass, settled accounting and verified worker/container/CLI cleanup. It inherits the same study balance and rejects stopped or uncertain parents; it does not inspect hidden scores to choose the branch. Activate the returned digest with the completed extension review, then use the existing paid execution command. There is no second extension. See the [extension review](../docs/reviews/2026-10-06-coding-extension.md) and [validation evidence](results/coding-extension-validation.json). Shared-deadline and repair executors remain pending.
 
+### Shared-deadline coding experiments
+
+The [R3 protocol](../docs/research/coding-deadline.md) keeps 128 native trajectories and 16 continuations from one public error state. Each trajectory yields two correlated snapshots at calibrated 5/15-second cutoffs. The runner and offline scorer have completed focused validation and review. No real R3 deadline comparison is available at this implementation commit. See [versioned validation](results/coding-deadline-validation.json) for what was actually checked.
+
+Zero-provider checks use the pinned WSL environment:
+
+Docker-backed checks use the prepared native daemon in `Ubuntu-24.04` as WSL user `root`, with `/home/li_zhuoyang/.local/share/tracepilot/timely-reproduction-20261006/venv/bin/python`. The default WSL user does not currently have Docker socket access. Use the existing execution identity; do not change socket permissions or switch to Docker Desktop during the experiment.
+
+```bash
+python -B research/coding_deadline_e2e.py
+python -B research/coding_deadline_study_e2e.py
+python -B research/coding_deadline_e2e.py --docker
+python -B research/coding_deadline_e2e.py --outer-cancel
+python -B research/coding_deadline_e2e.py --calibrate
+```
+
+The first two commands use fake HTTP and fake public judging. The last three use real isolated Docker tools with fake HTTP; calibration also uses actual lightweight study admission against isolated fixture history. Do not run another timed workload during calibration. Interrupted or failed calibration outputs are retained and cannot authorize paid execution.
+
+After final review, calibration and commit, prepare a proposal with `coding_deadline.py --prepare-plan --paid --calibration CALIBRATION_JSON --deadlines SHORT LONG`. The numerical deadlines and round guard must match the independently verified calibration. Use `timely_study.py prepare-deadline` with the completed extension as parent, the new proposal/provenance, and the archived extension source manifest. Activate the exact returned plan digest with the actual completed review before execution. The study reuses the cumulative CNY 200 allowance and reserves CNY 120 once; this is a guard, not an estimated invoice.
+
+The execution entry is `coding_deadline.py --execute-study ROOT --env-file PROVIDER_ENV`. The outer supervisor must use `run_owned_child(..., grace_s=180)` so cancellation can finish the independent helper's cleanup; its two-second default is insufficient. Static preparation runs before study reservation. Late responses are billed but cannot update a deadline snapshot. A per-request guard censors its trajectory; batch exhaustion, unknown usage and infrastructure failures preserve the full remaining denominator. Existing attempts are not retried or replaced.
+
+After the online batch is terminal and all HTTP/public tools have closed, `coding_deadline_score.py --input-root CLOSED_ROOT` validates and inventories the persisted candidates without grading. Add `--execute-hidden --output-root FRESH_SEPARATE_ROOT` to run hidden checks. Scoring makes no model requests, preserves the online input, and retains missing/unstarted rows in the 144/288 denominators. Run it only after all timed study work has stopped.
+
 ### Descriptive Timely trajectory
 
 [Redacted step records](results/timely-trajectory-diagnostic.json) distinguish error feedback, tool execution and score changes across the three real runs. Rebuild the [single-run diagnostic](figures/timely-v2-diagnostic.png) in a separate plotting environment:

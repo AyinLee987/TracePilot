@@ -1,0 +1,745 @@
+{
+  "schema": 1,
+  "date": "2026-10-06",
+  "status": "validated_reviewed_not_yet_paid_execution",
+  "provider_calls_actual": 0,
+  "versions": [
+    {
+      "revision": "final_scorer_normal_return_cleanup",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_score_e2e.py --missing-cleanup",
+      "scope": "Single targeted simulated normal-return incomplete-cleanup branch: exact UUID rm/ps, worker closure, infra result and stop preserved. No actual Docker.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 0,
+      "checks": [
+        "normal_return_unclosed_exact_owned_recovery_then_stop"
+      ],
+      "code_sha256": {
+        "coding_deadline_score.py": "6ae5c1668d070bb3f322b88a619039639951659e23e40369f6345bb58911da76",
+        "coding_deadline_score_e2e.py": "0caa0cf2266ca71a95b34fb4c379f6859be99d19af2d2c8a369d8d75922765f4"
+      },
+      "private_source": {
+        "path": ".local/deadline-score-fixture-3s8_ocp_/summary.json",
+        "sha256": "b851eb7cec5909bab3cf3992f7f6aa10985676472b4588e86cfe5b7d62a46fe2"
+      }
+    },
+    {
+      "revision": "final_scorer_delta",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_score_e2e.py --review-delta",
+      "scope": "Eleven focused checks including real executor/admission settle and cancel-stop outputs with fake HTTP/public/hidden checks; no new Docker execution.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 0,
+      "checks": [
+        "no_candidate_separate_from_not_evaluated",
+        "no_persisted_candidate_separate_from_ungraded",
+        "started_missing_baseline_refused",
+        "global_study_lock_refused",
+        "timeout_to_pass_transition",
+        "source_syntax_is_failure_not_infra",
+        "preflight_image_mismatch_stops_before_checker",
+        "matching_image_bound_in_manifest",
+        "interrupt_exact_owned_recovery_summary_then_reraise",
+        "real_admission_executor_settle_inventory_and_score",
+        "real_admission_executor_cancel_stop_inventory_and_score"
+      ],
+      "code_sha256": {
+        "coding_deadline.py": "29b3bd2704128dc91c39f3a20b82f7aa2ce13d8a3920fa25637ead55ea684d9b",
+        "coding_deadline_calibration.py": "6e56b14dcc72b87112cb9e3605d9af97ea9a5bad8536275c09d15984051c5e58",
+        "coding_deadline_score.py": "ead2034c230d7234375835ffb6df8b5d13abff1b5029404f3571ffaa481faa9f",
+        "coding_deadline_score_e2e.py": "5262229f110bae65b5b36f3e3b72c9953331a6019e2dca8fa322ce09829e8689",
+        "coding_deadline_study_e2e.py": "2fadc32baded7b89ca03eb15e45288a051d755020e1145b4ce2deac89c019589",
+        "coding_deadline_worker.py": "e54673b2403fc13e798acb6a5beacb922bcd6ead847bd4feb65bd86c74aada56",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "timely_batch.py": "d9bbdab7e9fc6a961cbfc489f9e30b6bd50333437fd73f26a7c004af6a19d296",
+        "timely_study.py": "97b276b8f748521df3666c77cbc814e640c9ead14d3d7d36db5529b6b25120fc",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d"
+      },
+      "private_source": {
+        "path": ".local/deadline-score-fixture-n8e50cly/summary.json",
+        "sha256": "78575a428c3c3ed74b5c08d80586a64be76e71df3d6a9e480d36e27120f1b45f"
+      }
+    },
+    {
+      "revision": "final_outer_sigint",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_e2e.py --outer-cancel",
+      "scope": "Final runtime single outer SIGINT: real helper/container/group closed in 13.196 seconds.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 1,
+      "checks": [
+        "outer_SIGINT_owned_helper_and_container_drained_before_parent_reaped"
+      ],
+      "code_sha256": {
+        "coding_deadline.py": "29b3bd2704128dc91c39f3a20b82f7aa2ce13d8a3920fa25637ead55ea684d9b",
+        "coding_deadline_worker.py": "e54673b2403fc13e798acb6a5beacb922bcd6ead847bd4feb65bd86c74aada56",
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d",
+        "coding_deadline_calibration.py": "6e56b14dcc72b87112cb9e3605d9af97ea9a5bad8536275c09d15984051c5e58"
+      },
+      "private_source": {
+        "path": ".local/coding-research-env/deadline-e2e/88ad938e311e4b57b639d39635072b85/summary.json",
+        "sha256": "897a5ea6db574846db043fcca1065561f045270c20d058a4daae0ad078820d61"
+      }
+    },
+    {
+      "revision": "final_preexec_helper_recovery",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_e2e.py --recovery",
+      "scope": "Final runtime real container recovery after helper exits before exec.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 1,
+      "checks": [
+        "abrupt_helper_death_exact_container_async_recovery"
+      ],
+      "code_sha256": {
+        "coding_deadline.py": "29b3bd2704128dc91c39f3a20b82f7aa2ce13d8a3920fa25637ead55ea684d9b",
+        "coding_deadline_worker.py": "e54673b2403fc13e798acb6a5beacb922bcd6ead847bd4feb65bd86c74aada56",
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d",
+        "coding_deadline_calibration.py": "6e56b14dcc72b87112cb9e3605d9af97ea9a5bad8536275c09d15984051c5e58"
+      },
+      "private_source": {
+        "path": ".local/coding-research-env/deadline-e2e/f2a216c665f54b81b79f1afdb6fc3f3a/summary.json",
+        "sha256": "4eb6102375cbf137f2fd7f84ad33a2ad958e12b6c1d1fe9259a7194beec09b4e"
+      }
+    },
+    {
+      "revision": "final_preflight_and_local_guards",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_e2e.py --review-delta",
+      "scope": "Final runtime five focused preparation/local guard checks; no containers or provider calls.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 0,
+      "checks": [
+        "missing-env_refused_before_study_reserve",
+        "daemon-failure_refused_before_study_reserve",
+        "per_request_cap_only_current_trajectory_and_baseline_preserved",
+        "message_limit_no_code_truncation_only_current_trajectory_and_baseline_preserved",
+        "feedback_projection_limit_only_current_trajectory_and_baseline_preserved"
+      ],
+      "code_sha256": {
+        "coding_deadline.py": "29b3bd2704128dc91c39f3a20b82f7aa2ce13d8a3920fa25637ead55ea684d9b",
+        "coding_deadline_worker.py": "e54673b2403fc13e798acb6a5beacb922bcd6ead847bd4feb65bd86c74aada56",
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d",
+        "coding_deadline_calibration.py": "6e56b14dcc72b87112cb9e3605d9af97ea9a5bad8536275c09d15984051c5e58"
+      },
+      "private_source": {
+        "path": ".local/coding-research-env/deadline-e2e/fb37a953259f469895d4a7eb15b9b097/summary.json",
+        "sha256": "bca5fe9bef43bfca9b2506b175d472dff39306e7dc8bffeb3ab6b8df3e2e0ca8"
+      }
+    },
+    {
+      "revision": "final_feedback_and_keyboard_interrupt",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_e2e.py --blind-diagnostic",
+      "scope": "No Docker; resample ignores oversized unused feedback; injected KeyboardInterrupt propagates after terminal recording.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 0,
+      "checks": [
+        "blind_long_diagnostic_never_projected_or_censored",
+        "KeyboardInterrupt_propagates_after_closure_with_interrupted_true"
+      ],
+      "code_sha256": {
+        "coding_deadline.py": "29b3bd2704128dc91c39f3a20b82f7aa2ce13d8a3920fa25637ead55ea684d9b",
+        "coding_deadline_worker.py": "e54673b2403fc13e798acb6a5beacb922bcd6ead847bd4feb65bd86c74aada56",
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d",
+        "coding_deadline_calibration.py": "6e56b14dcc72b87112cb9e3605d9af97ea9a5bad8536275c09d15984051c5e58"
+      },
+      "private_source": {
+        "path": ".local/coding-research-env/deadline-e2e/548476dbe2af4059a324f31df2c8d3c3/summary.json",
+        "sha256": "ce89ab6c87e08324805a0860bdb7cc86dc879fb50772ea6b2523f545977082c5"
+      }
+    },
+    {
+      "revision": "final_double_signal",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_e2e.py --double-signal",
+      "scope": "Real helper and container, repeated TERM/INT cancellation with owned drain.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 1,
+      "checks": [
+        "double_signal_idempotent_cleanup"
+      ],
+      "code_sha256": {
+        "coding_deadline.py": "29b3bd2704128dc91c39f3a20b82f7aa2ce13d8a3920fa25637ead55ea684d9b",
+        "coding_deadline_worker.py": "e54673b2403fc13e798acb6a5beacb922bcd6ead847bd4feb65bd86c74aada56",
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d",
+        "coding_deadline_calibration.py": "6e56b14dcc72b87112cb9e3605d9af97ea9a5bad8536275c09d15984051c5e58"
+      },
+      "private_source": {
+        "path": ".local/coding-research-env/deadline-e2e/73d8f4546cd34d229ffb7f94fccaefa6/summary.json",
+        "sha256": "02cbf21d69a95bff7c692cacb1f3db59993db1d74a0cd5008983f41d493bcbcf"
+      }
+    },
+    {
+      "revision": "final_killed_helper_recovery",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_e2e.py --stuck-helper",
+      "scope": "Real helper ignores SIGINT, then killpg and exact container recovery; production 240/75-second waits shortened to 5/0.2 seconds only in the test.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 1,
+      "checks": [
+        "stuck_helper_killpg_exact_recovery"
+      ],
+      "code_sha256": {
+        "coding_deadline.py": "29b3bd2704128dc91c39f3a20b82f7aa2ce13d8a3920fa25637ead55ea684d9b",
+        "coding_deadline_worker.py": "e54673b2403fc13e798acb6a5beacb922bcd6ead847bd4feb65bd86c74aada56",
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d",
+        "coding_deadline_calibration.py": "6e56b14dcc72b87112cb9e3605d9af97ea9a5bad8536275c09d15984051c5e58"
+      },
+      "private_source": {
+        "path": ".local/coding-research-env/deadline-e2e/57ad5a8032c342f788e61761f0a104fd/summary.json",
+        "sha256": "8f7cad9a321f4fdd245995638537e5cfc0d8ac1dca32081669b8cea28d3e0706"
+      }
+    },
+    {
+      "revision": "preflight_failure_then_same_stage_retry",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_study_e2e.py --preflight-retry",
+      "scope": "Real admission after a failed static preparation on the same root; fake HTTP/judging; failure consumes no reserve or dispatch.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 0,
+      "checks": [
+        "daemon_preflight_failure_zero_reserve_zero_dispatch",
+        "failure_leaves_head_ledger_and_locks_unchanged",
+        "same_root_second_preflight_live_session_known_settlement",
+        "both_static_preflight_receipts_preserved"
+      ],
+      "code_sha256": {
+        "coding_deadline.py": "29b3bd2704128dc91c39f3a20b82f7aa2ce13d8a3920fa25637ead55ea684d9b",
+        "coding_deadline_calibration.py": "6e56b14dcc72b87112cb9e3605d9af97ea9a5bad8536275c09d15984051c5e58",
+        "coding_deadline_study_e2e.py": "2fadc32baded7b89ca03eb15e45288a051d755020e1145b4ce2deac89c019589",
+        "coding_deadline_worker.py": "e54673b2403fc13e798acb6a5beacb922bcd6ead847bd4feb65bd86c74aada56",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "timely_study.py": "97b276b8f748521df3666c77cbc814e640c9ead14d3d7d36db5529b6b25120fc",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d"
+      },
+      "private_source": {
+        "path": ".local/deadline-study-fixture-rfgu39jw/summary.json",
+        "sha256": "5387b5f5d09fa9ec0a9aec55ccec02ec7d05181b9512c17909beaf8a1cb44870"
+      }
+    },
+    {
+      "revision": "offline_score_fixture",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_score_e2e.py",
+      "scope": "Closed synthetic input with fake hidden judging; identity-based scoring and full 144/288 denominator checks.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 0,
+      "checks": [
+        "attempt_identity_not_sourcehash_cache",
+        "two_snapshots_share_identity_score",
+        "public_selector_not_hidden_oracle",
+        "late_http_never_parsed",
+        "late_persisted_candidate_posthoc_only",
+        "common_seed_once",
+        "full144_288_denominators",
+        "he32_explicit_exclusion_sensitivity",
+        "attempt_transition_taxonomy",
+        "input_tree_immutable",
+        "nested_output_refused",
+        "existing_output_refused",
+        "unlabelled_fake_checker_refused",
+        "closed_held_billing_accepted_without_releasing_liability",
+        "lock_exact_reason_refused",
+        "unclosed_exact_reason_refused",
+        "tamper_exact_reason_refused",
+        "nonterminal_exact_reason_refused",
+        "hidden_infra_stops_remaining_checks",
+        "candidate_bytes_tamper_refused",
+        "exact_cutoff_equality_refused",
+        "hidden_cleanup_missing_stops_remaining_checks"
+      ],
+      "code_sha256": {
+        "coding_deadline_score.py": "091ea689533168beaaa9528e68e361eb956ba340277e87536c5cf3a182ef2dd3",
+        "coding_deadline_score_e2e.py": "481f15ab626ac19a7adeaad2f5706e459e6cc6668487d74d16f3fe0c35602b07"
+      },
+      "private_source": {
+        "path": ".local/deadline-score-fixture-opv4_3tk/summary.json",
+        "sha256": "2445cf93b99415fe0d1f4bd59d8b4cd992b4977769425e56a5e7a80b1cd4e784"
+      }
+    },
+    {
+      "revision": "calibration_verifier_alias_fix",
+      "command_in_pinned_wsl": "private numeric verifier fixture, corrected legacy dispatch alias",
+      "scope": "22 numerical checks with real historical sources and synthetic new-loop witness; legacy paid_call_count includes Mock dispatches.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 0,
+      "checks": [
+        "actual_like_mock_alias_48_accepted",
+        "prior_http_p90_s_self_report_changed",
+        "prior_public_p90_s_self_report_changed",
+        "min_prior_http_s_self_report_changed",
+        "setup_once_p90_s_self_report_changed",
+        "round_other_p90_s_self_report_changed",
+        "deadline_changed",
+        "round_guard_changed",
+        "summary_omits_round_overhead",
+        "summary_setup_changed",
+        "summary_fake_wait_changed",
+        "sample_omitted",
+        "runtime_identity_changed",
+        "timing_input_original_changed",
+        "guard_missing",
+        "guard_blocked_network",
+        "historical_raw_hash_mismatch",
+        "public_evidence_omitted",
+        "new_public_raw_drift",
+        "close_alias_zero_inconsistent",
+        "dispatch_alias_inconsistent",
+        "close_count_omits_dispatch"
+      ],
+      "code_sha256": {
+        "coding_deadline_calibration.py": "6e56b14dcc72b87112cb9e3605d9af97ea9a5bad8536275c09d15984051c5e58"
+      },
+      "private_source": {
+        "path": ".local/overnight/calibration-verifier-e2e-e72c2545d45c4c75a41f0845d5fd6084/summary.json",
+        "sha256": "f79af6126dbd72f6b3e0d3a78e38ca88c63c9f3542d4e4633f062afb40be567c"
+      }
+    },
+    {
+      "revision": "review_delta_study_guards_and_settlement",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_study_e2e.py",
+      "scope": "Eight isolated branches; real study admission with fake HTTP and fake judging; per-trajectory guards and known/unknown closure.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 0,
+      "checks": [
+        "extension_parent_15parsed_1parsefail_public_seed_known_fees",
+        "exact_reason_unactivated_dispatch_refused",
+        "exact_reason_no_cherry_picking_no_head_mutation",
+        "unused_maximum_slots_not_reserved",
+        "exact_reason_calibration_tamper_refused",
+        "exact_reason_synthetic_calibration_cannot_admit_paid",
+        "exact_reason_settlement_stop_whitelist_frozen",
+        "live_admission_no_online_recursive_history",
+        "real_executor_known_variable_calls_settle",
+        "known_request_reservations_released_before_next_request",
+        "full144_denominator",
+        "exact_reason_cannot_repeat",
+        "paid_history_untouched",
+        "real_executor_second_unknown_stops_all_rows",
+        "unknown_whole120_not_plus_partial_known",
+        "exact_reason_unclosed_public_resource_refused",
+        "uncertain_cleanup_both_locks_and120_retained",
+        "cap_guard_local_pro_repair_censor_later_row_runs",
+        "cap_guard_known_cost_settles",
+        "message_guard_local_pro_repair_censor_later_row_runs",
+        "message_guard_known_cost_settles",
+        "feedback_guard_local_pro_repair_censor_later_row_runs",
+        "feedback_guard_known_cost_settles",
+        "public_infra_closed_known_settles_without_scientific_success",
+        "known_context_closed_known_settles_without_scientific_success"
+      ],
+      "code_sha256": {
+        "coding_deadline_study_e2e.py": "b24cb160f40c8b6b770665fd086de3b68d8c21b9568008933ae67c563f8882ea",
+        "timely_study.py": "97b276b8f748521df3666c77cbc814e640c9ead14d3d7d36db5529b6b25120fc"
+      },
+      "private_source": {
+        "path": ".local/deadline-study-fixture-kuf60noy/summary.json",
+        "sha256": "112f8a3a17f6530ba12575301ddca0f3550c415c6b1d87720e18f83021ed8734"
+      }
+    },
+    {
+      "revision": "async_exact_container_recovery",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_e2e.py --recovery",
+      "scope": "Real container recovery after injected trusted-helper exit before exec; does not exercise the 240-second kill escalation.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 1,
+      "checks": [
+        "abrupt_helper_death_exact_container_async_recovery"
+      ],
+      "code_sha256": {
+        "coding_deadline.py": "fb516003a2f5c6c4e470929ff880d80e85a431c78a1a6711ffc26a892b544210",
+        "coding_deadline_worker.py": "e54673b2403fc13e798acb6a5beacb922bcd6ead847bd4feb65bd86c74aada56",
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d",
+        "coding_deadline_calibration.py": "65a27f6694544f8725832e959cec92892b3fc38911b2b3bcb4a9ae9821cf5b5a"
+      },
+      "private_source": {
+        "path": ".local/coding-research-env/deadline-e2e/c5de77e85c1e482d97c7c413b65ea8bf/summary.json",
+        "sha256": "a61d8e4c55cb61ac661999ca47e0157dbcd786137e18a7a4ab361b35feb3fd3b"
+      }
+    },
+    {
+      "revision": "review_delta_outer_cancellation",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_e2e.py --outer-cancel",
+      "scope": "Real helper, outer group and container cleanup after cancellation on the revised runtime.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 1,
+      "checks": [
+        "outer_SIGINT_owned_helper_and_container_drained_before_parent_reaped"
+      ],
+      "code_sha256": {
+        "coding_deadline.py": "fb516003a2f5c6c4e470929ff880d80e85a431c78a1a6711ffc26a892b544210",
+        "coding_deadline_worker.py": "e54673b2403fc13e798acb6a5beacb922bcd6ead847bd4feb65bd86c74aada56",
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d",
+        "coding_deadline_calibration.py": "65a27f6694544f8725832e959cec92892b3fc38911b2b3bcb4a9ae9821cf5b5a"
+      },
+      "private_source": {
+        "path": ".local/coding-research-env/deadline-e2e/e07bbcc670f5488f8e1e369a464f8dd7/summary.json",
+        "sha256": "12d1bf5046ea87acb30e51b9112123cf9c9025681d66ffce36fb998a5db0cc4d"
+      }
+    },
+    {
+      "revision": "review_delta_guards",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_e2e.py --review-delta",
+      "scope": "Fake HTTP/judging; preflight failures before reservation and per-trajectory guards preserving candidates.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 0,
+      "checks": [
+        "missing-env_refused_before_study_reserve",
+        "daemon-failure_refused_before_study_reserve",
+        "per_request_cap_only_current_trajectory_and_baseline_preserved",
+        "message_limit_no_code_truncation_only_current_trajectory_and_baseline_preserved",
+        "feedback_projection_limit_only_current_trajectory_and_baseline_preserved"
+      ],
+      "code_sha256": {
+        "coding_deadline.py": "fb516003a2f5c6c4e470929ff880d80e85a431c78a1a6711ffc26a892b544210",
+        "coding_deadline_worker.py": "e54673b2403fc13e798acb6a5beacb922bcd6ead847bd4feb65bd86c74aada56",
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d",
+        "coding_deadline_calibration.py": "65a27f6694544f8725832e959cec92892b3fc38911b2b3bcb4a9ae9821cf5b5a"
+      },
+      "private_source": {
+        "path": ".local/coding-research-env/deadline-e2e/daf9d9ce1b324ef8bc3ffcf429848b04/summary.json",
+        "sha256": "0858722d0ac53655cc2da543bf8c4cf2fd9e475c847cf2ee615b50eff337bd3d"
+      }
+    },
+    {
+      "revision": "calibration_verifier_numeric_fixture",
+      "command_in_pinned_wsl": "private numeric verifier fixture",
+      "scope": "Real historical files and synthetic new-loop numerical witness; not actual loop calibration.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 0,
+      "checks": [
+        "consistent_numeric_witness_accepted",
+        "prior_http_p90_s_self_report_changed",
+        "prior_public_p90_s_self_report_changed",
+        "min_prior_http_s_self_report_changed",
+        "setup_once_p90_s_self_report_changed",
+        "round_other_p90_s_self_report_changed",
+        "deadline_changed",
+        "round_guard_changed",
+        "summary_omits_round_overhead",
+        "summary_setup_changed",
+        "summary_fake_wait_changed",
+        "sample_omitted",
+        "runtime_identity_changed",
+        "timing_input_original_changed",
+        "historical_raw_hash_mismatch",
+        "public_evidence_omitted",
+        "new_public_raw_drift"
+      ],
+      "code_sha256": {
+        "coding_deadline_calibration.py": "65a27f6694544f8725832e959cec92892b3fc38911b2b3bcb4a9ae9821cf5b5a"
+      },
+      "private_source": {
+        "path": ".local/overnight/calibration-verifier-e2e-97aadb5681ae458bb1d9059b8c91e02e/summary.json",
+        "sha256": "61f0548de5f490fbec48b6e018a5f2b08cd798d2accb34eebb7283dd7e7a3407"
+      }
+    },
+    {
+      "revision": "initial_fake_boundaries",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_e2e.py",
+      "scope": "Fake HTTP and fake public checking; selected paths only.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 0,
+      "checks": [
+        "fixed_complete_matrix_and_reversed_repeats",
+        "late_http_settled_without_parse_tool_or_selection",
+        "public_return_after_cutoff_ineligible_and_closed",
+        "real_one_second_tool_delay_crosses_cutoff",
+        "immutable_prefix_best_and_earliest_tie",
+        "attempt_one_baseline_not_replaced_and_parse_feedback_has_no_tool_delay",
+        "blind_never_receives_seed_and_both_selectors_have_fallback",
+        "unknown_stops_entire_matrix_preserving_denominator",
+        "cancel_propagates_after_http_public_closure_and_full_matrix"
+      ],
+      "code_sha256": {
+        "coding_deadline.py": "1b53f896cd2e227d27d5cc82d3428e87096db46b490d32048efb4b7aa7fc93f5",
+        "coding_deadline_worker.py": "e54673b2403fc13e798acb6a5beacb922bcd6ead847bd4feb65bd86c74aada56",
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d"
+      },
+      "private_source": {
+        "path": ".local/coding-research-env/deadline-e2e/13db800f92a94f31be1b7bfb57f0c2f0/summary.json",
+        "sha256": "66076bfcbf30a2aa91406d1d1937a4fbb79d8c6d9e9e4d8b4e89286387156ee9"
+      }
+    },
+    {
+      "revision": "initial_study_integration",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_study_e2e.py",
+      "scope": "Real study admission with isolated synthetic history, fake HTTP and fake judging; two selected rows per branch, not 144 executed trajectories.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 0,
+      "checks": [
+        "extension_parent_15parsed_1parsefail_public_seed_known_fees",
+        "exact_reason_unactivated_dispatch_refused",
+        "exact_reason_no_cherry_picking_no_head_mutation",
+        "unused_maximum_slots_not_reserved",
+        "exact_reason_calibration_tamper_refused",
+        "exact_reason_synthetic_calibration_cannot_admit_paid",
+        "live_admission_no_online_recursive_history",
+        "real_executor_known_variable_calls_settle",
+        "known_request_reservations_released_before_next_request",
+        "full144_denominator",
+        "exact_reason_cannot_repeat",
+        "paid_history_untouched",
+        "real_executor_second_unknown_stops_all_rows",
+        "unknown_whole120_not_plus_partial_known",
+        "exact_reason_unclosed_public_resource_refused",
+        "uncertain_cleanup_both_locks_and120_retained"
+      ],
+      "code_sha256": {
+        "coding_deadline_study_e2e.py": "ba7d0b8384454acd5d58166d7b9142145c04c2ebfcef13889181978e20687d33",
+        "timely_study.py": "7ca48975100be81b52cbec58a30fd9e09982f74a5d4c98527899e562fff3887f"
+      },
+      "private_source": {
+        "path": ".local/deadline-study-fixture-8b7eahvp/summary.json",
+        "sha256": "58535d54629e0307cab5aac39ac46188e0f8bd8a6cdb3340f34d45a99a27c6d9"
+      }
+    },
+    {
+      "revision": "real_docker_lifecycle",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_e2e.py --docker",
+      "scope": "Real public helper and Docker; fake HTTP; canonical, output flood and timeout.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 3,
+      "checks": [
+        "canonical",
+        "fd-flood",
+        "timeout"
+      ],
+      "code_sha256": {
+        "coding_deadline.py": "6b3cc102428d3acdc6de2db7ee39b3ff98f6af6fe9926fecca4648de9296fce8",
+        "coding_deadline_worker.py": "e54673b2403fc13e798acb6a5beacb922bcd6ead847bd4feb65bd86c74aada56",
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d"
+      },
+      "private_source": {
+        "path": ".local/coding-research-env/deadline-e2e/d5dd3c5545ff4418bb9c23fce7321908/summary.json",
+        "sha256": "d18f16635643ebd29282ad9ad323e38225a6a75d49429f7a436a39dd987336f4"
+      }
+    },
+    {
+      "revision": "real_outer_cancellation",
+      "command_in_pinned_wsl": "python -B research/coding_deadline_e2e.py --outer-cancel",
+      "scope": "Real outer process, helper and Docker cleanup; fake HTTP.",
+      "status": "passed",
+      "provider_calls": 0,
+      "judge_containers": 1,
+      "checks": [
+        "outer_SIGINT_owned_helper_and_container_drained_before_parent_reaped"
+      ],
+      "code_sha256": {
+        "coding_deadline.py": "0cd3fa73b182b097b453620578579081f1f7dad49594744a12052aead4e713aa",
+        "coding_deadline_worker.py": "e54673b2403fc13e798acb6a5beacb922bcd6ead847bd4feb65bd86c74aada56",
+        "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+        "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+        "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+        "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d"
+      },
+      "private_source": {
+        "path": ".local/coding-research-env/deadline-e2e/81179bcefff8415dae56a0fd92114e4a/summary.json",
+        "sha256": "4afb4876a12024384a8539ab10a4dd11dec5457e86590baf019448afe219f3c1"
+      }
+    }
+  ],
+  "actual_claude_reviews": [
+    {
+      "scope": "protocol",
+      "actual_model": "claude-opus-5-5",
+      "is_error": false,
+      "private_source": {
+        "path": ".local/overnight/coding-deadline-protocol-review-20261006.json",
+        "sha256": "cac5abad874be60267076ad5cebeb7348154b18af7f2e62c9f45b6307d130c97"
+      }
+    },
+    {
+      "scope": "runtime",
+      "actual_model": "claude-opus-5-5",
+      "is_error": false,
+      "private_source": {
+        "path": ".local/overnight/coding-deadline-runtime-review-20261006.json",
+        "sha256": "b7e367c086b335d4318a93c7aee5c618e253abda31012d953eec93b5a8baf8b3"
+      }
+    },
+    {
+      "scope": "delta",
+      "actual_model": "claude-opus-5-5",
+      "is_error": false,
+      "private_source": {
+        "path": ".local/overnight/coding-deadline-delta-review-20261006.json",
+        "sha256": "34afcac435c8478379134b8798255a10cce559d88a929ad9c90008f2d7f5270f"
+      }
+    },
+    {
+      "scope": "final",
+      "actual_model": "claude-opus-5-5",
+      "is_error": false,
+      "private_source": {
+        "path": ".local/overnight/coding-deadline-final-review-20261006.json",
+        "sha256": "7902e09c3e18d4ac2c0e5f200e98aa16d3f9ee5966640288101210e2a6e05fec"
+      }
+    },
+    {
+      "scope": "scorer-delta",
+      "actual_model": "claude-opus-5-5",
+      "is_error": false,
+      "private_source": {
+        "path": ".local/overnight/coding-deadline-scorer-delta-review-20261006.json",
+        "sha256": "2bea5c96cf61a439b55a5b0331c260d36224408e38f67441b4844c6f0eb56fba"
+      }
+    },
+    {
+      "scope": "cleanup-fix",
+      "actual_model": "claude-opus-5-5",
+      "is_error": false,
+      "private_source": {
+        "path": ".local/overnight/coding-deadline-cleanup-fix-review-20261006.json",
+        "sha256": "41910f751c85bf33fee6f72e6d1d99440cd259aff6a86e26733aa7213ec1593b"
+      }
+    }
+  ],
+  "final_calibration": {
+    "deadlines_s": [
+      5,
+      15
+    ],
+    "max_rounds": 64,
+    "setup_once_p90_s": 0.002505536999990454,
+    "round_other_p90_s": 0.2911979689999953,
+    "prior_http_p90_s": 2.3214599130000124,
+    "prior_public_p90_s": 0.6200213580000309,
+    "code_sha256": {
+      "coding_deadline.py": "29b3bd2704128dc91c39f3a20b82f7aa2ce13d8a3920fa25637ead55ea684d9b",
+      "coding_deadline_worker.py": "e54673b2403fc13e798acb6a5beacb922bcd6ead847bd4feb65bd86c74aada56",
+      "coding_pilot.py": "2dae811e46810fd67621ccb997afef4e1bd99337018007d7ee9ff647e51c828a",
+      "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+      "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+      "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d",
+      "coding_deadline_calibration.py": "6e56b14dcc72b87112cb9e3605d9af97ea9a5bad8536275c09d15984051c5e58"
+    },
+    "runtime_identity": {
+      "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+      "executable": "/usr/bin/python3.12",
+      "invoked_executable": "/home/li_zhuoyang/.local/share/tracepilot/timely-reproduction-20261006/venv/bin/python",
+      "prefix": "/home/li_zhuoyang/.local/share/tracepilot/timely-reproduction-20261006/venv",
+      "platform": "linux",
+      "kernel": "6.18.33.2-microsoft-standard-WSL2",
+      "machine": "x86_64",
+      "httpx_version": "0.28.1"
+    }
+  },
+  "calibration_source": {
+    "path": ".local/coding-research-env/deadline-e2e/8dfe61195dc94cb9a4cb78528578714a/calibration.json",
+    "sha256": "8adbc784b90c026ca30c459ebe010e3e388506093b747a259bba253bc81131e1"
+  },
+  "calibration_counts": {
+    "setup_samples": 16,
+    "round_samples": 32,
+    "mock_dispatches": 48,
+    "real_public_containers": 32,
+    "censored_rounds": 0,
+    "owned_helper_groups_remaining": 0
+  },
+  "independent_calibration_verification": {
+    "deadlines_s": [
+      5,
+      15
+    ],
+    "max_rounds": 64,
+    "min_prior_http_s": 0.8646326610000017,
+    "prior_http_p90_s": 2.3214599130000124,
+    "prior_public_p90_s": 0.6200213580000309,
+    "prior_source_count": 104,
+    "round_count": 32,
+    "round_other_p90_s": 0.2911979689999953,
+    "setup_count": 16,
+    "setup_once_p90_s": 0.002505536999990454,
+    "verified": true,
+    "private_source": {
+      "path": ".local/overnight/r3-final-calibration-verification.json",
+      "sha256": "9e05ccf3b661f5ceb954578c206cc65a71b463134097ab707839ae613ee4ef45"
+    }
+  },
+  "generator_source_sha256": {
+    "coding_deadline_e2e.py": "a0dc14e073c8d60528ee0963640ebbed5a697bf16e3bfddaf26057354ad70059",
+    "coding_deadline_study_e2e.py": "2fadc32baded7b89ca03eb15e45288a051d755020e1145b4ce2deac89c019589"
+  },
+  "initial_real_scorer_integration": {
+    "all_cleanup": true,
+    "baseline_denominator": 144,
+    "blocked_network_attempts": 0,
+    "executions": 10,
+    "input_unchanged": true,
+    "provider_calls": 0,
+    "real_hidden_checker": true,
+    "scored_identity_count": 5,
+    "snapshot_denominator": 288,
+    "status": "complete",
+    "synthetic_input": true,
+    "private_source": {
+      "path": ".local/deadline-score-real-check-root-20261006/integration.json",
+      "sha256": "23c592787b3cbc1074c8a31c51ba76d1e2c4b0517d68753b4b22c914464ed32d"
+    },
+    "scope": "Five identities in a synthetic terminal input; ten real hidden-check containers. This does not validate real runner output integration."
+  },
+  "failed_checks_retained": [
+    {
+      "path": ".local/deadline-score-real-check-20261006",
+      "reason": "Default WSL user lacked Docker socket access; zero provider calls and zero candidate containers. Corrected execution identity to existing root; no socket changes."
+    }
+  ],
+  "pending": [
+    "Commit and same-study paid preparation",
+    "Real model matrix and final-version hidden scoring"
+  ],
+  "limits": [
+    "Checks belong to the listed source versions; no claim of a full rerun on future source.",
+    "144 rows in fixtures are complete denominators, not 144 completed scientific model trajectories.",
+    "An interrupted calibration attempt is preserved privately and is not usable calibration.",
+    "No R3 shared-deadline quality, repair gain or held-out prediction has been measured."
+  ]
+}

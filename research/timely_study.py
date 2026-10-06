@@ -4,8 +4,8 @@
 ``activate`` requires its exact plan digest and a separately reviewed file hash.
 The original registry, plans, ledgers and raw runs are never rewritten. The
 transition chain is published atomically under the existing study lock. There
-is one small-matrix revision, one coding first-draft batch, and at most one
-predefined coding extension. Shared-deadline execution is not admitted here.
+is one small-matrix revision, one coding first-draft batch, one predefined
+coding extension, and one explicitly reviewed deadline development batch.
 Historical version migration requires archived source bytes for a terminal
 parent; active execution always checks the current code hashes.
 """
@@ -19,6 +19,7 @@ from decimal import Decimal
 import os
 import json
 import hashlib
+import math
 from pathlib import Path
 import sys
 import uuid
@@ -29,9 +30,14 @@ REVISION = "r2-small-revision-1"
 EXTENSIONS = ("r2-four-game-v1", "r3-coding-v1")
 CODING_STAGE = "r3-coding-first-draft-16-v1"
 CODING_EXTENSION = "r3-coding-first-draft-extension16-v1"
+DEADLINE_STAGE = "r3-coding-deadline-dev-v1"
+DEADLINE_CAP = Decimal("120")
+DEADLINE_KNOWN_STOPS = (None, "budget_censored", "public_infrastructure_failure", "request_or_context_failure")
+DEADLINE_REQUEST_GUARDS = ("per_request_cap", "message_limit_no_code_truncation", "feedback_projection_limit")
 CODING_IDS = {"first16": (55, 32, 7, 56), "extension16": (16, 99, 18, 31)}
 CODING_CAP = Decimal("3.20")
 CODING_FILES = ("coding_pilot.py", "coding_tasks.py", "coding_environment_smoke.py", "timely_transport.py")
+DEADLINE_FILES = ("coding_deadline.py", "coding_deadline_worker.py", "coding_deadline_calibration.py", *CODING_FILES)
 
 
 def _registry() -> tuple[dict, str]:
@@ -64,7 +70,9 @@ def head() -> dict:
                   and result["stage_name"] == REVISION and result["revision_used"])
         extension = (event["kind"] == "advance-coding-extension16" and event["stage_name"] == CODING_EXTENSION
                      and result["stage_name"] == CODING_STAGE and result["revision_used"])
-        batch.require(event["parent_root"] == result["root"] and (revision or coding or extension),
+        deadline = (event["kind"] == "advance-coding-deadline" and event["stage_name"] == DEADLINE_STAGE
+                    and result["stage_name"] == CODING_EXTENSION and result["revision_used"])
+        batch.require(event["parent_root"] == result["root"] and (revision or coding or extension or deadline),
                       "invalid_or_duplicate_study_transition")
         previous = event["sha256"]
         result = {"sha256": previous, "root": event["root"], "revision_used": True,
@@ -329,6 +337,8 @@ def activate(root: Path, *, plan_sha256: str, review: Path, review_sha256: str) 
     root, review = batch.local_path(root), batch.local_path(review)
     with batch.exclusive(batch.PAID_STUDY_ROOT), batch.exclusive(root):
         plan = batch.read_json(root / "plan.json")
+        if plan.get("study_admission", {}).get("kind") == "advance-coding-deadline":
+            return _activate_deadline(root, plan, plan_sha256, review, review_sha256)
         if plan.get("study_admission", {}).get("kind") in {"advance-coding-first-draft", "advance-coding-extension16"}:
             return _activate_coding(root, plan, plan_sha256, review, review_sha256)
         admission = plan["study_admission"]
@@ -646,7 +656,7 @@ def _same_coding_protocol(parent: dict, plan: dict, provenance: dict) -> None:
                   and batch.digest(provenance) == parent["provenance_sha256"], "extension_changed_first_draft_protocol")
 
 
-def _coding_public_extension_evidence(root: Path, plan: dict) -> dict:
+def _coding_public_extension_evidence(root: Path, plan: dict, *, deadline: bool = False) -> dict:
     """Require all first drafts publicly pass; inspect hidden cleanup, not scores."""
     closed = batch.read_json(root / "execution-process-closed.json")
     batch.require(closed.get("pilot_root") == str(root) and closed.get("paid") is plan["paid"]
@@ -667,17 +677,27 @@ def _coding_public_extension_evidence(root: Path, plan: dict) -> dict:
         generation = batch.read_json(directory / "generation.json")
         batch.require(all(row.get(key) == generation.get(key) == value for key, value in expected.items())
                       and all(row.get(key) == value for key, value in generation.items() if key not in {"public", "hidden"})
-                      and row.get("generation_status") == "parsed"
-                      and batch.file_hash(directory / "candidate.py") == row["parse"]["code_sha256"],
+                      and row.get("generation_status") in ({"parsed", "parse_failed"} if deadline else {"parsed"}),
+                      "coding_parent_candidate_changed_or_unparsed")
+        generations.append(generation)
+        if row["generation_status"] == "parse_failed":
+            batch.require(row.get("public", {}).get("status") == row.get("hidden", {}).get("status") == "not_evaluated"
+                          and not (directory / "candidate.py").exists(), "coding_parse_failure_evidence_changed")
+            continue
+        batch.require(batch.file_hash(directory / "candidate.py") == row["parse"]["code_sha256"],
                       "coding_parent_candidate_changed_or_unparsed")
         public = batch.read_json(directory / "public-summary.json")
         batch.require(public == row.get("public") == batch.read_json(directory / "public" / "public-result.json")
                       and public.get("task_id") == expected["task_id"] and public.get("visibility") == "public"
-                      and public.get("status") == "pass" and public.get("reason") == "public_checks_complete"
+                      and public.get("status") in ({"pass", "fail"} if deadline else {"pass"})
+                      and public.get("reason") == "public_checks_complete"
                       and type(public.get("total")) is int and public["total"] > 0
-                      and public.get("checked") == public.get("passed") == public["total"]
+                      and public.get("checked") == public["total"]
+                      and type(public.get("passed")) is int and 0 <= public["passed"] <= public["total"]
                       and len(public.get("checks", [])) == public["total"]
-                      and all(check.get("passed") is True for check in public["checks"]),
+                      and all(type(check.get("passed")) is bool for check in public["checks"])
+                      and sum(check["passed"] for check in public["checks"]) == public["passed"]
+                      and (public["status"] == "pass") == (public["passed"] == public["total"]),
                       "extension_requires_all_16_public_pass")
         # The archived checker uses the fixed polynomial residual for task 32;
         # all other first16 tasks launch a separate reference worker.
@@ -692,28 +712,41 @@ def _coding_public_extension_evidence(root: Path, plan: dict) -> dict:
             if relative == "public/candidate/execution.json":
                 batch.require(execution.get("source_sha256") == row["parse"]["code_sha256"], "public_judge_candidate_changed")
             executions.add(path)
-        generations.append(generation)
         evidence.append({"run_id": expected["run_id"], "candidate_sha256": row["parse"]["code_sha256"],
                          "public_summary_sha256": batch.file_hash(directory / "public-summary.json")})
     batch.require(set((root / "drafts").glob("*/**/execution.json")) == executions,
                   "coding_unregistered_judge_execution")
     batch.require(batch.digest(generations) == batch.read_json(root / "generation-closed.json").get("records_sha256"),
                   "coding_generation_records_changed")
-    return {"rule": "complete_first16_parsed_and_public_pass_v1", "planned_denominator": 16,
-            "parsed": 16, "public_pass": 16, "hidden_scores_used": False, "candidates": evidence,
+    decision = {"rule": "complete_first16_parsed_and_public_pass_v1", "planned_denominator": 16,
+            "parsed": len(evidence), "public_pass": sum(row.get("public", {}).get("status") == "pass" for row in rows),
+            "hidden_scores_used": False, "candidates": evidence,
             "process_closed_sha256": batch.file_hash(root / "execution-process-closed.json"),
             "summary_sha256": batch.file_hash(root / "summary.json")}
+    if deadline:
+        selected = next((row for row in rows if row["run_id"] == "draft-11-he99-deepseek-flash-rep2"), None)
+        batch.require(selected is not None and selected["generation_status"] == "parsed"
+                      and selected["public"]["status"] == "fail" and selected["public"]["passed"] == 3
+                      and selected["public"]["total"] == 4 and len(evidence) == 15 and decision["public_pass"] == 14,
+                      "deadline_requires_frozen_natural_public_seed")
+        decision.update(rule="extension16_public_failed_seed_v1", seed={
+            "run_id": selected["run_id"], "task_id": selected["task_id"], "source_model": selected["model"],
+            "candidate_sha256": selected["parse"]["code_sha256"],
+            "public_summary_sha256": batch.file_hash(root / "drafts" / selected["run_id"] / "public-summary.json")})
+    return decision
 
 
-def _coding_parent_basis(root: Path, historical_sources: Path) -> dict:
+def _coding_parent_basis(root: Path, historical_sources: Path, *, deadline: bool = False) -> dict:
     """Caller owns study/parent locks. Only first16 may admit the sole extension."""
     current = head()
-    batch.require(current["root"] == str(root) and current["stage_name"] == CODING_STAGE,
+    parent_stage = CODING_EXTENSION if deadline else CODING_STAGE
+    batch.require(current["root"] == str(root) and current["stage_name"] == parent_stage,
                   "coding_extension_requires_first16_head")
     plan = batch.read_json(root / "plan.json")
     event = _assert_active_record(root, plan)
     _coding_contract(plan, historical=True)
-    batch.require(plan["stage"] == CODING_STAGE and plan.get("coding_stage", "first16") == "first16"
+    batch.require(plan["stage"] == parent_stage
+                  and plan.get("coding_stage", "first16") == ("extension16" if deadline else "first16")
                   and batch.money(plan["cap_cny"]) == 200 and batch.money(plan["study_batch_cap_cny"]) == CODING_CAP,
                   "coding_parent_stage_changed")
     archive = _coding_source_archive(historical_sources, plan, event)
@@ -735,16 +768,18 @@ def _coding_parent_basis(root: Path, historical_sources: Path) -> dict:
     known += cost
     origins = [(item["origin_plan_sha256"], item["run_id"]) for item in liabilities]
     batch.require(len(origins) == len(set(origins)), "duplicate_carried_liability")
-    decision = _coding_public_extension_evidence(root, plan)
+    decision = _coding_public_extension_evidence(root, plan, deadline=deadline)
     committed = known + sum((batch.money(item["held_cny"]) for item in liabilities), Decimal(0))
-    batch.require(committed + CODING_CAP <= 200, "whole_coding_batch_does_not_fit")
+    batch.require(committed + (DEADLINE_CAP if deadline else CODING_CAP) <= 200, "whole_coding_batch_does_not_fit")
     return {"schema": 1, "root": str(root), "genesis_sha256": genesis, "previous_head_sha256": current["sha256"],
-            "kind": "advance-coding-extension16", "stage_name": CODING_EXTENSION,
+            "kind": "advance-coding-deadline" if deadline else "advance-coding-extension16",
+            "stage_name": DEADLINE_STAGE if deadline else CODING_EXTENSION,
             "terminal": terminal["event"], "plan_sha256": batch.digest(plan), "ledger_tip_sha256": terminal["sha256"],
             "files": _files(root), "source_archive": archive, "public_decision": decision,
             "opening": {"known_cny": str(known), "liabilities": liabilities},
             "committed_cny": str(committed), "remaining_cny": str(Decimal(200) - committed),
-            "scientific_use": "one predefined first-draft extension; hidden scores do not choose the branch"}
+            "scientific_use": ("native128 and public-seed common16 deadline development; R2 remains incomplete" if deadline else
+                               "one predefined first-draft extension; hidden scores do not choose the branch")}
 
 
 class CodingAdmission:
@@ -822,6 +857,377 @@ def coding_session(root: Path, *, execute_paid: bool = False):
             admission._live = False
 
 
+def _deadline_contract(plan: dict) -> None:
+    from coding_deadline import rows as deadline_rows, validate_plan
+    rows = plan.get("trajectories", [])
+    expected = Counter((cohort, number, model, policy, delay, repeat)
+        for cohort, numbers in (("native", (55, 32, 7, 56, 16, 99, 18, 31)), ("common", (99,)))
+        for number in numbers for model in batch.MODELS for policy in ("resample", "repair")
+        for delay in (0, 1) for repeat in (1, 2))
+    cells = Counter((row.get("cohort"), row.get("number"), row.get("model"), row.get("policy"),
+                     row.get("delay_s"), row.get("repeat")) for row in rows)
+    ids = [row.get("run_id") for row in rows]
+    deadlines = plan.get("deadlines_s", [])
+    batch.require(rows == deadline_rows() and cells == expected and len(rows) == len(set(ids)) == 144
+                  and all(isinstance(rid, str) and rid and Path(rid).name == rid and rid not in {".", ".."} for rid in ids)
+                  and all(row.get("task_id") == f"HumanEval/{row['number']}" for row in rows),
+                  "deadline_requires_frozen_native128_common16")
+    batch.require(type(plan.get("max_rounds")) is int and plan["max_rounds"] >= 64
+                  and batch.money(plan["batch_cap_cny"]) == DEADLINE_CAP
+                  and batch.money(plan["per_request_cap_cny"]) == Decimal("0.20")
+                  and len(deadlines) == 2 and all(type(d) in (int, float) and math.isfinite(d) and d > 0 for d in deadlines)
+                  and deadlines[0] < deadlines[1] and plan.get("heldout_used") is False,
+                  "deadline_limits_not_frozen")
+    contract = plan.get("request_contract", {})
+    wanted = {"endpoint": "https://api.deepseek.com/chat/completions", "temperature": 0.7,
+              "max_tokens": 2048, "n": 1, "stream": False, "thinking": {"type": "disabled"},
+              "retries": 0, "http_operation_timeout_s": 60, "whole_request_timeout_s": 65}
+    batch.require(all(contract.get(key) == value for key, value in wanted.items()), "deadline_request_contract_changed")
+    batch.require(plan.get("known_settlement_stop_reasons") == list(DEADLINE_KNOWN_STOPS),
+                  "deadline_settlement_policy_changed")
+    batch.require(plan.get("code_sha256") == {name: batch.file_hash(batch.ROOT / "research" / name) for name in DEADLINE_FILES},
+                  "deadline_executor_source_changed")
+    ref = plan["calibration_ref"]
+    path = batch.local_path(Path(ref["path"]))
+    calibration = batch.read_json(path)
+    batch.require(batch.file_hash(path) == ref["sha256"] and calibration.get("status") == "passed"
+                  and calibration.get("provider_calls") == 0 and calibration.get("full_loop_calibration") is True
+                  and calibration.get("deadlines_s") == deadlines
+                  and calibration.get("code_sha256") == plan["code_sha256"]
+                  and calibration.get("runtime_identity") == plan["runtime_identity"]
+                  and calibration.get("study_sha256") == batch.file_hash(Path(__file__))
+                  and calibration.get("batch_sha256") == batch.file_hash(Path(batch.__file__))
+                  and (not plan["paid"] or not calibration.get("fixture_only")), "deadline_calibration_not_verified")
+    minimum = calibration.get("min_prior_http_s")
+    batch.require(type(minimum) in (int, float) and math.isfinite(minimum) and minimum > 0
+                  and plan["max_rounds"] == calibration.get("max_rounds") == max(64, math.ceil(deadlines[-1] / minimum) + 2),
+                  "deadline_round_guard_not_calibrated")
+    if not calibration.get("fixture_only"):
+        from coding_deadline_calibration import verify_calibration
+        try:
+            verify_calibration(calibration)
+        except ValueError as exc:
+            raise batch.PilotError("deadline_calibration_evidence_invalid") from exc
+        fields = ("setup_once_p90_s", "round_other_p90_s", "prior_http_p90_s", "prior_public_p90_s")
+        batch.require(all(type(calibration.get(key)) in (int, float) and math.isfinite(calibration[key])
+                          and calibration[key] >= 0 for key in fields), "deadline_calibration_timings_invalid")
+        short = max(5, math.ceil(sum(calibration[key] for key in fields) + 1))
+        batch.require(deadlines == [short, short * 3], "deadline_seconds_not_calibrated")
+    try:
+        validate_plan(plan)
+    except (ValueError, KeyError, TypeError, RuntimeError) as exc:
+        raise batch.PilotError("deadline_executor_plan_mismatch") from exc
+
+
+def _deadline_identity(root: Path, plan: dict) -> None:
+    from coding_pilot import runtime_identity
+    _deadline_contract(plan)
+    admission = plan["study_admission"]
+    batch.require(plan["stage"] == admission["stage_name"] == DEADLINE_STAGE
+                  and admission["kind"] == "advance-coding-deadline" and batch.money(plan["cap_cny"]) == 200
+                  and plan["runtime_identity"] == runtime_identity(require_wsl=plan["paid"])
+                  and admission["module_sha256"] == batch.file_hash(Path(__file__))
+                  and admission["batch_module_sha256"] == batch.file_hash(Path(batch.__file__))
+                  and batch.digest(batch.read_json(root / "provenance.json")) == plan["provenance_sha256"],
+                  "deadline_execution_identity_changed")
+
+
+def _deadline_seed(plan: dict, seal: dict) -> None:
+    wanted = {"parent_root": seal["root"], **{key: seal["public_decision"]["seed"][key]
+              for key in ("run_id", "candidate_sha256", "public_summary_sha256")}}
+    batch.require(plan.get("seed_ref") == wanted, "deadline_common_seed_changed")
+
+
+def prepare_deadline(parent: Path, root: Path, deadline_plan: dict, provenance: dict, *, historical_sources: Path) -> dict:
+    parent, root = batch.local_path(parent), batch.local_path(root)
+    batch.require(not root.exists() and not root.is_relative_to(parent) and not parent.is_relative_to(root),
+                  "deadline_requires_fresh_root")
+    with batch.exclusive(batch.PAID_STUDY_ROOT), batch.exclusive(parent):
+        seal = _coding_parent_basis(parent, historical_sources, deadline=True)
+        _deadline_contract(deadline_plan)
+        _deadline_seed(deadline_plan, seal)
+        registry, _ = _registry()
+        old = batch.read_json(parent / "plan.json")
+        batch.require(deadline_plan["paid"] is old["paid"] is registry.get("paid", True)
+                      and batch.digest(provenance) == old["provenance_sha256"], "deadline_mode_or_provenance_changed")
+        plan = {**deadline_plan, "stage": DEADLINE_STAGE, "cap_cny": "200", "imports": registry["imports"],
+                "study_opening": seal["opening"], "provenance_sha256": batch.digest(provenance),
+                "study_admission": {"kind": "advance-coding-deadline", "stage_name": DEADLINE_STAGE,
+                    "previous_head_sha256": seal["previous_head_sha256"], "parent_root": str(parent),
+                    "parent_seal_sha256": batch.digest(seal), "module_sha256": batch.file_hash(Path(__file__)),
+                    "batch_module_sha256": batch.file_hash(Path(batch.__file__))}}
+        root.mkdir(parents=True, exist_ok=False)
+        for name, content in (("parent-seal.json", seal), ("plan.json", plan), ("provenance.json", provenance)):
+            batch.write_new(root / name, content)
+        _deadline_append(root, plan, "open", {"plan_sha256": batch.digest(plan)})
+        return {"status": "prepared_not_active", "pilot_root": str(root), "plan_sha256": batch.digest(plan),
+                "opening": seal["opening"], "remaining_cny": seal["remaining_cny"], "model_calls": 0}
+
+
+def _activate_deadline(root: Path, plan: dict, plan_sha256: str, review: Path, review_sha256: str) -> dict:
+    admission = plan["study_admission"]
+    parent = batch.local_path(Path(admission["parent_root"]))
+    with batch.exclusive(parent):
+        batch.require(batch.digest(plan) == plan_sha256 and review.is_file() and review.stat().st_size > 0
+                      and batch.file_hash(review) == review_sha256, "deadline_plan_or_review_hash_mismatch")
+        _deadline_identity(root, plan)
+        seal = batch.read_json(root / "parent-seal.json")
+        batch.require(batch.digest(seal) == admission["parent_seal_sha256"]
+                      and seal == _coding_parent_basis(parent, Path(seal["source_archive"]["manifest"]["path"]), deadline=True)
+                      and plan["study_opening"] == seal["opening"], "deadline_parent_or_opening_changed")
+        _deadline_seed(plan, seal)
+        batch.require(len(_deadline_events(root, plan)) == 1 and set(_files(root)) == {
+            "parent-seal.json", "plan.json", "provenance.json", "deadline-ledger.jsonl"}, "deadline_successor_not_pristine")
+        current = head()
+        registry, _ = _registry()
+        batch.require(current["sha256"] == admission["previous_head_sha256"]
+                      and plan["paid"] is registry.get("paid", True) and plan["imports"] == registry["imports"],
+                      "deadline_parent_head_changed")
+        payload = {"schema": 1, "seq": current["count"], "previous_sha256": current["sha256"],
+            "kind": admission["kind"], "stage_name": DEADLINE_STAGE, "parent_root": str(parent), "root": str(root),
+            "plan_sha256": plan_sha256, "plan_file_sha256": batch.file_hash(root / "plan.json"),
+            "parent_seal_sha256": admission["parent_seal_sha256"], "opening": seal["opening"],
+            "module_sha256": admission["module_sha256"], "source_archive": seal["source_archive"],
+            "review": {"path": str(review), "sha256": review_sha256}, "utc": datetime.now(timezone.utc).isoformat()}
+        record = {**payload, "sha256": batch.digest(payload)}
+        _publish(record)
+        return {"status": "activated_no_model_calls", "head_sha256": record["sha256"], "pilot_root": str(root),
+                "opening": seal["opening"], "model_calls": 0}
+
+
+def _deadline_events(root: Path, plan: dict) -> list[dict]:
+    path = root / "deadline-ledger.jsonl"
+    if not path.exists():
+        return []
+    raw, events = path.read_bytes(), []
+    batch.require(raw.endswith(b"\n"), "torn_deadline_ledger")
+    for line in raw.splitlines():
+        record = json.loads(line)
+        batch.require(batch.canonical(record) == line and record["seq"] == len(events)
+            and record["previous_sha256"] == (events[-1]["sha256"] if events else None)
+            and record["sha256"] == batch.digest({k: v for k, v in record.items() if k != "sha256"}), "invalid_deadline_ledger")
+        events.append(record)
+    batch.require(1 <= len(events) <= 3 and events[0]["event"] == "open"
+                  and events[0]["data"] == {"plan_sha256": batch.digest(plan)}, "deadline_opening_mismatch")
+    if len(events) > 1:
+        batch.require(events[1]["event"] == "reserve" and events[1]["data"] == {"reservation_cny": str(DEADLINE_CAP)},
+                      "deadline_reservation_mismatch")
+    if len(events) == 3:
+        last = events[-1]
+        batch.require((last["event"] == "settle" and batch.money(last["data"]["cost_cny"]) <= DEADLINE_CAP)
+                      or (last["event"] == "stop" and batch.money(last["data"]["liability_cny"]) >= DEADLINE_CAP),
+                      "deadline_terminal_mismatch")
+    return events
+
+
+def _deadline_append(root: Path, plan: dict, event: str, data: dict) -> None:
+    events = _deadline_events(root, plan)
+    batch.require((len(events), event) in {(0, "open"), (1, "reserve"), (2, "settle"), (2, "stop")}, "deadline_cannot_repeat")
+    payload = {"seq": len(events), "previous_sha256": events[-1]["sha256"] if events else None,
+               "event": event, "data": data, "utc": datetime.now(timezone.utc).isoformat()}
+    with (root / "deadline-ledger.jsonl").open("ab") as stream:
+        stream.write(batch.canonical({**payload, "sha256": batch.digest(payload)}) + b"\n")
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
+def _deadline_refs(root: Path) -> dict:
+    return {name: batch.file_hash(root / name) for name in
+            ("requests.jsonl", "result.json", "generation-closed.json", "trajectories.json") if (root / name).is_file()}
+
+
+def _deadline_closed(root: Path, plan: dict) -> bool:
+    try:
+        result, closure = batch.read_json(root / "result.json"), batch.read_json(root / "generation-closed.json")
+        raw = (root / "requests.jsonl").read_bytes()
+        last = json.loads(raw.splitlines()[-1])
+        batch.require(raw.endswith(b"\n") and last.get("event") == "batch_close" and last.get("active_calls") == 0
+                      and result.get("plan_sha256") == batch.digest(plan) and result.get("paid") is plan["paid"]
+                      and result.get("denominator") == closure.get("denominator") == 144, "deadline_http_not_closed")
+        for document in (result, closure):
+            batch.require(document.get("http_closed") is True and document.get("public_resources_closed") is True
+                          and document.get("requests_sha256") == batch.file_hash(root / "requests.jsonl")
+                          and document.get("trajectories_sha256") == batch.file_hash(root / "trajectories.json"),
+                          "deadline_closure_artifact_mismatch")
+        resources = closure["public_resources"]
+        seen = set()
+        for ref in resources:
+            path = (root / ref["path"]).resolve()
+            batch.require(path.is_relative_to(root) and not path.is_symlink() and path not in seen
+                          and path.name == "public-resource-closed.json" and batch.file_hash(path) == ref["sha256"],
+                          "deadline_public_resource_ref_changed")
+            document = batch.read_json(path)
+            batch.require(document.get("closed") is True and document.get("worker_reaped") is True
+                          and document.get("containers_removed") is True, "deadline_public_resource_unclosed")
+            seen.add(path)
+        batch.require(seen == set(root.rglob("public-resource-closed.json")), "deadline_public_resource_inventory_changed")
+        trajectories = batch.read_json(root / "trajectories.json")
+        issued = [attempt for row in trajectories for attempt in row["attempts"] if "public_started_at_s" in attempt]
+        batch.require(len(issued) == len(seen)
+                      and {json.dumps(attempt["public_resource"], sort_keys=True) for attempt in issued}
+                          == {json.dumps(ref, sort_keys=True) for ref in resources}, "deadline_public_issue_inventory_changed")
+        return True
+    except (OSError, ValueError, KeyError, IndexError, TypeError, batch.PilotError):
+        return False
+
+
+def _deadline_closed_cost(root: Path, plan: dict) -> Decimal:
+    """Known billing can close even when public science stops unsuccessfully.
+
+    This does not authorize another run or declare the matrix complete. The
+    frozen whitelist never excuses unknown usage, cancellation, or cleanup.
+    """
+    batch.require(_deadline_closed(root, plan), "deadline_resources_not_closed")
+    result, closure = batch.read_json(root / "result.json"), batch.read_json(root / "generation-closed.json")
+    stop = result.get("stop_reason")
+    batch.require(plan.get("known_settlement_stop_reasons") == list(DEADLINE_KNOWN_STOPS),
+                  "deadline_settlement_policy_changed")
+    batch.require(result.get("interrupted") is False and closure.get("interrupted") is False
+                  and stop in DEADLINE_KNOWN_STOPS, "deadline_abnormal_stop")
+    trajectories = batch.read_json(root / "trajectories.json")
+    batch.require(isinstance(trajectories, list) and len(trajectories) == 144
+                  and [row.get("run_id") for row in trajectories] == [row["run_id"] for row in plan["trajectories"]],
+                  "deadline_denominator_changed")
+    for frozen, row in zip(plan["trajectories"], trajectories):
+        batch.require(all(row.get(key) == value for key, value in frozen.items())
+                      and row.get("status") in {"complete", "stopped", "not_started"}, "deadline_trajectory_not_terminal")
+        if row["status"] == "complete":
+            batch.require(row.get("stop_reason") in (None, "max_rounds_censored", "request_guard_censored"),
+                          "deadline_unexplained_complete_trajectory")
+            if row.get("stop_reason") == "request_guard_censored":
+                batch.require(row.get("censored") is True and row.get("guard_reason") in DEADLINE_REQUEST_GUARDS,
+                              "deadline_request_guard_mismatch")
+        else:
+            batch.require((not plan["paid"] and row.get("stop_reason") == "offline_fixture_not_selected")
+                          or (stop is not None and row.get("stop_reason") == (
+                              "batch_stopped:" + stop if row["status"] == "not_started" else stop)),
+                          "deadline_unexplained_unfinished_trajectory")
+        if row["status"] != "not_started":
+            snapshots = row.get("snapshots", [])
+            batch.require(len(snapshots) == 2 and [s.get("deadline_s") for s in snapshots] == plan["deadlines_s"],
+                          "deadline_snapshots_missing")
+            for snapshot in snapshots:
+                path = (root / snapshot["path"]).resolve()
+                batch.require(path.is_relative_to(root) and batch.file_hash(path) == snapshot["sha256"],
+                              "deadline_snapshot_changed")
+    events = [json.loads(line) for line in (root / "requests.jsonl").read_bytes().splitlines()]
+    dispatch = [e for e in events if e.get("event") == "request_dispatch"]
+    complete = [e for e in events if e.get("event") == "request_complete"]
+    ids = [e.get("request_id") for e in dispatch]
+    order = {row["run_id"]: index for index, row in enumerate(plan["trajectories"])}
+    indices = [order.get(e.get("labels", {}).get("run_id"), -1) for e in dispatch]
+    batch.require(events[0].get("event") == "batch_open" and sum(e.get("event") == "batch_open" for e in events) == 1
+                  and sum(e.get("event") == "batch_close" for e in events) == 1 and len(ids) <= 144 * plan["max_rounds"]
+                  and len(ids) == len(set(ids)) and all(isinstance(rid, str) and rid for rid in ids)
+                  and ids == [e.get("request_id") for e in complete]
+                  and indices == sorted(indices) and all(index >= 0 for index in indices)
+                  and not any(e.get("event") in {"request_unknown", "request_rejected"} for e in events),
+                  "deadline_usage_not_fully_known")
+    by_id, attempts = {row["run_id"]: row for row in plan["trajectories"]}, Counter()
+    for event in dispatch:
+        labels, body = event.get("labels", {}), event.get("request_body", {})
+        row = by_id.get(labels.get("run_id"))
+        batch.require(row is not None, "deadline_dispatch_unknown_trajectory")
+        attempts[row["run_id"]] += 1
+        batch.require(attempts[row["run_id"]] <= plan["max_rounds"] and labels.get("case_id") == f"attempt-{attempts[row['run_id']]:02d}"
+                      and all(labels.get(key) == row[key] for key in ("run_id", "task_id", "model", "repeat"))
+                      and labels.get("phase") == row["cohort"]
+                      and labels.get("condition") == f"{row['policy']}/delay-{row['delay_s']}"
+                      and labels.get("deadline_s") == plan["deadlines_s"][-1] and body.get("model") == row["model"]
+                      and all(body.get(key) == plan["request_contract"][key] for key in ("stream", "thinking", "max_tokens", "temperature", "n"))
+                      and batch.money(event["reservation_cny"]) <= Decimal("0.20"), "deadline_dispatch_contract_changed")
+    cost = sum((batch.money(e["provider_usage_peak_estimate_cny"]) for e in complete), Decimal(0))
+    for account in (events[-1], result["accounting"], closure["transport"]):
+        batch.require(account.get("calls_dispatched") == len(ids) and account.get("max_calls") == 144 * plan["max_rounds"]
+                      and account.get("unknown_calls") == account.get("active_calls") == 0
+                      and account.get("stop_reason") is None and batch.money(account["reserved_cny"]) == 0
+                      and batch.money(account["spent_estimate_cny"]) == cost
+                      and batch.money(account["batch_budget_cny"]) == DEADLINE_CAP, "deadline_accounting_mismatch")
+    batch.require(cost <= DEADLINE_CAP, "deadline_cost_exceeds_guard")
+    return cost
+
+
+_DEADLINE_TOKEN = object()
+
+
+class DeadlineAdmission:
+    """Full audit at entry/final seal; bounded checks during timed work.
+
+    The study reserves CNY 120 once. Transport releases each known request's
+    unused reservation immediately; maximum future request slots reserve no
+    additional money. Unknown usage holds the whole study reservation once.
+    """
+    def __init__(self, root: Path, plan: dict, token: object) -> None:
+        batch.require(token is _DEADLINE_TOKEN, "deadline_admission_requires_live_session")
+        self.root, self.plan, self.batch_cap_cny, self._live = root, plan, str(DEADLINE_CAP), True
+        self._head_sha = head()["sha256"]
+        self._plan_file_sha = batch.file_hash(root / "plan.json")
+        self._plan_sha = batch.digest(plan)
+        self._lock_refs = {p: batch.file_hash(p) for p in (root / "pilot.lock", batch.PAID_STUDY_ROOT / "pilot.lock")}
+
+    def assert_live(self, root: Path, plan: dict) -> None:
+        batch.require(self._live and batch.local_path(root) == self.root and batch.digest(plan) == self._plan_sha
+                      and batch.file_hash(self.root / "plan.json") == self._plan_file_sha
+                      and len(_deadline_events(self.root, self.plan)) == 2, "deadline_admission_not_live")
+        batch.require(head()["sha256"] == self._head_sha
+                      and all(batch.file_hash(path) == sha for path, sha in self._lock_refs.items()), "deadline_active_head_or_lock_changed")
+        sources = {**self.plan["code_sha256"], "timely_study.py": self.plan["study_admission"]["module_sha256"],
+                   "timely_batch.py": self.plan["study_admission"]["batch_module_sha256"]}
+        batch.require(all(batch.file_hash(batch.ROOT / "research" / name) == sha for name, sha in sources.items()),
+                      "deadline_live_source_changed")
+
+    def finish(self) -> dict:
+        self.assert_live(self.root, self.plan)
+        batch.require(_deadline_closed(self.root, self.plan), "deadline_resources_not_closed")
+        assert_active(self.root, self.plan)
+        _deadline_identity(self.root, self.plan)
+        known = batch.money(self.plan["study_opening"]["known_cny"])
+        carried = sum((batch.money(x["held_cny"]) for x in self.plan["study_opening"]["liabilities"]), Decimal(0))
+        try:
+            cost = _deadline_closed_cost(self.root, self.plan)
+        except (OSError, ValueError, KeyError, TypeError, batch.PilotError):
+            held = max(DEADLINE_CAP, batch.observed_commitment(self.root))
+            _deadline_append(self.root, self.plan, "stop", {"liability_cny": str(held), "artifacts": _deadline_refs(self.root)})
+            return {"status": "held", "liability_cny": str(held), "study_known_cny": str(known),
+                    "study_committed_cny": str(known + carried + held), "requests_allowed": False}
+        _deadline_append(self.root, self.plan, "settle", {"cost_cny": str(cost), "artifacts": _deadline_refs(self.root)})
+        return {"status": "known_settled", "batch_cost_cny": str(cost), "study_known_cny": str(known + cost),
+                "study_committed_cny": str(known + carried + cost), "requests_allowed": False,
+                "scientific_stop_reason": batch.read_json(self.root / "result.json").get("stop_reason")}
+
+
+@contextmanager
+def deadline_session(root: Path, *, execute_paid: bool = False):
+    root = batch.local_path(root)
+    with batch.exclusive(batch.PAID_STUDY_ROOT), batch.exclusive(root):
+        plan = batch.read_json(root / "plan.json")
+        batch.require(plan["paid"] is execute_paid, "deadline_paid_fake_mismatch")
+        assert_active(root, plan)
+        _deadline_identity(root, plan)
+        batch.require(len(_deadline_events(root, plan)) == 1 and not any((root / name).exists() for name in
+            ("requests.jsonl", "result.json", "generation-closed.json", "trajectories.json")), "deadline_cannot_repeat")
+        opening = plan["study_opening"]
+        committed = batch.money(opening["known_cny"]) + sum((batch.money(x["held_cny"]) for x in opening["liabilities"]), Decimal(0))
+        batch.require(committed + DEADLINE_CAP <= 200, "deadline_guard_does_not_fit")
+        _deadline_append(root, plan, "reserve", {"reservation_cny": str(DEADLINE_CAP)})
+        admission = DeadlineAdmission(root, plan, _DEADLINE_TOKEN)
+        try:
+            yield admission
+            batch.require(len(_deadline_events(root, plan)) == 3 and _deadline_closed(root, plan), "deadline_batch_not_closed")
+        except BaseException:
+            try:
+                if len(_deadline_events(root, plan)) == 2:
+                    _deadline_append(root, plan, "stop", {"liability_cny": str(max(DEADLINE_CAP, batch.observed_commitment(root))),
+                                                         "artifacts": _deadline_refs(root)})
+            except BaseException as exc:
+                raise batch.ProcessCleanupError("deadline_accounting_uncertain_lock_retained") from exc
+            if not _deadline_closed(root, plan):
+                raise batch.ProcessCleanupError("deadline_resources_unclosed_lock_retained")
+            raise
+        finally:
+            admission._live = False
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
@@ -829,7 +1235,7 @@ def main() -> int:
     prepare.add_argument("--parent", type=Path, required=True)
     prepare.add_argument("--pilot-root", type=Path, required=True)
     prepare.add_argument("--tool-format", choices=("official", "single-json-v1", "single-json-v2"), required=True)
-    for command in ("prepare-coding16", "prepare-coding-extension16"):
+    for command in ("prepare-coding16", "prepare-coding-extension16", "prepare-deadline"):
         coding_prepare = commands.add_parser(command)
         coding_prepare.add_argument("--parent", type=Path, required=True)
         coding_prepare.add_argument("--pilot-root", type=Path, required=True)
@@ -848,8 +1254,9 @@ def main() -> int:
     try:
         if args.command == "prepare-revision":
             result = prepare_revision(args.parent, args.pilot_root, tool_format=args.tool_format)
-        elif args.command in {"prepare-coding16", "prepare-coding-extension16"}:
-            prepare_function = prepare_coding16 if args.command == "prepare-coding16" else prepare_coding_extension16
+        elif args.command in {"prepare-coding16", "prepare-coding-extension16", "prepare-deadline"}:
+            prepare_function = {"prepare-coding16": prepare_coding16, "prepare-coding-extension16": prepare_coding_extension16,
+                                "prepare-deadline": prepare_deadline}[args.command]
             result = prepare_function(args.parent, args.pilot_root, batch.read_json(args.coding_plan),
                                       batch.read_json(args.provenance), historical_sources=args.historical_sources)
         elif args.command == "activate":

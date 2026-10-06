@@ -20,6 +20,7 @@ See the [experiment plan](docs/research/timely-reproduction.md) and [related wor
 | Timely code audit and Pi/mini-SWE-agent smoke runs | Available; [earlier results](docs/research/pilot-results.md) are engineering checks |
 | Timely evaluation with real benchmark tasks | Three real Zork1 runs recorded; both batch conditions stopped on tool-format failures; no valid model comparison yet |
 | Coding first-draft and public/hidden checks | 32 real drafts complete; one public code failure and one format failure; [latest results](docs/research/coding-extension16-results.md) |
+| Shared-deadline repair and resampling | 5/15-second protocol calibrated; runner and scorer reviewed; real comparison pending; [protocol](docs/research/coding-deadline.md) |
 | Runtime JSONL, routing, and held-out selection experiments | Planned |
 
 ## Getting started
