@@ -84,6 +84,23 @@
 - **审查与验证**：两轮 Claude CLI 只读文档审查，退出码均为 0，`is_error=false`，实际模型均为 `claude-opus-5-5`，均未发现阻断问题。已落实信息时点、状态/任务分组、时间迁移、独立重采样及重计时基线等建议；详见 [审查与处置](reviews/2026-10-06-speed-feedback-literature.md)。文档链接、英文 README、凭证缺席、忽略规则和 `git diff --check` 已通过，原工作区 main 干净且未修改；无运行时改动，不声称新增 E2E。
 - **下一步**：先冻结两个配置、客观编程任务、共同 deadline、反馈对照与留出预测的最小实验协议，再决定开发批次范围和费用上限。
 
+## 2026-10-06：README 与 Timely 复现实验启动
+
+- **授权范围**：用户要求完善项目 README，从 Timely Machine 复现开始再推进既定实验；完整目标保持 active。
+- **文档**：README 保持英文，增加研究问题、顺序、状态与安装入口；新增 [执行计划](research/timely-reproduction.md)，分开官方代码协议复验、原论文数值复现和研究扩展。
+- **来源核对**：官方 HEAD 仍为 `e13af2b`，本地源码干净；论文 Fig.2 使用未公开的 cold-start SFT checkpoints。公开版逻辑延迟并非真实 sleep，step 预算也非跨模型共同秒数。Jericho 新版本默认 seed 改变，优先隔离安装 3.2.1。
+- **环境现状**：本机 GPU 为 RTX 4060 Laptop 8GB；Docker Desktop 启动因旧 secrets-engine socket 失败，没有删除 socket 或反复重启。Ubuntu WSL 独立环境现已通过官方 wrapper 动作/评分/同动作回放检查及 `pip check`；57 个 ROM 能 reset，其中 `lgop.z3` 不可靠支持评分，首批排除。依赖与证据在 `.local/timely-reproduction-env/`，零模型调用，尚无新真实模型评测结果。
+- **预算**：第一条真实短轨迹上限 5 元/12 requests，先导累计上限 200 元，均计入原 2,000 元总预算；开始付费前完成代码审查和完整调用验证。
+- **审查与验证**：README/计划已由 Claude CLI 实际模型 `claude-opus-5-5` 审查，`is_error=false`，未发现阻断问题；已落实能力状态、模型映射、测速请求、预算及格式失败口径建议。预算 transport 和 evaluator runner 仍需独立代码审查；未把准备状态写成已复现。
+
+## 2026-10-06：顶会及同期工作补充核验
+
+- **范围与新增**：按用户最新要求重新访问一手论文与正式论文集。新增 AutoLab、AgentOpt v2、How Many Tries、GAIATrace / Vidur-Agent、ASAP，相关工作表扩充为 25 篇；重新核验 Timely、AgentTTS、CUDAnalyst、SALE、EvoRoute、Snell 的主会身份。
+- **关键边界**：AutoLab 已做真实工程任务轨迹与 pi 等 harness 对照，AgentOpt 已有记录和模型组合搜索库；EdgeBench 已预测同任务集的后段聚合曲线；Slow Down 将从早期特征预测单任务拐点列为未来方向。候选贡献不能概括成“首次轨迹分析/预测/选型”。
+- **状态**：更新 [相关工作](research/speed-feedback-related-work.md)与 `agent.md`；英文 README 已检查，其研究入口和候选措辞仍准确。没有因文献检索启动新的付费模型评测。
+- **验证与审查**：Claude CLI 退出码 0、`is_error=false`、实际模型 `claude-opus-5-5`，无阻断；已处理论文/代码预算语义、任务域衔接、独立抽样统计及状态措辞。来源核验及全部处置见 [审查记录](reviews/2026-10-06-literature-supplement.md)。文档链接、README ASCII、可疑凭证模式与 diff 检查通过；运行时代码保持待审查，不纳入本次文档交付。
+- **待澄清项**：完整 SFT/RL 训练优先级的可选问题尚未收到答复；继续评测路径与文献工作，不购买 GPU。
+
 ## 后续记录格式
 
 每次任务新增一条记录，至少包含：日期、范围、实际完成内容、验证命令与结果、Claude 审查及处置、已知限制、下一步。代码功能的记录应附对应端到端场景；只读评审不单独触发提交循环。

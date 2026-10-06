@@ -124,9 +124,13 @@ TracePilot 计划成为一个基于任务特征与 Agent 执行轨迹进行路�
 
 2026-10-05 的候选 C“历史耗时预测价值 vs 紧迫感”保留为历史方案，不再作为默认主线。该轮查重发现 JAUNT、NetMCP、Can LLMs Perceive Time? 等近邻，并核实 TicToc 的 ACL Findings 状态；历史预测、预测辅助路由、时间反馈校准和预测／行动分离均不能单独作为创新。来源和限制见 [`docs/research/latency-history-check.md`](docs/research/latency-history-check.md)。
 
-用户已授权夜间小实验及 Pi 等开源 Agent 的本地试跑，使用当前 Agent 项目的 API key；余额不足时报告，不自动购买额度。研究在独立 worktree / 分支 `research/acl-feasibility-20261005` 进行，原 `main@dadab3f` 不修改、不合并、不强推。今晚实验上限 200 元、总研究预算约 2,000 元；原始输出及凭证留在忽略目录。Pi 与 mini-SWE-agent 已隔离部署并完成真实小任务；mini 首轮适配器提示词问题导致未正常提交，修正后通过，首轮记录保留。两框架加 E1 共 207 次请求，峰值价格估算约 0.163 元；无未知计费或余额不足报错。详细范围、审查和结果见 [`docs/research/open-agent-plan.md`](docs/research/open-agent-plan.md)。
+用户已授权夜间小实验及 Pi 等开源 Agent 的本地试跑，使用当前 Agent 项目的 API key；余额不足时报告，不自动购买额度。研究在独立 worktree / 分支 `research/acl-feasibility-20261005` 进行，原 `main@dadab3f` 不修改、不合并、不强推。10 月 5 日夜间批次已结束，当时上限 200 元不额外结转；总研究预算约 2,000 元，当前批次以执行计划为准。原始输出及凭证留在忽略目录。Pi 与 mini-SWE-agent 已隔离部署并完成真实小任务；mini 首轮适配器提示词问题导致未正常提交，修正后通过，首轮记录保留。两框架加 E1 共 207 次请求，峰值价格估算约 0.163 元；无未知计费或余额不足报错。详细范围、审查和结果见 [`docs/research/open-agent-plan.md`](docs/research/open-agent-plan.md)。
 
-**下一步：** 研究先冻结快慢配置、共同 deadline、原生/共同状态对照、盲重采样/反馈修复和留出预测协议；付费批次前明确范围与费用上限。工程按实验需求核对 Langfuse 指标，补最小事件、Provider attempt/辅助调用边界与本地 trace 前缀/JSONL。Agent 内部状态不迁移为 Langfuse schema；完整 router 和通用 checkpoint 不作为先导前置条件。
+**当前执行：** 用户已授权先完善 README，再从 Timely Machine 复现开始并按计划开展实验。英文 README 已更新，官方源码与复现资产已核对，WSL Jericho 环境已完成零模型调用验证，受预算限制的真实模型评测尚待代码审查；完整论文数值复现仍缺作者 checkpoint 等资产。阶段 R0–R4、费用边界和完成依据见 [执行计划](docs/research/timely-reproduction.md)。这不改变 P1–P5 运行时能力状态。
+
+同日按用户要求补查同期工作，文献表扩充至 25 篇：AutoLab 已覆盖真实工程轨迹与 pi 等框架对照，AgentOpt 已有跨框架记录和模型组合搜索；EdgeBench 已有同任务集早段曲线预测后段的实验。候选贡献继续限定为决策时可得特征对新任务、变化延迟下共同 deadline 选型的额外预测价值，不能把轨迹分析、框架扩展或曲线外推概括为无人研究。
+
+**下一步：** 先跑通官方 evaluator 的真实任务路径并测量两模型延迟曲线，再推进共同 deadline、原生/共同状态、盲重采样/反馈修复及留出预测；各付费批次前冻结范围与费用上限。工程按实验需求补足记录和 Provider attempt 边界。Agent 内部状态不迁移为 Langfuse schema；完整 router 和通用 checkpoint 不作为先导前置条件。
 
 已完成的 E0/E1 结果见 [`docs/research/pilot-results.md`](docs/research/pilot-results.md)：E0 为离线代码审计，E1 包含 40 次真实模型任务运行、191 次请求；峰值价格估算约 0.135 元。单一路径档案任务中的倒计时并未显示共同前缀动作变化，不能支持或否定历史方案的信息价值假设，也不构成当前快慢模型比较或反馈机制的证据。不扩大该玩具任务。
 

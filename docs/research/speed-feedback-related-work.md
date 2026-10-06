@@ -10,6 +10,8 @@
 
 本轮主要变化：确认 EvoRoute 为 ACL 2026 主会、CUDAnalyst 为 ICML 2026 主会；发现 EFC v2 已加入仅使用前缀信息的在线控制；补入 AgentTTS、Strategy Auctions 和 Nature Machine Intelligence 的配置选择研究。以上使“分析轨迹后做 router”的宽泛定位进一步收窄。
 
+同日补查又发现 AutoLab 和 AgentOpt 两项直接近邻：前者已有实际工程任务的时间曲线、失败轨迹及 pi 等 harness 对照，后者已有跨框架记录和模型组合搜索库。因此任务扩展与即插即用本身也不足以构成论文贡献。新增五项证据及其边界见第 5 节补查；当前共记录 25 篇相关工作。
+
 ## 1. 研究问题与范围
 
 本轮冻结三个问题，避免将研究漂移为剩余 token 预算路由或历史耗时紧迫感测试。
@@ -46,6 +48,8 @@
 
 **[Timely Machine](https://aclanthology.org/2026.acl-long.211/)，ACL 2026 主会。** 最接近用户最初观察。正式版 §5.1、Fig.2 比较 Qwen3 不同尺寸与工具延迟：快速反馈时部分小模型可依靠更多交互领先，延迟提高后大模型更有利；更小的模型也可能因能力不足持续落后。论文还包含一般推理和机器学习编程任务，不能说“只做文字游戏”。其一般推理部分有模型原始耗时倍数预算，不应将所有实验统称共同绝对时限。它已有延迟干预；我们不能将“延迟导致排序改变”重新包装为首次发现。
 
+上段是论文报告的现象，不能直接等同于当前公开实现的预算语义：发布版 [interactive.py](https://github.com/Entarochuan/Timely-Machine/blob/e13af2b8c98d799857ace789ebcfdfd4ea6c2985/src/timely_eval/interactive.py) 按 `max_steps × average_duration_per_step` 设置预算，工具时延是逻辑累加，相同 step 数并非跨模型共同实际秒数。作者原始 Fig.2 的完整启动参数与时间网格未公开，我们尚未核实图中每个点与发布版配置的精确对应，不能声称现有代码直接复现了共同 wall-clock 协议。实际执行差异见 [复验计划](timely-reproduction.md)。
+
 **[Snell 等的 compute-optimal scaling](https://proceedings.iclr.cc/paper_files/paper/2025/hash/1b623663fd9b874366f3ce019fdfdd44-Abstract-Conference.html) 与 [Inference Scaling Laws](https://proceedings.iclr.cc/paper_files/paper/2025/hash/8c3caae2f725c8e2a55ecd600563d172-Abstract-Conference.html)，均为 ICLR 2025。** 前者 §6–7 比较顺序修订和并行采样，分析任务难度及小大模型的计算交换；后者 §4.2–4.3 联合研究模型尺寸、搜索策略和计算预算。两篇已支持“最优模型随任务与预算改变”，也指出弱模型在难题上可能很快饱和。主要预算为 FLOPs/生成次数，不能直接推出真实工具等待下的截止前成功率。Snell 的难度估计还需要额外采样；移植其规则时不能把估计开销视为免费。
 
 **[The Cost of Dynamic Reasoning](https://2026.hpca-conf.org/details/hpca-2026-main-conference/17/The-Cost-of-Dynamic-Reasoning-Demystifying-AI-Agents-and-Test-Time-Scaling-from-an-A)，HPCA 2026 主会。** [全文](https://arxiv.org/html/2506.04301v2) §V-B、Fig.14/16/17 与 Table III 同时报准确率、时间、token 和能耗。8B 增加尝试可能接近 70B，但耗时更多；70B 可以更早达到较高正确率。其 8B 使用 1 张 A100，70B 使用 8 张 A100，不能解释成同硬件下的纯模型尺寸效应。这是重要反证：小模型的优势可能是能耗，未必是秒数；拉高轮次上限也可能只延长尾部。
@@ -76,9 +80,9 @@
 
 **对 RQ3 的回答：** 任务与模型适配、执行经验路由、冻结模型泛化和机制指导配置都已有研究。候选贡献应是具体的时间—反馈机制及其可迁移预测，而不是泛泛增加一个 router。
 
-## 5. 同期工作：最需要防止撞题的七篇
+## 5. 同期工作：七篇直接近邻与补查
 
-以下均核验原始论文；本次没有独立核实其主会/期刊正式身份，因此按预印本处理。日期依据 arXiv 提交/修订记录，月份编号本身不作提交日证据。
+以下均核验原始论文；SWE-Router 已由 [DL4C 官方 poster 名单](https://dl4c.github.io/poster-sessions/)和[日程](https://dl4c.github.io/schedule/)确认为 ICML 2026 Workshop（DL4C），不是 ICML 主会；其余六项本次未独立确认主会/期刊正式身份，按预印本处理。日期依据 arXiv 提交/修订记录，月份编号本身不作提交日证据。
 
 | 论文与版本 | 与我们实质重合的内容 | 需要保留的差别/限制 |
 | --- | --- | --- |
@@ -87,7 +91,7 @@
 | [When Agents Slow Down](https://arxiv.org/abs/2609.15309)，9月14日首稿 | 逐步结果、边际收益下降、长轨迹与并行重启资源分配 | 核心尺度是 Elo/token；不能把标题理解为 API 变慢；存在部分 wall-clock 分析，不能说完全没测时间 |
 | [PAIR-Bench](https://arxiv.org/html/2607.01360v1)，7月1日首稿 | 定向修复、其他错误改善、已有正确行为保留、单调进展、提示效率 | 主要按交互轮数比较；反馈协议共享初稿，不代表所有模型共享同一初稿 |
 | [Try Again, Don’t Look Back](https://arxiv.org/html/2607.26117v1)，7月28日首稿 | 同初稿/重试预算，对照盲重采样、失败通知、执行反馈和反思 | 部分小代码模型盲重采样优于自修复；不是普遍否定反馈，也非相同 wall-clock 对照 |
-| [SWE-Router](https://arxiv.org/html/2607.00053v1)，6月30日首稿 | 前 1–4 步 trace 决定继续弱模型或重启强模型，直接比较 prompt 与轨迹信息 | 质量—美元目标；主 mix-1 协议将 4/5 的 SWE-bench Verified 实例纳入训练，不能称整套 benchmark 未见迁移 |
+| [SWE-Router](https://arxiv.org/html/2607.00053v1)，6月30日首稿；ICML 2026 DL4C Workshop | 前 1–4 步 trace 决定继续弱模型或重启强模型，直接比较 prompt 与轨迹信息 | 质量—美元目标；主 mix-1 协议将 4/5 的 SWE-bench Verified 实例纳入训练，不能称整套 benchmark 未见迁移 |
 | [RSI-Router](https://arxiv.org/abs/2609.34712)，9月28日首稿 | 从训练轨迹挖子任务，比较路由/强模型轨迹，联合优化模型分配和专用 skills | 本轮核验元数据与方法，未精读其数据划分，不据此作泛化结论 |
 
 ### EFC 对定位的影响最大
@@ -100,9 +104,23 @@ EFC v2 §4.2 已在同任务、模型以及 token、工具和墙钟预算条件�
 
 EdgeBench §4.1 尝试降低初始质量差异，§5 分析保留、修改、回退和重启；Slow Down §4–6 将边际收益分析用于资源分配。前者更接近真实时间曲线，后者更接近长轨迹何时继续无益。两者都要求我们超过“画每轮成绩、选几个失败案例”的证据强度。[EdgeBench](https://arxiv.org/html/2607.05155v1)；[Slow Down 全文](https://arxiv.org/pdf/2609.15309)
 
+进一步核查预测范围：EdgeBench §3.2 已用同一任务集合前 6.5 小时的聚合曲线预测后续至 12 小时的表现，明确称为 population-level law；不能说它没有前瞻曲线预测，但这不等于新任务实例或人为改变服务速度后的赢家预测。Slow Down §7 则把从任务属性或早期统计预测单任务收益拐点列为未来工作，当前方法仍需测量该任务的 scaling curve。它的 §6 使用已测拐点安排重启预算，不能被描述为完全没有预测或配置决策。[EdgeBench §3.2](https://arxiv.org/html/2607.05155v1#S3.SS2)；[Slow Down §6–7](https://arxiv.org/pdf/2609.15309)
+
 PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部分的退化；既比较有反馈迭代，也比较相同资源下重新尝试。否则快模型的收益可能来自多次抽样，不能归因于有效利用工具反馈。[PAIR](https://arxiv.org/html/2607.01360v1)；[Try Again](https://arxiv.org/html/2607.26117v1)
 
 另有直接反证 **[To Run or Not to Run](https://arxiv.org/html/2606.26978v1)**：对代码执行权限/配额做干预，发现部分强模型可以在明显减少执行开销时维持相近修复表现。§3–4 的执行政策同时影响信息与成本，不是单独的速度干预。作者自报 ISSTA 2026 接收，官方作者页列有该论文，但本轮未完成论文集级确认；不并入上面的已确认主会清单。
+
+### 同日补查：实际工程轨迹、客户端选型和反例
+
+**AutoLab 与 EdgeBench 共同压缩了“从文字游戏扩展到真实工程任务”的新颖性空间。** [AutoLab](https://arxiv.org/html/2606.05080v1) 于 2026-06-03 提交，包含 36 个任务、17 个模型和 2–12 小时预算；§3.3 展示随实际时间变化的优化轨迹，§4 分析失败与资源使用，并比较 terminus-2、mini-swe-agent 和 pi-mono。文中持续迭代与得分的关联不能直接等同于迭代的因果收益；所检分析也不构成在新任务、新推理延迟下冻结规则的赢家预测。它比文字游戏更接近我们的实际任务目标，但完整复跑超出当前低预算先导的合理范围。相比之下，[EdgeBench](https://arxiv.org/html/2607.05155v1) 更集中于长时间优化、保留与回退；二者均应成为轨迹分析的参考。
+
+**AgentOpt 与 AgentTTS 使“记录后自动寻找高效模型配置”已有直接实现。** [AgentOpt v2](https://arxiv.org/html/2604.06296v2)（2026-04-15 修订）通过 HTTP transport 层记录模型调用、token、时延和归属，再搜索角色级模型组合并展示质量、费用和时延前沿。它与 TracePilot 原始的跨框架库目标直接相关；[AgentTTS](https://papers.nips.cc/paper_files/paper/2025/hash/8d9bbba8cac9cabb54e85ee7f21441c8-Abstract-Conference.html) 则联合搜索多阶段模型与采样预算。AgentOpt 的固定工作流配置搜索不同于前缀决策时预测共同 deadline 下的反馈收益，但这种区别仍需实验证明有用。库和可视化可以作为交付物，不独立主张研究创新。
+
+**反复修复是否值得，现有证据随模型与协议而变。** [How Many Tries Does It Take?](https://arxiv.org/html/2604.10508) 在七个模型、HumanEval 和 MBPP 上分析逐轮增益及错误类型；其修复/重采样对照还混有解码温度差异，作者明确承认未完全分离反馈信息效应。[Try Again, Don't Look Back](https://arxiv.org/html/2607.26117v1) 则在另一组较小代码模型中观察到盲重采样的优势。这不是可以直接平均的矛盾：模型、任务和采样条件不同。我们必须固定候选选择规则、计算全部开销并加入无反馈重试，否则更多成功可能只是更多抽样机会。
+
+两项相邻系统研究进一步限定实验解释。[GAIATrace / Vidur-Agent](https://arxiv.org/html/2606.01725v1) 使用 GAIA 上 MiroThinker、OWL 的细粒度轨迹做系统重放，提醒我们调用级 token 速度与任务完成时延并不等价；固定轨迹重放可以研究服务配置，但无法单独验证换模型后的语义行为。[ASAP](https://arxiv.org/html/2606.25207v1) 在 HPO 中对比每轮质量与墙钟收益，附录 B.1 显示评估极快时廉价优化器可凭吞吐量反超 LLM 方案。后者是任务耗时结构改变赢家的相邻证据，不是快慢 LLM 的直接对照。
+
+这五项本次均按预印本/技术报告使用，未据检索不到正式会议记录推断它们没有录用；不计入已确认顶会数。对 AutoLab 只引用已检查的案例、统计和 harness 对照，未把摘要中的“predictor”表述当作已部署的跨条件预测模型。
 
 ## 6. 重合审计与剩余问题
 
@@ -114,6 +132,8 @@ PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部�
 | 固定初稿/状态后替换反馈或模型 | 已有局部识别方法 | CUDAnalyst；Self-Repair |
 | 用早期 trace 选择模型 | 已有非常直接方法 | SWE-Router；EvoRoute |
 | 用机制分析指导模型/Agent 配置 | 已有正式先行 | AgentTTS；SALE；NMI |
+| 实际工程任务中的时间曲线及多框架轨迹分析 | 已有直接同期工作 | AutoLab；EdgeBench |
+| 跨框架记录后搜索模型组合并绘制开销前沿 | 已有公开库和技术报告 | AgentOpt |
 | 预测共同 deadline 下的相对优势，并迁移到未见任务及速度条件 | 本轮未找到直接完整验证这一目标的工作；仍是候选 | 需要正面对比上述工作，不能靠控制项组合宣称首次 |
 
 **最强拒稿论证：** 如果最终只是复现 Timely 的交叉曲线，再用 EFC 类指标解释“多轮不等于有效多轮”，最后训练普通 router，审稿人有充分理由认为是既有结论的拼接。换成代码任务、加 Langfuse 或把横轴改成秒数都不能自动解决这一问题。
@@ -131,7 +151,7 @@ PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部�
 3. **分开改变速度与信息。** 对同模型增加外部等待来识别受控减速效应；单独改变工具等待。固定任务环境、反馈生成规则和后续资源配置，相同动作/状态返回相同语义反馈，允许策略分叉产生不同后续反馈；固定反馈重放另作局部对照。减速只能识别该干预范围，不能冒充更快服务的真实效果。记录 deadline 可见性：时间不进入提示时接近固定行为的截断实验；进入提示时还包含策略适应，两者不能混为同一个效应。
 4. **比较更多尝试与反馈利用。** 至少含首稿、盲重采样、执行反馈修复；逐轮记录有效修复、退化、无效重复、有效反馈与等待。盲重采样指下一候选不读取前一候选/诊断；若用可见测试选择样本，选择阶段仍使用反馈，须计入时间和费用并固定规则。隐藏验收只作离线评分，不提供给 Agent 或样本选择器。
 5. **冻结预测再验证。** 运行前选型只用任务输入及开发集形成的模型/任务画像，画像获取成本单列；短前缀选型首版只探测一个显式候选，全部探测计入共同 deadline。两个模型都运行后提取的特征只作离线分析，不能冒充廉价在线选型。按任务来源/仓库/模板分组，并分别报告“同任务新延迟”“新任务原延迟”“新任务新延迟”；新条件下不重拟合规则/阈值，允许重校准的协议另列。任务实例、任务族和新模型泛化也分开。所有特征遵守决策时点，最终分数只作标签。
-6. **以强简单基线决定是否继续。** 比较固定快/强模型、模型×任务画像查表、开发集估计的首轮能力与实测速度、历史质量—时间曲线外推、prompt-only/prefix 路由和可复现的 EFC 风格前缀指标。增加“开发集轨迹按新延迟重计时”的截断预测；目标测试任务的完整轨迹重放只作离线诊断，不能用来在线选型。增加独立尝试参照：若单次成功率为 p、可完成 k 次尝试，至少一次成功覆盖率为 `1-(1-p)^k`；p 从开发集估计，k 使用实测耗时分布。该式依赖独立性，且是覆盖率，不等于实际选择出的最终答案成功率；部署基线必须用同一可见选择规则并计入成本。最终按选型后质量、相对离线 oracle 的损失和置信区间判断；oracle 仅为上界。改编既有方法要标明，不能把弱代理称为原方法。
+6. **以强简单基线决定是否继续。** 比较固定快/强模型、模型×任务画像查表、开发集估计的首轮能力与实测速度、历史质量—时间曲线外推、prompt-only/prefix 路由和可复现的 EFC 风格前缀指标。增加“开发集轨迹按新延迟重计时”的截断预测；目标测试任务的完整轨迹重放只作离线诊断，不能用来在线选型。增加独立尝试参照：若单次成功率为 p、可完成 k 次尝试，至少一次成功覆盖率为 `1-(1-p)^k`；p 按开发集任务属性/难度分层估计，目标任务隐藏标签不可用；K 使用实测尝试耗时分布推得。对分层后的 `1-(1-p_i)^K_i` 取期望，不把全局平均 p 与平均 K 直接代入；成功与耗时相关时，改用联合经验重采样而非该简式。该式依赖独立性，且是覆盖率，不等于实际选择出的最终答案成功率；部署基线必须用同一可见选择规则并计入成本。最终按选型后质量、相对离线 oracle 的损失和置信区间判断；oracle 仅为上界。改编既有方法要标明，不能把弱代理称为原方法。
 
 特征来源进一步分开：运行前可用任务描述、已知工具/验证接口和开发集的模型修复/退化画像；需要实际执行才能估计的验证成本只能用开发集估计，或计入目标任务探测。短前缀可增加已发生的错误类型、可见测试变化、重复动作及耗时。隐藏验收、另一个模型在该目标任务上的结果均不可用。要验证的是任务属性与模型画像的交互或前缀的额外预测价值，而不只是把模型级常量换个名称。若排序变化完全由重计时截断解释，不主张发现新的反馈适应机制。
 
@@ -141,9 +161,9 @@ PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部�
 
 ## 8. 阅读顺序与项目决定
 
-建议先读六篇，目的不同：**Timely §5.1** 确认现象已知；**EFC v2 §3.3、§6–7** 理解最直接重合；**CUDAnalyst §3.2、§5** 学习局部干预；**AgentTTS §4.2** 看模型与流程的相互作用；**EdgeBench §4–5** 看真实长轨迹如何分析；**NMI 正式版的 Cross-domain generalization** 检查规则迁移为什么会失败。之后再读 SALE 和 SWE-Router，决定是否需要路由方法作为伴随产物。
+建议优先读 **Timely §5.1 → EFC v2 §3.3、§6–7 → AutoLab §3.3–4 → CUDAnalyst §3.2、§5**：依次确认已知现象、指标与控制重合、真实轨迹先行、局部干预方法。工程上单独对照 **AgentOpt §3–4**，避免重复构建其已有能力。之后读 AgentTTS、EdgeBench、NMI 的 Cross-domain generalization，再以 SALE 和 SWE-Router 确定路由基线。
 
-当前决定：保留这个方向作为实证研究候选，先写冻结的最小实验协议，验证机制能否增加预测价值。TracePilot 负责可靠记录和实验复现；暂不以完整通用 router、后训练或购物扩展作为前置条件。与当前用户目标不同的“历史耗时预测价值 vs 紧迫感”仅保留为历史候选，不再作为默认主线。
+当前决定：保留这个方向作为实证研究候选，按用户授权先完成官方 Jericho 评测路径的协议复验，再在客观验收的编程任务上冻结 R3/R4 机制与预测协议，验证机制能否增加预测价值。Jericho 的计时复验不自动承担编程修复/退化实验；详细衔接见 [执行计划](timely-reproduction.md)。TracePilot 负责可靠记录和实验复现；暂不以完整通用 router、后训练或购物扩展作为前置条件。与当前用户目标不同的“历史耗时预测价值 vs 紧迫感”仅保留为历史候选，不再作为默认主线。
 
 ## 参考文献与身份记录
 
@@ -166,6 +186,11 @@ PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部�
 15. Kaiyuan Liu 等. **When Agents Slow Down: Understanding LLM Agents' Test-Time Strategies via Elo-per-token Analysis.** arXiv:2609.15309, 2026. [原始记录](https://arxiv.org/abs/2609.15309)
 16. Cuong Chi Le, Aashish Yadavally, Minh Le-Anh, Tien N. Nguyen. **Benchmarking Code Improvement with Progressive, Adaptive, and Interactive Feedback.** arXiv:2607.01360v1, 2026. [核验版本](https://arxiv.org/html/2607.01360v1)
 17. Yuvraj Verma. **Try Again, Don’t Look Back: Blind Resampling Outperforms Self-Repair in Small Code Models.** arXiv:2607.26117v1, 2026. [核验版本](https://arxiv.org/html/2607.26117v1)
-18. Seongho Son, Sangwoong Yoon, Jiahua Tang, Shuhan Wang, Lorenz Wolf, Ilija Bogunovic. **SWE-Router: Routing in Multi-turn Agentic Software Engineering Tasks.** arXiv:2607.00053v1, 2026. [原始记录](https://arxiv.org/abs/2607.00053)
+18. Seongho Son, Sangwoong Yoon, Jiahua Tang, Shuhan Wang, Lorenz Wolf, Ilija Bogunovic. **SWE-Router: Routing in Multi-turn Agentic Software Engineering Tasks.** ICML 2026 DL4C Workshop；arXiv:2607.00053v1. [原始记录](https://arxiv.org/abs/2607.00053)；[官方录用 poster 名单](https://dl4c.github.io/poster-sessions/)。Workshop CFP 明示 [non-archival](https://dl4c.github.io/callforpapers/)，不计入主会论文。
 19. Hao Li, Hangfan Zhang, Zhiyao Cui, Chunjiang Mu, Yiqun Zhang, Bo Zhang, Danyang Jia, Shuyue Hu. **RSI-Router: Evolving Subtask-Level LLM Routing and Skills for Cost-Efficient Agents.** arXiv:2609.34712v1, 2026. [原始记录](https://arxiv.org/abs/2609.34712)
 20. Zhihao Lin, Junhua Zhu, Mingyi Zhou, Xin Wang, Zhensu Sun, Renyu Yang, David Lo, Li Li. **To Run or Not to Run: Analyzing the Cost-Effectiveness of Code Execution in LLM-Based Program Repair.** arXiv:2606.26978v1；作者自报 ISSTA 2026 接收，[官方作者页](https://conf.researchr.org/profile/issta-2026/zhihaolin1)列文，本轮未完成论文集级核验。[全文](https://arxiv.org/html/2606.26978v1)
+21. Zhangchen Xu 等. **AutoLab: Can Frontier Models Solve Long-Horizon Auto Research and Engineering Tasks?** arXiv:2606.05080v1, 2026-06-03. [原始记录](https://arxiv.org/abs/2606.05080)
+22. Wenyue Hua 等. **AgentOpt v0.1 Technical Report: Client-Side Optimization for LLM-Based Agent.** arXiv:2604.06296v2, 2026-04-15. [核验版本](https://arxiv.org/html/2604.06296v2)
+23. Johin Johny Arimbur. **How Many Tries Does It Take? Iterative Self-Repair in LLM Code Generation Across Model Scales and Benchmarks.** arXiv:2604.10508, 2026. [原始记录](https://arxiv.org/abs/2604.10508)
+24. Donghwan Kim, Prakhar Singh, Younghoon Min, Jongryool Kim, Jongse Park, Kiwan Maeng. **Characterization of Multi-Model Agentic AI Systems on General Tasks via Trace-Driven Simulation.** arXiv:2606.01725v1, 2026-06-01. [全文](https://arxiv.org/html/2606.01725v1)
+25. Taicheng Guo 等. **ASAP: Agent-System Co-Design for Wall-Clock-Centered Auto HPO Research for ML Experiments.** arXiv:2606.25207v1, 2026-06-23. [全文](https://arxiv.org/html/2606.25207v1)
