@@ -43,10 +43,10 @@ import httpx
 
 PRICE_CARD_DATE = "2026-10-06"
 PLANNING_CNY_PER_USD = Decimal("8")
-MAX_MESSAGE_BYTES = 48_000
+MAX_MESSAGE_BYTES = 256_000
 MAX_OUTPUT_TOKENS = 2_048
 MESSAGE_OVERHEAD_TOKENS = 1_024  # Per message, deliberately conservative.
-MAX_REQUEST_BYTES = 128_000
+MAX_REQUEST_BYTES = 1_048_576
 # Applied separately to encoded wire bytes and decoded response bytes.
 MAX_RESPONSE_BYTES = 1_048_576
 _MILLION = Decimal(1_000_000)
@@ -377,15 +377,19 @@ class BudgetedTimelyTransport(httpx.AsyncBaseTransport):
         if self._closing:
             raise TransportBlocked("batch_closed")
         try:
+            if self._stop_reason:
+                raise TransportBlocked("batch_stopped")
             body, message_bytes, input_upper = await self._validate(request)
             call = self._begin(body, message_bytes, input_upper, request_id, labels, dispatched)
         except TransportBlocked as exc:
+            self._stop_reason = self._stop_reason or str(exc)
             self._emit({"event": "request_rejected", "request_id": request_id, "labels": labels,
                         "run_id": labels.get("run_id"),
                         "dispatch_monotonic_s": dispatched, "end_monotonic_s": time.monotonic(),
                         "reason": str(exc), **self.snapshot()})
             raise
         except Exception:
+            self._stop_reason = self._stop_reason or "invalid_request_stream"
             self._emit({"event": "request_rejected", "request_id": request_id, "labels": labels,
                         "run_id": labels.get("run_id"),
                         "dispatch_monotonic_s": dispatched, "end_monotonic_s": time.monotonic(),

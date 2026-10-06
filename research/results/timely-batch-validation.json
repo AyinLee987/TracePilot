@@ -1,0 +1,128 @@
+{
+  "schema": 2,
+  "provider_calls": 0,
+  "batch_fixture": {
+    "checks": [
+      "prompt_source_raise_not_executed",
+      "prompt_source_write_not_executed",
+      "model_step_child_caps_and_balanced_block_guards",
+      "full_frozen_matrix",
+      "dry_cli",
+      "clean_resume",
+      "weighted_tau",
+      "timed_binding",
+      "complete_idempotency",
+      "completed_calibration_tamper",
+      "completed_calibration_missing",
+      "default_official_condition",
+      "adapted_full_matrix",
+      "prompt_variant_calibration_isolation",
+      "whole_block_reservation",
+      "unknown",
+      "missing-result",
+      "overcap",
+      "unusable_calibration_stops",
+      "clock-jump",
+      "tool-duration",
+      "tree-timeout",
+      "tree-interrupt",
+      "tree-hangup",
+      "tree-quit",
+      "settle_fsync_sigint_recovers_durable_sequence",
+      "torn_settlement_fail_closed_no_further_append",
+      "calibration_raw_hash_tamper",
+      "calibration_document_hash_tamper",
+      "binding_hash_tamper",
+      "exclusive_lock_preserved",
+      "unsettled_resume_refused",
+      "frozen_plan_hash",
+      "r1_known_failed_accounting",
+      "r1_duplicate_rejected",
+      "r1_omission_rejected",
+      "invalid_imports_leave_study_unbound",
+      "offline_live_separation",
+      "one_paid_pilot_per_study",
+      "shared_study_lock",
+      "frozen_complete_r1_inventory",
+      "unknown_history_retained_and_blocks_study",
+      "cleanup_uncertainty_preserves_lock"
+    ],
+    "status": "ok",
+    "summary": ".local/timely-batch-fixture-aaye2oof/summary.json",
+    "summary_sha256": "0f2d1400055da5534bdbecca3d13eac1f5833e47601620db878613b1701c1472"
+  },
+  "full_runner": {
+    "passed": 19,
+    "total": 19,
+    "summary": ".local/timely-reproduction-checks/877ee7a15c6d4c19ba90dd49ac314a8d/summary.json",
+    "summary_sha256": "552abfc2b4985011b28cd2c803500a1ff486de631df3d1345b3e4f0a6a1dd7f4"
+  },
+  "transport": {
+    "passed": 30,
+    "directory": ".local/timely-transport-checks/09f545e0783f45edba0cf647f3e8c683",
+    "scope": "MockTransport only"
+  },
+  "coordinator_real_evaluator_offline": {
+    "planned": 24,
+    "settled": 24,
+    "speed": 8,
+    "timed": 16,
+    "status": "complete",
+    "scope": "full frozen matrix with real official source/evaluator/ROM and fake HTTP",
+    "directory": ".local/timely-small-real-evaluator-capacity-rerun-20261006",
+    "plan_sha256": "48993ecc8cee63bc8bccb81b617749e51c414dd298a6cf29bb3698062ee5090b",
+    "ledger_sha256": "188c2c3d3dc2ccdeeeb36f225ae24665e86302fbbe3528162fc0523d8af8975e",
+    "raw_artifact_hashes_verified": 144,
+    "synthetic_accounting_not_API_cost": true
+  },
+  "retained_failures": [
+    {
+      "directory": ".local/timely-reproduction-checks/451ca15a133845b59cef1bcec91ecac1",
+      "reason": "test still asserted old request bounds; expectations updated and full suite rerun"
+    },
+    {
+      "directory": ".local/timely-small-real-evaluator-capacity-20261006",
+      "reason": "upstream realtime elapsed became negative at calibration8; all32 fake requests closed; run preserved and independent zeroAPI verification repeated",
+      "suspected_cause": "realtime clock rollback; exact host mechanism unverified",
+      "final_official_time_s": -0.7805647020684434,
+      "monotonic_evaluator_wall_s": 0.247684358
+    }
+  ],
+  "code_sha256": {
+    "timely_reproduce.py": "8953bacabda2209cfa7059ff657886cc68bf585a13e0eb8285d03249982dba71",
+    "timely_reproduction_fake_e2e.py": "9cab760b3f9dfb22482ef6269ec0bbe3794d882df4751d6981fff12e69076181",
+    "timely_transport.py": "b361b53b7b336fde17b0460bf92e6e0f374b0981eb3bd3d11e049ef9169a0cca",
+    "timely_transport_fake_e2e.py": "fed938d6f2d178308701face3ee043d60442e34006d92e01c305b5693f03ce5e",
+    "timely_evidence.py": "efb053f6921555a38820a901990981b439c0d592fd860432568527f0b169f784",
+    "timely_batch.py": "e486812e003098c9329c2b2951de220b39e2293b3cca3b5162521b678713c3ca",
+    "timely_batch_fake_e2e.py": "d7c54cb71aee5b89afe994cc97bab7ae98256b3724eb505e41dd70cf265e5316"
+  },
+  "pre_paid_review_checks": {
+    "review_actual_model": "claude-opus-5-5",
+    "review_is_error": false,
+    "all_current_source_hashes_match": true,
+    "raw_artifacts_rehashed": 144,
+    "timed_cutoff": {
+      "timed_total": 16,
+      "early_cutoff_verified": 4,
+      "steps": [
+        59,
+        56,
+        55,
+        61
+      ],
+      "max_steps": 64,
+      "current_episode_rechecks_passed": 4,
+      "provider_calls": 0
+    },
+    "unknown_tool_alias": {
+      "basis": "source inspection only; upstream normalizes nonempty alias to step before duration/results/observer",
+      "existing_raw_alias_calls": 0
+    },
+    "pro_response_contract": {
+      "existing_real_response_evidence": false,
+      "policy": "first predeclared Pro request validates contract; mismatch retains liability and stops"
+    },
+    "execution_gate": "review and preflight clear for first four calibration episodes under existing cumulative CNY200 cap; no claim of completed paid R2"
+  }
+}

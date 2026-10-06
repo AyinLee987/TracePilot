@@ -36,6 +36,7 @@ PINNED_COMMIT = "e13af2b8c98d799857ace789ebcfdfd4ea6c2985"
 # guard before importing it catches accidental replacement of MockTransport.
 # This is a Python network guard, not an OS-level network sandbox.
 CHILD_BOOTSTRAP = """
+import hashlib
 import json
 import multiprocessing
 import os
@@ -44,6 +45,9 @@ import runpy
 import sys
 
 guard_path, runner, *runner_args = sys.argv[1:]
+source = Path(runner_args[runner_args.index('--source') + 1])
+prompt_path = source / 'src/timely_eval/prompts.py'
+prompt_source_before = hashlib.sha256(prompt_path.read_bytes()).hexdigest()
 blocked_events = []
 network_events = {
     'socket.connect', 'socket.connect_ex', 'socket.getaddrinfo',
@@ -81,6 +85,17 @@ if paid_setup:
 try:
     runpy.run_path(runner, run_name='__main__')
 finally:
+    official = sys.modules.get('timely_eval.interactive')
+    prompts = sys.modules.get('timely_eval.prompts')
+    prompt_evidence = {}
+    if official is not None and prompts is not None:
+        base_system = prompts.INTERACTIVE_SYSTEM + '\\n\\n' + prompts.INTERACTIVE_TOOL_PROMPT
+        prompt_evidence = {
+            'tool_prompt_restored': official.INTERACTIVE_TOOL_PROMPT == prompts.INTERACTIVE_TOOL_PROMPT,
+            'base_tool_prompt_sha256': hashlib.sha256(prompts.INTERACTIVE_TOOL_PROMPT.encode()).hexdigest(),
+            'base_system_message_sha256': hashlib.sha256(base_system.encode()).hexdigest(),
+            'source_unchanged': prompt_source_before == hashlib.sha256(prompt_path.read_bytes()).hexdigest(),
+        }
     active_child_pids = [child.pid for child in multiprocessing.active_children()]
     proc_children = Path(f'/proc/self/task/{os.getpid()}/children')
     direct_child_pids = ([int(pid) for pid in proc_children.read_text().split()]
@@ -91,6 +106,7 @@ finally:
                    'credentials_source': 'generated_dummy_env_fixture' if paid_setup else 'none',
                    'real_credentials_passed': False,
                    'http_transports': http_transports, 'http_requests': http_requests,
+                   'prompt_scope': prompt_evidence,
                    'active_child_pids': active_child_pids,
                    'procfs_direct_child_pids': direct_child_pids}, stream, indent=2)
         stream.write('\\n')
@@ -101,6 +117,7 @@ finally:
 class Case:
     name: str
     fake_case: str = "valid"
+    tool_format: str = "official"
     network_setup: bool = False
     extra_args: tuple[str, ...] = ()
     technical_ok: bool = True
@@ -123,6 +140,18 @@ class Case:
 
 CASES = (
     Case("valid-speed", calibration_usable=True),
+    Case("single-json-v1-speed", tool_format="single-json-v1", calibration_usable=True),
+    Case("single-json-v1-timed", tool_format="single-json-v1",
+         extra_args=("--mode", "timed", "--average-duration-per-step", "0.000001"),
+         recorded_steps=1, model_responses=1, executed_tools=1, request_dispatch=1, request_complete=1),
+    Case("single-json-v1-conclusion", tool_format="single-json-v1", fake_case="conclusion", protocol_ok=False,
+         recorded_steps=0, model_responses=1, executed_tools=0,
+         request_dispatch=1, request_complete=1, conclusion_responses=1,
+         required_warnings=("official_conclusion_success_is_not_game_victory",)),
+    Case("single-json-v1-tool-error", tool_format="single-json-v1", fake_case="tool-error", technical_ok=False, protocol_ok=False,
+         recorded_steps=0, model_responses=0, executed_tools=0,
+         request_dispatch=1, request_complete=1,
+         required_errors=("official_episode_failure", "expected_one_returned_trajectory")),
     Case("timed-after-action", extra_args=("--mode", "timed", "--average-duration-per-step", "0.000001"),
          recorded_steps=1, model_responses=1, executed_tools=1,
          request_dispatch=1, request_complete=1),
@@ -228,6 +257,8 @@ def inspect_case(case: Case, output: Path, control: Path, game_path: Path,
         check(guard.get("real_credentials_passed") is False, "real credential boundary missing")
         check(guard.get("active_child_pids") == [], "multiprocessing children still active before runner exit")
         check(guard.get("procfs_direct_child_pids") in (None, []), "child PIDs remain before runner exit")
+        check(guard["prompt_scope"].get("tool_prompt_restored") is True, "official prompt not restored after episode")
+        check(guard["prompt_scope"].get("source_unchanged") is True, "official prompt source file changed")
         if case.name == "pool-abort":
             environment = read_json(output / "environment.json")
             result = read_json(output / "pool-abort.json")
@@ -237,6 +268,8 @@ def inspect_case(case: Case, output: Path, control: Path, game_path: Path,
             check(result["worker_alive_after"] == [] and all(code is not None for code in result["worker_exitcodes"].values()),
                   "real worker processes remain alive or unjoined after observer abort")
             check(result["official_class_restored"] is True, "official environment class not restored")
+            check(result["prompt_scope_restored"] is True and result["prompt_note_once"] is True,
+                  "adapted prompt context did not restore after controlled abort")
             check(result["upstream_commit"] == PINNED_COMMIT and bool(result["upstream_sha256"]), "source pin missing")
             check(result["jericho_version"] == "3.2.1", "wrong Jericho version")
             check(len(environment["environments"]) == 1, "expected one real observed environment")
@@ -259,7 +292,7 @@ def inspect_case(case: Case, output: Path, control: Path, game_path: Path,
         events = read_jsonl(output / "requests.jsonl")
         evidence, accounting = result["evidence"], result["accounting"]
         counts, game = evidence["counts"], evidence["game"]
-        mode = "timed" if case.name == "timed-after-action" else "speed"
+        mode = "timed" if "--mode" in case.extra_args else "speed"
         check(manifest["paid"] is case.network_setup and result["paid"] is case.network_setup, "wrong runner mode")
         check(manifest["evidence"] == ("api_model_protocol_replication" if case.network_setup else "fake_model_real_environment"),
               "wrong environment/model evidence label")
@@ -274,11 +307,35 @@ def inspect_case(case: Case, output: Path, control: Path, game_path: Path,
         check(manifest["sdk_max_retries"] == 0 and manifest["official_agent_attempts"] == 1,
               "unexpected retry configuration")
         check("outer_retries" not in manifest, "legacy retry metadata is ambiguous")
+        from timely_reproduce import SINGLE_JSON_TOOL_NOTE
+        note = SINGLE_JSON_TOOL_NOTE if case.tool_format == "single-json-v1" else ""
+        check(manifest["tool_format"] == case.tool_format
+              and manifest["prompt_condition_id"] == f"timely-interactive:{case.tool_format}"
+              and manifest["tool_format_note"] == note, "prompt condition metadata mismatch")
+        prompt_hashes = manifest["prompt_sha256"]
+        check(prompt_hashes["base_tool_prompt"] == guard["prompt_scope"]["base_tool_prompt_sha256"]
+              and prompt_hashes["base_system_message"] == guard["prompt_scope"]["base_system_message_sha256"],
+              "base prompt hashes differ from unchanged official module")
+        adapted_difference = "single-json-v1 tool-format-only prompt clarification"
+        check((adapted_difference in manifest["differences_from_paper"]) == bool(note), "prompt adaptation disclosure missing or invented")
+        if not note:
+            check(prompt_hashes["base_tool_prompt"] == prompt_hashes["actual_tool_prompt"]
+                  and prompt_hashes["base_system_message"] == prompt_hashes["actual_system_message"],
+                  "default official prompt was changed")
+        for event in events:
+            if event["event"] == "request_dispatch":
+                system = event["request_body"]["messages"][0]["content"]
+                check(hashlib.sha256(system.encode()).hexdigest() == prompt_hashes["actual_system_message"],
+                      "actual request system prompt differs from manifest")
+                check(system.count(SINGLE_JSON_TOOL_NOTE) == int(bool(note)), "tool format note must appear exactly once only in adapted condition")
+                base = system.removesuffix("\n\n" + note) if note else system
+                check(hashlib.sha256(base.encode()).hexdigest() == prompt_hashes["base_system_message"],
+                      "adaptation changed the original system prompt beyond appending the note")
         check(manifest["http_operation_timeout_s"] == 60
               and manifest["http_timeout_semantics"] == "per_operation_not_absolute_task_deadline",
               "HTTP operation timeout confused with the evaluator deadline")
         check(manifest["transport_limits"] == {
-            "max_message_bytes": 48_000, "max_request_bytes": 128_000,
+            "max_message_bytes": 256_000, "max_request_bytes": 1_048_576,
             "max_response_bytes_each_wire_decoded": 1_048_576,
             "max_output_tokens": 2_048, "message_overhead_tokens_each": 1_024,
         }, "transport bounds differ from the pinned offline contract")
@@ -358,7 +415,7 @@ def inspect_case(case: Case, output: Path, control: Path, game_path: Path,
         check(official_summary == (result["official_result"][0] if mode == "timed" else result["official_result"]),
               "official summary artifact differs from result")
         trajectory_path = output / "official" / "trajectories_max_steps_3.jsonl"
-        if case.name == "tool-error":
+        if case.fake_case == "tool-error":
             check(official_summary["failed_games"] == 1 and not trajectory_path.exists(),
                   "tool exception should remain an official failed episode without a trajectory")
         else:
@@ -393,7 +450,7 @@ def inspect_case(case: Case, output: Path, control: Path, game_path: Path,
             check(counts["no_tool_steps"] == 3, "no-tool scenario should record three unsuccessful protocol steps")
         if case.name == "length":
             check(counts["finish_reasons"].get("length") == 3, "length finish reasons missing")
-        if case.name == "tool-error":
+        if case.fake_case == "tool-error":
             check(counts["invalid_tool_arguments"] == 1, "malformed tool argument diagnostic missing")
         summary.update({"technical_ok": evidence["technical_ok"], "protocol_ok": evidence["protocol_ok"],
                         "calibration_usable": evidence["calibration_usable"], "counts": counts,
@@ -413,7 +470,7 @@ def inspect_case(case: Case, output: Path, control: Path, game_path: Path,
 def pool_abort_child(source: Path, game: Path, output: Path) -> int:
     """Use a real Jericho worker pool, then leave the observer with an error."""
     import importlib.metadata
-    from timely_reproduce import verify_source
+    from timely_reproduce import verify_source, tool_prompt_condition, SINGLE_JSON_TOOL_NOTE
     from timely_evidence import observe_environment
 
     hashes = verify_source(source)
@@ -425,13 +482,15 @@ def pool_abort_child(source: Path, game: Path, output: Path) -> int:
         raise ValueError("Observer-check output must be below this checkout's .local")
     output.mkdir(parents=True, exist_ok=False)
     original = official.JerichoToolEnvironment
+    original_prompt, prompt_note_once = official.INTERACTIVE_TOOL_PROMPT, False
     observer, workers, actions_count, aborted = None, [], 0, False
 
     class ControlledPoolAbort(Exception):
         pass
 
     try:
-        with observe_environment(official) as observer:
+        with tool_prompt_condition(official, "single-json-v1"), observe_environment(official) as observer:
+            prompt_note_once = official.INTERACTIVE_TOOL_PROMPT.count(SINGLE_JSON_TOOL_NOTE) == 1
             env = official.JerichoToolEnvironment(game)
             actions_count = len(env.get_valid_actions())
             workers = list(env.env.pool._pool)
@@ -446,6 +505,8 @@ def pool_abort_child(source: Path, game: Path, output: Path) -> int:
             "worker_alive_after": [worker.pid for worker in workers if worker.is_alive()],
             "worker_exitcodes": {str(worker.pid): worker.exitcode for worker in workers},
             "official_class_restored": official.JerichoToolEnvironment is original,
+            "prompt_scope_restored": official.INTERACTIVE_TOOL_PROMPT == original_prompt,
+            "prompt_note_once": prompt_note_once,
             "upstream_commit": PINNED_COMMIT, "upstream_sha256": hashes,
             "jericho_version": importlib.metadata.version("jericho"), "zero_api": True,
         })
@@ -494,6 +555,8 @@ def main() -> int:
         else:
             command.extend(["--output", str(output), "--steps", "3", "--tool-delay", "2",
                             "--max-calls", "8", "--budget-cny", "1", "--fake-case", case.fake_case, *case.extra_args])
+            if case.tool_format != "official":
+                command.extend(["--tool-format", case.tool_format])
         dummy_secret, fixture = None, control / ".dummy-input.env"
         started, timed_out, exit_code = time.perf_counter(), False, None
         try:

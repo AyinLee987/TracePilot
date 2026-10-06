@@ -1,0 +1,146 @@
+{
+  "schema": 1,
+  "stage": "R1 original public prompt",
+  "run_id": "r1-live-20261006",
+  "paid": true,
+  "source_commit": "e13af2b8c98d799857ace789ebcfdfd4ea6c2985",
+  "model": "deepseek-flash",
+  "game": "zork1.z5",
+  "source_game_sha256": "0ae5ac229e79094ff368b6669356444af0f35e21d862a1baaa546989085c15fd",
+  "runner_sha256": {
+    "timely_reproduce.py": "c46090f4cbfdac6b644bbf3577d5191a650ded97f4f24f6cbe3b98b1846cc27d",
+    "timely_transport.py": "aa5f802664bbb251abde55412cd920d83590b813fd6ef7ab4dd7ce5c5790e868",
+    "timely_evidence.py": "efb053f6921555a38820a901990981b439c0d592fd860432568527f0b169f784"
+  },
+  "steps": 8,
+  "request_count": 8,
+  "estimated_cny": "0.008655072",
+  "unknown_reserved_cny": "0",
+  "prior_batch_estimated_cny": "0.162511296",
+  "combined_estimated_cny": "0.171166368",
+  "current_pilot_estimated_cny": "0.008655072",
+  "cost_semantics": "peak-price estimate at fixed planning conversion; not invoice",
+  "technical_ok": true,
+  "protocol_ok": false,
+  "calibration_usable": false,
+  "calibration_exclusions": [
+    "invalid_tool_protocol"
+  ],
+  "wall_s": 7.618328151,
+  "official_logical_s": 13.854577064678598,
+  "virtual_tool_s": 6.2,
+  "official_tau": 1.7318221330848247,
+  "game_state": {
+    "official_score": 5,
+    "official_success_flag": false,
+    "signed_score": 5,
+    "max_score": 350,
+    "normalized_score": 0.014285714285714285,
+    "victory": false,
+    "game_over": false
+  },
+  "steps_redacted": [
+    {
+      "step": 0,
+      "parsed_tool_calls": 3,
+      "executed_tool": "get_available_actions",
+      "discarded_tool_calls": 2,
+      "format": "official_xml_json",
+      "score_delta": 0,
+      "model_wall_s": 0.9357904450000021,
+      "estimated_cny": "0.0019536"
+    },
+    {
+      "step": 1,
+      "parsed_tool_calls": 1,
+      "executed_tool": "step",
+      "discarded_tool_calls": 0,
+      "format": "official_xml_json",
+      "score_delta": 0,
+      "model_wall_s": 0.8713944589999976,
+      "estimated_cny": "0.000980832"
+    },
+    {
+      "step": 2,
+      "parsed_tool_calls": 1,
+      "executed_tool": "step",
+      "discarded_tool_calls": 0,
+      "format": "official_xml_json",
+      "score_delta": 0,
+      "model_wall_s": 0.5460697619999983,
+      "estimated_cny": "0.000727776"
+    },
+    {
+      "step": 3,
+      "parsed_tool_calls": 1,
+      "executed_tool": "step",
+      "discarded_tool_calls": 0,
+      "format": "official_xml_json",
+      "score_delta": 0,
+      "model_wall_s": 0.5865559359999999,
+      "estimated_cny": "0.001171776"
+    },
+    {
+      "step": 4,
+      "parsed_tool_calls": 1,
+      "executed_tool": "step",
+      "discarded_tool_calls": 0,
+      "format": "official_xml_json",
+      "score_delta": 0,
+      "model_wall_s": 0.9870140409999983,
+      "estimated_cny": "0.00090192"
+    },
+    {
+      "step": 5,
+      "parsed_tool_calls": 1,
+      "executed_tool": "step",
+      "discarded_tool_calls": 0,
+      "format": "official_xml_json",
+      "score_delta": 0,
+      "model_wall_s": 0.7298768970000005,
+      "estimated_cny": "0.001112064"
+    },
+    {
+      "step": 6,
+      "parsed_tool_calls": 0,
+      "executed_tool": null,
+      "discarded_tool_calls": 0,
+      "format": "unparsed_dsml",
+      "score_delta": 0,
+      "model_wall_s": 0.8131498120000025,
+      "estimated_cny": "0.000862752"
+    },
+    {
+      "step": 7,
+      "parsed_tool_calls": 1,
+      "executed_tool": "step",
+      "discarded_tool_calls": 0,
+      "format": "official_xml_json",
+      "score_delta": 5,
+      "model_wall_s": 0.7442703119999976,
+      "estimated_cny": "0.000944352"
+    }
+  ],
+  "findings": [
+    "public prompt permits multiple calls but public evaluator executes only the first",
+    "step 6 uses DSML rather than the required tool_call wrapper; original evaluator reports no valid call",
+    "step 7 returns to the required format after the official error feedback"
+  ],
+  "limitations": [
+    "one short run; no cross-model comparison",
+    "unreleased paper checkpoints not reproduced",
+    "original tau retained but excluded from planned R2 calibration",
+    "tool delays are virtual, not elapsed sleeps"
+  ],
+  "raw_artifacts": {
+    "directory": ".local/timely-reproduction-runs/r1-live-20261006",
+    "sha256": {
+      "environment.json": "029f31133935df6cca7ab5968fb9f90e84ce38edf45259f7e78ef736c1eb9786",
+      "manifest.json": "b62d72b9c2013e3c78560947b494dcd41e9f418a56dda5fdb9684f3a63011303",
+      "official/speed_summary.json": "b81eb7fd3f3145a368706835303652dd64a43d80e3593de7ca95abd118ce4dbb",
+      "official/trajectories_max_steps_8.jsonl": "6d02f64ba8b9db6db6cd5a433460de109d32769e1b5b7eeef3a50a1dfbfac93d",
+      "requests.jsonl": "8e0dc1364f4c5339205617e030bc7be552297d12c8864474a055c20623cbb163",
+      "result.json": "bf0b7630dcb69f243445fac3fd8478bfcb429acd84c02a13e9f32eccbd22abd2"
+    }
+  }
+}

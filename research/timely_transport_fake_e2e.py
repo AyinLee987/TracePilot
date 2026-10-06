@@ -13,7 +13,8 @@ import uuid
 
 import httpx
 
-from timely_transport import BudgetedTimelyTransport, MAX_RESPONSE_BYTES, TransportBlocked, run_context
+from timely_transport import (BudgetedTimelyTransport, MAX_MESSAGE_BYTES, MAX_REQUEST_BYTES,
+                              MAX_RESPONSE_BYTES, TransportBlocked, run_context)
 
 
 URL = "https://api.deepseek.com/chat/completions"
@@ -392,6 +393,40 @@ async def main() -> None:
             raise AssertionError("pool failure accepted")
         assert journal.closed
     cases += 1
+    # A 64-round, 128-message history beyond the old bounds must reach the provider.
+    history = [{"role": "user" if i % 2 else "assistant", "content": "x" * 1024}
+               for i in range(128)]
+    t = transport("large_history", ok, batch_budget_cny="5")
+    async with httpx.AsyncClient(transport=t) as client:
+        reply = await client.post(URL, json={**PAYLOAD, "model": "deepseek-v4-pro", "messages": history})
+        assert reply.status_code == 200 and t.snapshot()["calls_dispatched"] == 1
+        assert t.snapshot()["stop_reason"] is None
+    cases += 1
+
+    # Exceeding either request limit halts this transport without spending money.
+    for mode in ("message_limit", "request_limit"):
+        reached = 0
+
+        async def should_not_dispatch(request):
+            nonlocal reached
+            reached += 1
+            raise AssertionError("oversized request reached provider")
+
+        t = transport(mode, should_not_dispatch, batch_budget_cny="20")
+        async with httpx.AsyncClient(transport=t) as client:
+            if mode == "message_limit":
+                await blocked(client.post(URL, json={**PAYLOAD, "messages": [
+                    {"role": "user", "content": "x" * (MAX_MESSAGE_BYTES + 1)}]}))
+                reason = "request_body_not_allowed"
+            else:
+                await blocked(client.post(URL, content=b" " * (MAX_REQUEST_BYTES + 1)))
+                reason = "request_body_too_large"
+            assert t.snapshot()["stop_reason"] == reason
+            await blocked(client.post(URL, json=PAYLOAD))
+            assert reached == 0 and t.snapshot()["calls_dispatched"] == 0
+            assert Decimal(t.snapshot()["committed_cny"]) == 0
+            assert t.snapshot()["stop_reason"] == reason
+        cases += 1
     print(json.dumps({"mode": "offline_mock_only", "passed_cases": cases, "output_dir": str(out)}, ensure_ascii=False))
 
 
