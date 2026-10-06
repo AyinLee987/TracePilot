@@ -2,6 +2,15 @@
 
 阶段状态以 [`agent.md`](../agent.md) 为准。本文件记录每次任务的实际工作、验证和审查结果。
 
+## 2026-10-06：在线 R3 终态与离线分析/绘图功能
+
+- **在线状态**：原冻结矩阵144/144轨迹 complete，843次请求全部 known_settled，外层 child exit0/reaped。本批估算2.785298144元，原累计200元 study 合计3.129782592元，含早期独立实验合计3.292293888元；无未知费用，非账单，不含Claude审查。hidden scorer（本地session69912）正在运行，尚无最终评分；本条不发布胜负或修复收益。
+- **实际计时限制**：外层UTC elapsed2255.434085秒与monotonic2443.493910041秒相差188.059825041秒，原因未知。同一monotonic下的5/15秒资格与选择可核验，外部真实时钟对应仍待核验。不改冻结规则、不按整批比例校正、不删掉或重跑替换原批，也不直接宣布全部数据无效。
+- **功能**：新增纯离线分析器与绘图，输出独立目录，校核原始/评分引用及完整144/288分母；native/common、/32敏感性、首稿/最终增益、未知费用和缺失成员分开。绘图仅展示两个测量点与任务差异，不外插交叉时间；未启动/未知不进入已观测箱线，未知质量差值为NA。
+- **验证**：`python -B research/analyze_coding_deadline.py --self-test` 的21项纯JSON检查通过；旧真实executor/admission的closed settle/cancel fixture贯通144/288，零API、零Docker，原输入hash未变。绘图synthetic13项检查、9份PNG/PDF/SVG导出及排版目视通过。这些是模拟功能验证，不声称真实paid数据分析或图已验证。复验入口见[research README](../research/README.md#offline-deadline-analysis-and-figures)，本地分析证据为`.local/overnight/deadline-analysis-missingness-validation.json`。
+- **四轮实际审查已完成**：Claude CLI均为实际`claude-opus-5-5`、exit0、is_error=false。初审发现M1–M6，修复缺失、基线、费用分段和common分层后增量审查指出B1/B2/S4及plot S2；完成最小修复后的最终聚焦审查无阻断，并确认S3已有gating、撤回该项。原件依次为`.local/overnight/coding-deadline-analysis-review-20261006.json`、`coding-deadline-analysis-delta-review-20261006.json`、`coding-deadline-analysis-missingness-review-20261006.json`；最终原件SHA256 `7f1284df21bd0f68143f7ee70453e1bccf3e118da51b179defefe13d3f5c8189`。随后实际 `coding-deadline-analysis-release-review-20261006.json` 终审 exit0/is_error=false、源码未变、无提交阻断；最终 plot SHA `41c9e816…` 与文字导出证据一致。采纳验证分版本、64请求及单模型hidden_pass=0的文档澄清，完整证据见 [分析验证](../research/results/coding-deadline-analysis-validation.json) 与 [处置](reviews/2026-10-06-coding-deadline-analysis.md)。
+- **后续**：先交付已审查的分析/图功能，等hidden终态及输入独立核验后单独报告实际结果。[R4候选](research/coding-prefix-prediction.md)未冻结、未准入、未付费，需开发可辨识性、预算、外部时钟、judge/迁移/审查门槛。R2有效四游戏与曲线仍未完成，完整目标仍未完成。
+
 ## 2026-10-06：共同截止执行器与完整循环校准
 
 - **范围**：实现八个开发题的 128 条原生轨迹和单个 Flash 公开错误状态的 16 条续跑，比较独立重采样/反馈修复、Flash/Pro、0/1 秒工具延迟；每条在两个共同截止产生相关快照，保留完整分母。尚未开始真实模型对照。

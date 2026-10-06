@@ -20,8 +20,11 @@ See the [experiment plan](docs/research/timely-reproduction.md) and [related wor
 | Timely code audit and Pi/mini-SWE-agent smoke runs | Available; [earlier results](docs/research/pilot-results.md) are engineering checks |
 | Timely evaluation with real benchmark tasks | Three real Zork1 runs recorded; both batch conditions stopped on tool-format failures; no valid model comparison yet |
 | Coding first-draft and public/hidden checks | 32 real drafts complete; one public code failure and one format failure; [latest results](docs/research/coding-extension16-results.md) |
-| Shared-deadline repair and resampling | 5/15-second protocol calibrated; runner and scorer reviewed; real comparison pending; [protocol](docs/research/coding-deadline.md) |
-| Runtime JSONL, routing, and held-out selection experiments | Planned |
+| Shared-deadline repair and resampling | 144/144 online trajectories complete; hidden scoring pending; external clock mapping unresolved; [protocol and limitations](docs/research/coding-deadline.md) |
+| Offline analysis and figures | Reviewed; synthetic validation passed; real paid-result analysis and figures pending |
+| Runtime JSONL, routing, and held-out selection experiments | Planned; [R4 candidate protocol](docs/research/coding-prefix-prediction.md) is not frozen or admitted for execution |
+
+R3 uses recorded WSL monotonic cutoffs; external-clock validation remains open.
 
 ## Getting started
 

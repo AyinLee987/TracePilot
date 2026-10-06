@@ -115,11 +115,13 @@ The study reserves CNY 3.20 for the whole batch; the HTTP transport remains the 
 
 Plan preparation, study preparation, activation and execution must all use the same pinned WSL interpreter and Linux path form. Confirm dotenv, credential parsing and all request reservations before activation; no network request is needed for these checks. The first batch is complete; its results are in [coding-first16.json](results/coding-first16.json).
 
-The sole predefined extension uses `coding_pilot.py --prepare-paid-plan --stage extension16`, which prints a new `PLAN_DIRECTORY`, followed by `timely_study.py prepare-coding-extension16 --parent FIRST16_ROOT --pilot-root FRESH_EXTENSION_ROOT --coding-plan PLAN_DIRECTORY/coding-plan.json --provenance PLAN_DIRECTORY/provenance.json --historical-sources ARCHIVE_MANIFEST`. Use the actual six-file source archive from the first batch's reviewed commit. Preparation requires all 16 public checks to pass, settled accounting and verified worker/container/CLI cleanup. It inherits the same study balance and rejects stopped or uncertain parents; it does not inspect hidden scores to choose the branch. Activate the returned digest with the completed extension review, then use the existing paid execution command. There is no second extension. See the [extension review](../docs/reviews/2026-10-06-coding-extension.md) and [validation evidence](results/coding-extension-validation.json). Shared-deadline and repair executors remain pending.
+The sole predefined extension uses `coding_pilot.py --prepare-paid-plan --stage extension16`, which prints a new `PLAN_DIRECTORY`, followed by `timely_study.py prepare-coding-extension16 --parent FIRST16_ROOT --pilot-root FRESH_EXTENSION_ROOT --coding-plan PLAN_DIRECTORY/coding-plan.json --provenance PLAN_DIRECTORY/provenance.json --historical-sources ARCHIVE_MANIFEST`. Use the actual six-file source archive from the first batch's reviewed commit. Preparation requires all 16 public checks to pass, settled accounting and verified worker/container/CLI cleanup. It inherits the same study balance and rejects stopped or uncertain parents; it does not inspect hidden scores to choose the branch. Activate the returned digest with the completed extension review, then use the existing paid execution command. There is no second extension. The extension has completed; these commands document its admission path, not permission to repeat it. See the [extension review](../docs/reviews/2026-10-06-coding-extension.md) and [validation evidence](results/coding-extension-validation.json).
 
 ### Shared-deadline coding experiments
 
-The [R3 protocol](../docs/research/coding-deadline.md) keeps 128 native trajectories and 16 continuations from one public error state. Each trajectory yields two correlated snapshots at calibrated 5/15-second cutoffs. The runner and offline scorer have completed focused validation and review. No real R3 deadline comparison is available at this implementation commit. See [versioned validation](results/coding-deadline-validation.json) for what was actually checked.
+The [R3 protocol](../docs/research/coding-deadline.md) keeps 128 native trajectories and 16 continuations from one public error state. All 144 online trajectories are complete, with 843 known-settled requests and child exit0/reaped. The batch estimate is CNY 2.785298144; the same study totals CNY 3.129782592, or CNY 3.292293888 including earlier independent experiments. These are usage estimates, not invoices, and exclude Claude reviews. Hidden scoring is in progress; final quality comparisons are not yet available. See [versioned runtime validation](results/coding-deadline-validation.json) for the earlier engineering checks.
+
+The two snapshots use frozen 5/15-second monotonic cutoffs. Outer UTC and monotonic elapsed times differed by 188.059825041 seconds (2255.434085 versus 2443.493910041). Eligibility under the recorded clock is auditable, but correspondence to external real 5/15 seconds remains unverified. Do not rescale, replace historical runs or infer that every result is invalid; preserve the discrepancy and complete independent clock verification before another paid stage.
 
 Zero-provider checks use the pinned WSL environment:
 
@@ -140,6 +142,20 @@ After final review, calibration and commit, prepare a proposal with `coding_dead
 The execution entry is `coding_deadline.py --execute-study ROOT --env-file PROVIDER_ENV`. The outer supervisor must use `run_owned_child(..., grace_s=180)` so cancellation can finish the independent helper's cleanup; its two-second default is insufficient. Static preparation runs before study reservation. Late responses are billed but cannot update a deadline snapshot. A per-request guard censors its trajectory; batch exhaustion, unknown usage and infrastructure failures preserve the full remaining denominator. Existing attempts are not retried or replaced.
 
 After the online batch is terminal and all HTTP/public tools have closed, `coding_deadline_score.py --input-root CLOSED_ROOT` validates and inventories the persisted candidates without grading. Add `--execute-hidden --output-root FRESH_SEPARATE_ROOT` to run hidden checks. Scoring makes no model requests, preserves the online input, and retains missing/unstarted rows in the 144/288 denominators. Run it only after all timed study work has stopped.
+
+### Offline deadline analysis and figures
+
+`analyze_coding_deadline.py` reads a terminal raw batch and a separate closed score output, verifies hashes and all 144/288 planned rows, and writes fresh redacted JSON/CSV tables. It separates native/common cohorts, baseline and final missingness, /32 sensitivity, unknown costs and incomplete stratum membership. Seed-to-first-attempt transitions are separate. No model, Docker or executor code runs during analysis.
+
+```bash
+python -B research/analyze_coding_deadline.py --self-test
+python -B research/analyze_coding_deadline.py --raw-root CLOSED_RAW_ROOT --score-root CLOSED_SCORE_ROOT --output FRESH_ANALYSIS_DIR
+python -B research/plot_coding_deadline.py --source FRESH_ANALYSIS_DIR/summary.json --output FRESH_FIGURE_DIR
+```
+
+Plotting uses `requirements-plot.txt`, verifies referenced tables and accepts only the frozen 5/15 cutoffs. Three figures each export PNG/PDF/SVG; missing quality becomes NA, unstarted rows do not enter observed boxplots, and unknown fees remain marked lower bounds. This is descriptive analysis, without interpolation-based crossing estimates or held-out prediction claims.
+
+Validation so far: 21 pure-JSON analysis checks and old closed settle/cancel fixtures with 144/288 rows; 13 checks on earlier plot versions, nine focused shared-axis checks, and final text-only exports/visual inspection. Four actual Claude Opus 5.5 review rounds completed with no remaining blocker. See the [versioned evidence](results/coding-deadline-analysis-validation.json). These checks do not validate actual paid-result analysis or figures; hidden scoring has not finished. The [R4 candidate](../docs/research/coding-prefix-prediction.md) is not frozen, admitted or paid. Timely's valid four-game curves and the full research goal remain incomplete.
 
 ### Descriptive Timely trajectory
 

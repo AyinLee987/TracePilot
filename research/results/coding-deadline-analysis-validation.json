@@ -1,0 +1,378 @@
+{
+  "schema": 1,
+  "stage": "R3 offline analysis feature checkpoint",
+  "code_sha256": {
+    "research/analyze_coding_deadline.py": "223a6d12265c4a5e9d77b3d5ee989c32351f8cc08fdf332397b2e8b009f3b3fc",
+    "research/plot_coding_deadline.py": "41c9e816778dd8bbe7b7801ad7d074917bfc6353a9af07a37af73327ed2b052b"
+  },
+  "analyzer_validation": {
+    "path": ".local/overnight/deadline-analysis-missingness-validation.json",
+    "sha256": "55aa83b7469943049b5439a8b925b5dd9707c616e3a146b41b6c23516457397b",
+    "self_test": {
+      "checks": 21,
+      "exit_code": 0,
+      "new_cases": [
+        "native unstarted/interrupted membership unknown, completed late false, observed public/format outcome retained",
+        "common incomplete without improvement unknown, observed improvement false, complete no improvement true",
+        "common parse failure not corrected, unstarted hidden status explicit"
+      ],
+      "command": "python -B research/analyze_coding_deadline.py --self-test"
+    },
+    "fixture": {
+      "command": "python -B research/analyze_coding_deadline.py --raw-root .local/deadline-score-fixture-n8e50cly/executor-cancel/deadline --score-root .local/deadline-score-fixture-n8e50cly/actual-cancel-score --output .local/deadline-analysis-missingness-final-fixture-20261006",
+      "exit_code": 0,
+      "trajectories": 144,
+      "observations": 288,
+      "source_unchanged": true,
+      "native_membership_unknown": 127,
+      "summary_sha256": "b295375406d3652875021994d526656e8ee328a9d25022b5288edd367dcffc11"
+    },
+    "provider_calls": 0,
+    "judge_containers": 0
+  },
+  "plot_validation_versions": [
+    {
+      "path": ".local/deadline-plot-synthetic-f3b7e946854f4fe48c753c20606fcd17/qa-summary.json",
+      "sha256": "e915abe4ba57582356bc73167f2755796e5ff95bb7aafc436ab46b05608bdf6c",
+      "status": "passed",
+      "scope": "Synthetic plotting smoke only; 0.2/0.6 labels mapped to 5/15. No real benchmark measurement.",
+      "exit_code": 0,
+      "script_sha256": "c784d68874adecd60aa6b84fddacfb6f80ed75af16cd0266cde3fabbe27f6752",
+      "visual_inspection": "pending; record separately after viewing all three PNGs",
+      "checks": [
+        {
+          "name": "known_cost_box_excludes_unknown_and_not_started",
+          "passed": true
+        },
+        {
+          "name": "round_box_excludes_not_started_but_keeps_observed_unknown_fee_rounds",
+          "passed": true
+        },
+        {
+          "name": "gray_x_for_each_unstarted_row_in_both_panels",
+          "passed": true
+        },
+        {
+          "name": "black_X_only_for_unknown_cost_marker",
+          "passed": true
+        },
+        {
+          "name": "task_gaps_all_64_incomplete_cells_are_NA",
+          "passed": true
+        },
+        {
+          "name": "incomplete_quality_points_have_lower_bound_marker",
+          "passed": true
+        },
+        {
+          "name": "nine_nonempty_exports_hash_verified",
+          "passed": true
+        },
+        {
+          "name": "synthetic_and_incomplete_watermarks_recorded",
+          "passed": true
+        },
+        {
+          "name": "synthetic_watermark_deadline-quality.svg",
+          "passed": true
+        },
+        {
+          "name": "synthetic_watermark_deadline-work.svg",
+          "passed": true
+        },
+        {
+          "name": "synthetic_watermark_deadline-task-gaps.svg",
+          "passed": true
+        },
+        {
+          "name": "original_source_files_unchanged",
+          "passed": true
+        },
+        {
+          "name": "planned_denominator_144_preserved",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "path": ".local/deadline-plot-synthetic-f3b7e946854f4fe48c753c20606fcd17/visual-qa.json",
+      "sha256": "c1dea357513130a0013fad06d322812a529552b2e221b09b07b4cdbee8f656b3",
+      "status": "issues_found",
+      "scope": "Synthetic plot smoke only; no real 5/15-second experiment and no paid input",
+      "plot_script_sha256": "c784d68874adecd60aa6b84fddacfb6f80ed75af16cd0266cde3fabbe27f6752",
+      "machine_checks_passed": 13,
+      "checks": []
+    },
+    {
+      "path": ".local/deadline-plot-synthetic-f3b7e946854f4fe48c753c20606fcd17/qa-summary-layout.json",
+      "sha256": "8f90247b0c26d9d771b144d365c3414530e8a65491254ecccd684a1b27d68284",
+      "status": "passed",
+      "scope": "Synthetic plotting smoke only; 0.2/0.6 labels mapped to 5/15. No real benchmark measurement.",
+      "exit_code": 0,
+      "script_sha256": "890746f25bba429949b307f784299661710c58cc01e9c8eeaa0c3121fd4e8da1",
+      "visual_inspection": "pending; record separately after viewing all three PNGs",
+      "checks": [
+        {
+          "name": "known_cost_box_excludes_unknown_and_not_started",
+          "passed": true
+        },
+        {
+          "name": "round_box_excludes_not_started_but_keeps_observed_unknown_fee_rounds",
+          "passed": true
+        },
+        {
+          "name": "gray_x_for_each_unstarted_row_in_both_panels",
+          "passed": true
+        },
+        {
+          "name": "black_X_only_for_unknown_cost_marker",
+          "passed": true
+        },
+        {
+          "name": "task_gaps_all_64_incomplete_cells_are_NA",
+          "passed": true
+        },
+        {
+          "name": "incomplete_quality_points_have_lower_bound_marker",
+          "passed": true
+        },
+        {
+          "name": "nine_nonempty_exports_hash_verified",
+          "passed": true
+        },
+        {
+          "name": "synthetic_and_incomplete_watermarks_recorded",
+          "passed": true
+        },
+        {
+          "name": "synthetic_watermark_deadline-quality.svg",
+          "passed": true
+        },
+        {
+          "name": "synthetic_watermark_deadline-work.svg",
+          "passed": true
+        },
+        {
+          "name": "synthetic_watermark_deadline-task-gaps.svg",
+          "passed": true
+        },
+        {
+          "name": "original_source_files_unchanged",
+          "passed": true
+        },
+        {
+          "name": "planned_denominator_144_preserved",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "path": ".local/deadline-plot-synthetic-f3b7e946854f4fe48c753c20606fcd17/visual-qa-layout.json",
+      "sha256": "fd3cb05ae4da2cdc88117fd01a11ca7df830ef85faecc3dd09958a421def18d3",
+      "status": "passed",
+      "scope": "Same synthetic source; deadline labels only mapped from .2/.6 to 5/15; no real benchmark",
+      "plot_script_sha256": "890746f25bba429949b307f784299661710c58cc01e9c8eeaa0c3121fd4e8da1",
+      "machine_checks_passed": 13,
+      "observations": [
+        "Quality now has one shared vertical label with no middle-gap overlap or clipping.",
+        "Work bottom tick labels and four footnotes are separated and readable; shortened y labels fit.",
+        "Work panels share y scales by row; count scale uses integer ticks and empty panel no longer displays fractional counts.",
+        "Gray x, black X, known-only cost box, lower-bound stars and synthetic watermark remain visible."
+      ],
+      "limitations": [
+        "Task-gap image was re-exported and machine checked (64 NA); previous visual QA remains applicable; it was not re-viewed in this layout-only pass.",
+        "This validates rendering and selected plotting branches, not statistical analysis, accounting reconciliation, or actual 5/15 measurements."
+      ],
+      "checks": []
+    },
+    {
+      "path": ".local/deadline-plot-synthetic-f3b7e946854f4fe48c753c20606fcd17/qa-summary-shared-axis.json",
+      "sha256": "e7411e89eb08875c525eafc810a8dfc719a027492623364b42247225ac0aac92",
+      "status": "passed",
+      "scope": "Synthetic plotting regression only; in-memory row mutation is not persisted to source CSVs.",
+      "exit_code": 0,
+      "plot_script_sha256": "abddf44f1e3296ec640d575d5ade9c54170334be771b04410315c29e74d49244",
+      "visual_inspection": "pending separate visual-qa-shared-axis.json",
+      "checks": [
+        {
+          "name": "eligible_rounds_same_shared_limits",
+          "passed": true
+        },
+        {
+          "name": "eligible_rounds_global_max_margin",
+          "passed": true
+        },
+        {
+          "name": "eligible_rounds_all_128_native_points_inside",
+          "passed": true
+        },
+        {
+          "name": "known_cost_cny_same_shared_limits",
+          "passed": true
+        },
+        {
+          "name": "known_cost_cny_global_max_margin",
+          "passed": true
+        },
+        {
+          "name": "known_cost_cny_all_128_native_points_inside",
+          "passed": true
+        },
+        {
+          "name": "CLI_nine_exports_hash_verified",
+          "passed": true
+        },
+        {
+          "name": "synthetic_no_paid_input",
+          "passed": true
+        },
+        {
+          "name": "all_previous_fixture_and_evidence_bytes_unchanged",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "path": ".local/deadline-plot-synthetic-f3b7e946854f4fe48c753c20606fcd17/visual-qa-shared-axis.json",
+      "sha256": "340de4fe6f60cab95a7038669ee878465d5cfb5f8b2cf01044f0f485474241f6",
+      "status": "passed",
+      "scope": "Plot-only synthetic regression. No actual 5/15 experiment, model calls, or Docker execution.",
+      "plot_script_sha256": "abddf44f1e3296ec640d575d5ade9c54170334be771b04410315c29e74d49244",
+      "machine_checks_passed": 9,
+      "observations": [
+        "Both columns use identical row scales and retain all points.",
+        "In-memory delay1 count 17 is visible below 18.36 maximum; known cost .125 is visible below .135 maximum.",
+        "CLI work plot retains readable labels, separated footnotes, gray x, black X and synthetic watermark."
+      ],
+      "checks": []
+    },
+    {
+      "path": ".local/deadline-plot-synthetic-f3b7e946854f4fe48c753c20606fcd17/qa-summary-clock-labels.json",
+      "sha256": "58f964da524127afbf441054386ba8dd40acff5fbf79903f3e49d034212d552d",
+      "status": "passed",
+      "scope": "Text-only plot QA on existing synthetic input; prior 13/9 statistical checks were not rerun",
+      "exit_code": 0,
+      "plot_script_sha256": "41c9e816778dd8bbe7b7801ad7d074917bfc6353a9af07a37af73327ed2b052b",
+      "visual_inspection": {
+        "method": "view_image, all three exported PNGs",
+        "status": "passed",
+        "observations": [
+          "Quality x-axis explicitly says WSL monotonic cutoff (s), and external-clock-equivalence-unverified footnote is legible without overlap.",
+          "Work footnote explicitly says 15s WSL monotonic cutoff; captions and tick labels remain separated.",
+          "Task-gap x-axis explicitly says WSL monotonic cutoff; all three synthetic watermarks and explanatory notes are legible."
+        ],
+        "not_verified": "No external clock equivalence or real-data rendering quality is established by this synthetic text-only QA."
+      },
+      "source_unchanged": true,
+      "export_count": 9,
+      "export_hashes_verified": true,
+      "checks": []
+    }
+  ],
+  "claude_reviews": [
+    {
+      "path": ".local/overnight/coding-deadline-analysis-review-20261006.json",
+      "sha256": "06d36885d594dc0c7957f0aee2c8a6446e63edabcaa96582a9d9fa1d2d059643",
+      "actual_models": [
+        "claude-opus-5-5"
+      ],
+      "is_error": false,
+      "subtype": "success"
+    },
+    {
+      "path": ".local/overnight/coding-deadline-analysis-delta-review-20261006.json",
+      "sha256": "40f229562325f357793f438e9ef59d270a1070be6585227e4313d741ae71f5c8",
+      "actual_models": [
+        "claude-opus-5-5"
+      ],
+      "is_error": false,
+      "subtype": "success"
+    },
+    {
+      "path": ".local/overnight/coding-deadline-analysis-missingness-review-20261006.json",
+      "sha256": "7f1284df21bd0f68143f7ee70453e1bccf3e118da51b179defefe13d3f5c8189",
+      "actual_models": [
+        "claude-opus-5-5"
+      ],
+      "is_error": false,
+      "subtype": "success"
+    },
+    {
+      "path": ".local/overnight/coding-deadline-analysis-release-review-20261006.json",
+      "sha256": "37def342ecfc284b6c18bb0c1b77a9301876c5b6c5da3d13b88dfd70e088e3e0",
+      "actual_models": [
+        "claude-opus-5-5"
+      ],
+      "is_error": false,
+      "subtype": "success"
+    }
+  ],
+  "online_terminal": {
+    "path": ".local/overnight/coding-deadline-terminal-verification.json",
+    "sha256": "1456d69f1713348172f541e18bd8e2cb44e292c1d5ba9af39594a4f5a8298414",
+    "settlement": "known_settled",
+    "batch_cost_cny": "2.785298144",
+    "study_known_cny": "3.129782592",
+    "all_experiments_known_cny": "3.292293888",
+    "trajectory_status_counts": {
+      "complete": 144
+    },
+    "frozen_image": "sha256:83712435c2675d4426381b7ac449347f834a1f0b820c945b4cb9b92ab46b9e8d",
+    "accounting": {
+      "batch_budget_cny": "120",
+      "max_calls": 9216,
+      "calls_dispatched": 843,
+      "spent_estimate_cny": "2.785298144",
+      "paid_call_count": 843,
+      "estimated_cny": "2.785298144",
+      "unknown_reserved_cny": "0",
+      "in_flight_reserved_cny": "0",
+      "reserved_cny": "0",
+      "committed_cny": "2.785298144",
+      "active_calls": 0,
+      "unknown_calls": 0,
+      "stop_reason": null,
+      "closing": true
+    },
+    "cleanup": {
+      "cleanup_verified": true,
+      "pid": 4436,
+      "returncode": 0
+    },
+    "process_returncode": 0,
+    "process_reaped": true
+  },
+  "clock_audit": {
+    "path": ".local/overnight/coding-deadline-clock-audit.json",
+    "sha256": "e9069098114a88ea015cf67dca7cc52a3ed8cd8e41c61791633b0c5dda5c7022",
+    "status": "discrepancy_confirmed_cause_unresolved",
+    "historical_outer": {
+      "started_utc": "2026-10-06T10:30:28.133618+00:00",
+      "finished_utc": "2026-10-06T11:08:03.567703+00:00",
+      "utc_elapsed_s": "2255.434085",
+      "monotonic_elapsed_s": "2443.493910041",
+      "monotonic_minus_utc_s": "188.059825041"
+    },
+    "scientific_boundary": {
+      "retained": "The recorded online eligibility, max deadline and snapshot selection use a shared time.monotonic coordinate and strict available_at_s < cutoff. The discrepancy alone does not demonstrate altered candidate bytes, billing or violation of those internal predicates.",
+      "must_disclose": "Report cutoffs as 5/15 seconds on the recorded WSL CLOCK_MONOTONIC coordinate, with an unresolved discrepancy against UTC/host time. Exact external elapsed-time equivalence and stable clock-rate comparability across conditions are not established by this evidence.",
+      "prohibited_inferences": [
+        "Do not attribute the discrepancy to NTP or a specific host/WSL mechanism.",
+        "Do not declare all experimental outcomes invalid solely from this discrepancy.",
+        "Do not uniformly rescale trajectories or deadlines using the batch ratio.",
+        "Do not infer per-condition clock bias, corrected winners or quality effects without suitable evidence."
+      ],
+      "r4_gate": "Keep R4 clock validation outstanding before paid evaluation; define a paired host/guest timing validation and its acceptance rule before those runs. This artifact neither changes the frozen R3 deadlines nor authorizes additional paid runs."
+    }
+  },
+  "limitations": [
+    "Synthetic analyzer and plotting checks do not measure model quality.",
+    "Paid hidden scoring, real-input analysis and result plotting are not completed at this feature checkpoint.",
+    "Plot evidence retains each source version; later layout/text changes need their own export evidence.",
+    "R4 is an unfrozen proposal; no held-out model calls have been made."
+  ],
+  "publication_script": {
+    "path": ".local/overnight/publish_deadline_analysis_validation.py",
+    "sha256": "c8e764fab6f4dd6f5ee5c644964befb309d0009fb9ca18906d341bdec0f416b5"
+  }
+}
