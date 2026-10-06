@@ -10,7 +10,7 @@
 
 本轮主要变化：确认 EvoRoute 为 ACL 2026 主会、CUDAnalyst 为 ICML 2026 主会；发现 EFC v2 已加入仅使用前缀信息的在线控制；补入 AgentTTS、Strategy Auctions 和 Nature Machine Intelligence 的配置选择研究。以上使“分析轨迹后做 router”的宽泛定位进一步收窄。
 
-同日补查又发现 AutoLab 和 AgentOpt 两项直接近邻：前者已有实际工程任务的时间曲线、失败轨迹及 pi 等 harness 对照，后者已有跨框架记录和模型组合搜索库。因此任务扩展与即插即用本身也不足以构成论文贡献。最近一周的增量检索补入 cua-speedrun、LEAP、SSA 最新版与评测可靠性研究；再次核查补入 S* 和 Agents Are Systems, Not Models，补查又加入 Apple/EPFL 的 MLE harness 研究，当前共记录 32 篇相关工作。后者已直接比较共同实际时限、模型配置和轨迹行为，使单纯曲线加分类的定位进一步受限。
+同日补查又发现 AutoLab 和 AgentOpt 两项直接近邻：前者已有实际工程任务的时间曲线、失败轨迹及 pi 等 harness 对照，后者已有跨框架记录和模型组合搜索库。因此任务扩展与即插即用本身也不足以构成论文贡献。最近一周的增量检索补入 cua-speedrun、LEAP、SSA 最新版与评测可靠性研究；再次核查补入 S* 和 Agents Are Systems, Not Models，补查又加入 Apple/EPFL 的 MLE harness 研究，该轮共记录 32 篇相关工作；本轮补查三项路由近邻后共 35 篇。其中 Agents Are Systems, Not Models 已直接比较共同实际时限、模型配置和轨迹行为，使单纯曲线加分类的定位进一步受限。
 
 ## 1. 研究问题与范围
 
@@ -144,15 +144,30 @@ PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部�
 
 上述工作将目前的候选贡献进一步限定为**决策时可得的反馈信号，对未见任务和变化延迟下的截止前相对质量，是否有超出简单能力/速度画像及轨迹重计时的预测价值**。本轮未找到完整直接验证这一具体目标的工作；这不是“首次”的证明，也不能保证先导会得到正面结果。
 
+### 5.4 本轮补查：路由与测试时计算的直接近邻
+
+本轮再次核验顶会与同期工作，并新增以下三项记录，文献表增至 35 篇。它们分别涉及逐步状态路由、任务入口调度与单查询候选采样；不能混成一种使用早期前缀切换模型的方法。
+
+**[Agentic Routing: The Harness-Native Data Flywheel](https://arxiv.org/html/2607.11399v1)，2026-07-13。** §3.2–3.5 将工具历史、恢复状态、验证信息等 harness state 用于逐步模型选择，并记录选择、轨迹、结果、费用和耗时；开放起点是 LightGBM ranker。它直接覆盖“记录 trace 后训练 router”的宽泛构想。§4 主要报告固定 provider 设置下 DRACO/PinchBench 的质量—费用与延迟 operating points；§3.4 将后续学习策略描述为演进路径，不能把整套持续学习愿景写成已经完成的泛化验证。已查实验未直接验证本文候选的冻结规则在新延迟下的共同 deadline 模型胜负预测。本轮已核实正文，但未确认正式发表状态，按固定版本的 arXiv 预印本引用。
+
+**[ORACLE: Agentic AI Orchestrator Routing via Adaptive Verifier Calibration Feedback](https://arxiv.org/html/2607.22465v4)，2026-10-01 的 v4。** §4.1–4.3 在任务入口绑定模型与验证器，由任务结果更新后续路由；异步反馈将验证从派发关键路径移出；DISC 在任务入口比较等待收益与质量损失，并可选择另一后端。任务内部后续请求沿用同一模型，不根据任务内前缀逐步切换，区别于上篇的逐步选择。§5 比较质量—费用与并发吞吐量；它说明服务条件和验证开销应进入分析，但不能直接作为单任务固定截止前质量预测的验证。此 arXiv 编号的 7 月 v1 题为 **TRACE-Router**，题名和作者列表在新版本改变，引用必须固定版本，不合并两个版本的结果。本轮已核实正文，但未确认正式发表状态，按固定版本的 arXiv 预印本引用。
+
+与 EvoRoute、SWE-Router 相比，上述工作继续压缩通用 trace router 的创新空间。我们的候选问题仍须证明反馈特征在首轮质量、实测速度、历史时间曲线、前缀路由、模型与独立采样次数联合选择（BEST-Route 式）及重计时基线之上的增量预测价值；“新任务泛化”“前缀信息”本身也不能作为区别，因为 EFC v2 已分别检验留出泛化和前缀控制。
+
+补查正式顶会又加入 **[BEST-Route: Adaptive LLM Routing with Test-Time Optimal Compute](https://proceedings.mlr.press/v267/ding25d.html)，ICML 2025**。§3.2–4 联合选择模型和 best-of-N 次数，§5 包含延迟开销及分布外验证；这比一般 prompt router 更接近“小模型多次尝试换能力”的选型设想。其基本单元是单查询的候选生成/选择，主要目标为费用与质量，§5.4 只测本地模型延迟；不应转述为真实 API 等待、环境反馈和共同硬截止条件下的验证。[正式全文](https://raw.githubusercontent.com/mlresearch/v267/main/assets/ding25d/ding25d.pdf)
+
 ## 6. 重合审计与剩余问题
 
 | 可能写出的贡献 | 当前判断 | 最直接的先行 |
 | --- | --- | --- |
 | 小模型在相同时间靠更多交互反超 | 已有直接现象，不能单独主张新颖 | Timely |
 | 最佳模型取决于任务难度和预算 | 已有计算最优分析 | Snell；Inference Scaling Laws |
+| 联合选择模型和额外候选次数，并做分布外验证 | 已有正式先行，核心是单查询 best-of-N | BEST-Route |
 | 分析每轮有效进展、修复与退化 | 已有指标和实验 | EFC；PAIR；Self-Repair；EdgeBench |
 | 固定初稿/状态后替换反馈或模型 | 已有局部识别方法 | CUDAnalyst；Self-Repair |
 | 用早期 trace 选择模型 | 已有非常直接方法 | SWE-Router；EvoRoute |
+| 把完整 harness state、恢复/验证记录用于逐步模型选择 | 已有直接同期近邻 | Harness-Native Data Flywheel |
+| 用完成后的验证反馈更新后续任务路由，并在入口权衡等待与质量 | 已有直接同期近邻，任务内部保持模型绑定 | ORACLE v4 |
 | 用机制分析指导模型/Agent 配置 | 已有正式先行 | AgentTTS；SALE；NMI |
 | 实际工程任务中的时间曲线及多框架轨迹分析 | 已有直接同期工作 | AutoLab；EdgeBench |
 | 跨框架记录后搜索模型组合并绘制开销前沿 | 已有公开库和技术报告 | AgentOpt |
@@ -226,3 +241,6 @@ PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部�
 30. Dacheng Li 等. **S*: Test Time Scaling for Code Generation.** Findings of EMNLP 2025, 15964–15978. [官方记录](https://aclanthology.org/2025.findings-emnlp.865/)
 31. Luis Wiedmann, Leander Girrbach, Cordelia Schmid, Zeynep Akata. **Agents Are Systems, Not Models: Rethinking Agentic Evaluation.** arXiv:2610.01618v1, 2026-10-01. [原始记录](https://arxiv.org/abs/2610.01618)；[全文](https://arxiv.org/html/2610.01618v1)
 32. Kirill Brilliantov, Alejandro Hernández-Cano, Emmanuel Abbé. **How Much of a Harness Does a Strong Agent Need for Autonomous ML Engineering?** arXiv:2609.40303v1, 2026-09-30. [原始记录](https://arxiv.org/abs/2609.40303)；[全文](https://arxiv.org/html/2609.40303v1)
+33. Xinchen Liu 等. **Agentic Routing: The Harness-Native Data Flywheel.** arXiv:2607.11399v1, 2026-07-13. [原始记录](https://arxiv.org/abs/2607.11399)；[全文](https://arxiv.org/html/2607.11399v1)
+34. Ritik Raj, Souvik Kundu, Dheemanth Joshi, Tushar Krishna. **ORACLE: Agentic AI Orchestrator Routing via Adaptive Verifier Calibration Feedback.** arXiv:2607.22465v4, 2026-10-01. [版本记录](https://arxiv.org/abs/2607.22465)；[全文](https://arxiv.org/html/2607.22465v4)。7 月 v1 题为 TRACE-Router，不混用其结果。
+35. Dujian Ding 等. **BEST-Route: Adaptive LLM Routing with Test-Time Optimal Compute.** ICML 2025, PMLR 267:13870–13884. [正式记录](https://proceedings.mlr.press/v267/ding25d.html)
