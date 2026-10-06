@@ -183,6 +183,13 @@
 - **轨迹产物**：三条真实 Timely 轨迹的 72 步脱敏数据及 [单轨迹图](../research/figures/timely-v2-diagnostic.png)已生成并目视检查。第 24 条格式失败后第 25 条恢复合法调用，分数 15→15；不据此声称反馈因果效应或模型排名。
 - **状态**：本条记录尚无真实 coding 付费调用，计划未 prepare/activate。累计实验费用不变。提交后执行首批 16 槽，再依据公开自然错误推进协议；共同 deadline、反馈闭环及留出预测仍待完成。
 
+## 2026-10-06：首批 16 条真实编程首稿完成
+
+- **执行**：已审查代码 `80e208e` 推送并核验远端。使用同一 WSL 解释器 prepare/activate；计划摘要 `2734c09b54d10b0313d0d2137df49a6753bfe37dd0e02a6d5ebd8750afea8a40`，pilot 字节与受审及最终 E2E 同为 `fdd487…`。首稿 16/16 请求闭合且全部可解析，CLI child4319 exit0/reaped；44/44 容器移除、worker 回收，先完成全部 HTTP 再 public、再 hidden。
+- **结果**：Flash 与 Pro 各公开 8/8、隐藏整题 6/8。生成时间中位数分别 1.076/2.165 秒，包含本地处理且缓存命中不同；不是共同 deadline 或反馈迭代证据，不据此排名。四个隐藏整题失败均为 /32，保留数值判定局限，不作为反馈或选择依据。
+- **费用**：新增 0.084681216 元，当前研究累计 0.296871136 元，所有实验估算 0.459382432 元，未知为零；非账单，不含 Claude 审查。完整分母、usage、状态和原文件 hash 见 [结果](../research/results/coding-first16.json)。独立分析的第一版因额外 usage 元数据误报 usage 不一致，五个计费字段逐条一致；原报告保留，修正版无完整性问题，未改 paid 根。
+- **下一步**：依据公开检查全部通过，执行此前已规定的四题扩展（/16、/99、/18、/31），需要继承同一 study 的 coding ledger；不重建额度、不重复首16。共同 deadline、反馈修复、留出预测仍未完成。详见 [首批报告](research/coding-first16-results.md)。本条结果文件已由实际 Claude Opus 5.5 审查，无文档提交阻断；已澄清 /32 判定局限、12 次参考执行的构成与执行时源码身份，见 [处置](reviews/2026-10-06-coding-first16-results.md)。验证命令：python .local/overnight/publish_coding16_result.py 构建数值结果；cleanup 字段另由 document_coding16_result.py 从已哈希的 coding16-analysis-agent-v2.json 并入。随后独立核对所有原始产物 hash、16 条 public 状态、73 个文档链接及英文 README，均通过。
+
 ## 后续记录格式
 
 每次任务新增一条记录，至少包含：日期、范围、实际完成内容、验证命令与结果、Claude 审查及处置、已知限制、下一步。代码功能的记录应附对应端到端场景；只读评审不单独触发提交循环。

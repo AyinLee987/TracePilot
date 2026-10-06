@@ -1,0 +1,639 @@
+{
+  "schema": 1,
+  "stage": "R3 development first drafts; completed 16/16",
+  "paid": true,
+  "code_commit": "80e208e5fcaf3a55fffd0c99044ab3695b02e9c0",
+  "plan_canonical_sha256": "2734c09b54d10b0313d0d2137df49a6753bfe37dd0e02a6d5ebd8750afea8a40",
+  "code_sha256": {
+    "coding_environment_smoke.py": "e249978226e7cf1833e1b04b532a8f5141e42ef2e1b93e233d0859d36dd4bc68",
+    "coding_pilot.py": "fdd487d82c0464ae5b73aaf3fbf2b00d3926e6484c1d9020057b3a281de780f1",
+    "coding_tasks.py": "1e40cb14195bab48b97a8c0e798ceb725a108b5c88431e8ee3c236f595d031ef",
+    "timely_transport.py": "eec09273fa30d00ac8c38e68089840ec503ba52839ad10fb59eb0edfd4b95c5d"
+  },
+  "dev_ids": [
+    55,
+    32,
+    7,
+    56
+  ],
+  "heldout_used": false,
+  "models": [
+    {
+      "model": "deepseek-flash",
+      "denominator": 8,
+      "generation_wall_s_median": 1.0755359585000122,
+      "generation_wall_s_mean": 1.3401763235000033,
+      "cost_cny": "0.019141632",
+      "public": {
+        "pass": 8
+      },
+      "hidden": {
+        "pass": 6,
+        "fail": 2
+      },
+      "usage_totals": {
+        "prompt_tokens": 2228,
+        "completion_tokens": 1531,
+        "total_tokens": 3759,
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 1844
+      }
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "denominator": 8,
+      "generation_wall_s_median": 2.1654319360000045,
+      "generation_wall_s_mean": 2.884605195749998,
+      "cost_cny": "0.065539584",
+      "public": {
+        "pass": 8
+      },
+      "hidden": {
+        "pass": 6,
+        "fail": 2
+      },
+      "usage_totals": {
+        "prompt_tokens": 2220,
+        "completion_tokens": 1700,
+        "total_tokens": 3920,
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 1068
+      }
+    }
+  ],
+  "rows": [
+    {
+      "run_id": "draft-01-he55-deepseek-flash-rep1",
+      "task_id": "HumanEval/55",
+      "model": "deepseek-flash",
+      "repeat": 1,
+      "generation_status": "parsed",
+      "generation_wall_s": 1.0347874980000142,
+      "usage_peak_estimate_cny": "0.001248",
+      "usage": {
+        "prompt_tokens": 200,
+        "completion_tokens": 80,
+        "total_tokens": 280,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 200
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 3,
+        "total": 3,
+        "passed": 3,
+        "wall_s": 0.5851241859999732
+      },
+      "hidden": {
+        "status": "pass",
+        "reason": "hidden_checks_complete",
+        "checked": 50,
+        "total": 50,
+        "passed": 50,
+        "wall_s": 1.0846973949999779
+      }
+    },
+    {
+      "run_id": "draft-02-he55-deepseek-v4-pro-rep1",
+      "task_id": "HumanEval/55",
+      "model": "deepseek-v4-pro",
+      "repeat": 1,
+      "generation_status": "parsed",
+      "generation_wall_s": 2.96325224200001,
+      "usage_peak_estimate_cny": "0.0051744",
+      "usage": {
+        "prompt_tokens": 199,
+        "completion_tokens": 97,
+        "total_tokens": 296,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 199
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 3,
+        "total": 3,
+        "passed": 3,
+        "wall_s": 0.5847991489999913
+      },
+      "hidden": {
+        "status": "pass",
+        "reason": "hidden_checks_complete",
+        "checked": 50,
+        "total": 50,
+        "passed": 50,
+        "wall_s": 1.0823642049999762
+      }
+    },
+    {
+      "run_id": "draft-03-he32-deepseek-flash-rep1",
+      "task_id": "HumanEval/32",
+      "model": "deepseek-flash",
+      "repeat": 1,
+      "generation_status": "parsed",
+      "generation_wall_s": 2.3286497710000162,
+      "usage_peak_estimate_cny": "0.004815744",
+      "usage": {
+        "prompt_tokens": 416,
+        "completion_tokens": 429,
+        "total_tokens": 845,
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 288
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 2,
+        "total": 2,
+        "passed": 2,
+        "wall_s": 0.6229059880000136
+      },
+      "hidden": {
+        "status": "fail",
+        "reason": "hidden_checks_complete",
+        "checked": 888,
+        "total": 888,
+        "passed": 814,
+        "wall_s": 0.6747316780000006
+      }
+    },
+    {
+      "run_id": "draft-04-he32-deepseek-v4-pro-rep1",
+      "task_id": "HumanEval/32",
+      "model": "deepseek-v4-pro",
+      "repeat": 1,
+      "generation_status": "parsed",
+      "generation_wall_s": 4.408286513999997,
+      "usage_peak_estimate_cny": "0.016254656",
+      "usage": {
+        "prompt_tokens": 415,
+        "completion_tokens": 416,
+        "total_tokens": 831,
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 287
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 2,
+        "total": 2,
+        "passed": 2,
+        "wall_s": 0.6039440430000127
+      },
+      "hidden": {
+        "status": "fail",
+        "reason": "hidden_checks_complete",
+        "checked": 888,
+        "total": 888,
+        "passed": 794,
+        "wall_s": 0.6845420289999993
+      }
+    },
+    {
+      "run_id": "draft-05-he7-deepseek-flash-rep1",
+      "task_id": "HumanEval/7",
+      "model": "deepseek-flash",
+      "repeat": 1,
+      "generation_status": "parsed",
+      "generation_wall_s": 1.0413048660000186,
+      "usage_peak_estimate_cny": "0.0015768",
+      "usage": {
+        "prompt_tokens": 249,
+        "completion_tokens": 102,
+        "total_tokens": 351,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 249
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 2,
+        "total": 2,
+        "passed": 2,
+        "wall_s": 0.5702915080000253
+      },
+      "hidden": {
+        "status": "pass",
+        "reason": "hidden_checks_complete",
+        "checked": 182,
+        "total": 182,
+        "passed": 182,
+        "wall_s": 1.1627128450000441
+      }
+    },
+    {
+      "run_id": "draft-06-he7-deepseek-v4-pro-rep1",
+      "task_id": "HumanEval/7",
+      "model": "deepseek-v4-pro",
+      "repeat": 1,
+      "generation_status": "parsed",
+      "generation_wall_s": 1.6591061369999807,
+      "usage_peak_estimate_cny": "0.004670336",
+      "usage": {
+        "prompt_tokens": 248,
+        "completion_tokens": 106,
+        "total_tokens": 354,
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 120
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 2,
+        "total": 2,
+        "passed": 2,
+        "wall_s": 0.5856424490000336
+      },
+      "hidden": {
+        "status": "pass",
+        "reason": "hidden_checks_complete",
+        "checked": 182,
+        "total": 182,
+        "passed": 182,
+        "wall_s": 1.1209240480000062
+      }
+    },
+    {
+      "run_id": "draft-07-he56-deepseek-flash-rep1",
+      "task_id": "HumanEval/56",
+      "model": "deepseek-flash",
+      "repeat": 1,
+      "generation_status": "parsed",
+      "generation_wall_s": 1.2159691769999768,
+      "usage_peak_estimate_cny": "0.0019704",
+      "usage": {
+        "prompt_tokens": 249,
+        "completion_tokens": 143,
+        "total_tokens": 392,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 249
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 4,
+        "total": 4,
+        "passed": 4,
+        "wall_s": 0.5791170159999979
+      },
+      "hidden": {
+        "status": "pass",
+        "reason": "hidden_checks_complete",
+        "checked": 1012,
+        "total": 1012,
+        "passed": 1012,
+        "wall_s": 1.2442321269999752
+      }
+    },
+    {
+      "run_id": "draft-08-he56-deepseek-v4-pro-rep1",
+      "task_id": "HumanEval/56",
+      "model": "deepseek-v4-pro",
+      "repeat": 1,
+      "generation_status": "parsed",
+      "generation_wall_s": 2.1875374129999727,
+      "usage_peak_estimate_cny": "0.005715776",
+      "usage": {
+        "prompt_tokens": 248,
+        "completion_tokens": 139,
+        "total_tokens": 387,
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 120
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 4,
+        "total": 4,
+        "passed": 4,
+        "wall_s": 0.5635567460000175
+      },
+      "hidden": {
+        "status": "pass",
+        "reason": "hidden_checks_complete",
+        "checked": 1012,
+        "total": 1012,
+        "passed": 1012,
+        "wall_s": 1.2033161850000056
+      }
+    },
+    {
+      "run_id": "draft-09-he55-deepseek-flash-rep2",
+      "task_id": "HumanEval/55",
+      "model": "deepseek-flash",
+      "repeat": 2,
+      "generation_status": "parsed",
+      "generation_wall_s": 1.1097670510000057,
+      "usage_peak_estimate_cny": "0.001488",
+      "usage": {
+        "prompt_tokens": 200,
+        "completion_tokens": 105,
+        "total_tokens": 305,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 200
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 3,
+        "total": 3,
+        "passed": 3,
+        "wall_s": 0.6103069190000383
+      },
+      "hidden": {
+        "status": "pass",
+        "reason": "hidden_checks_complete",
+        "checked": 50,
+        "total": 50,
+        "passed": 50,
+        "wall_s": 1.1656618820000517
+      }
+    },
+    {
+      "run_id": "draft-10-he55-deepseek-v4-pro-rep2",
+      "task_id": "HumanEval/55",
+      "model": "deepseek-v4-pro",
+      "repeat": 2,
+      "generation_status": "parsed",
+      "generation_wall_s": 2.1433264590000363,
+      "usage_peak_estimate_cny": "0.004279616",
+      "usage": {
+        "prompt_tokens": 199,
+        "completion_tokens": 110,
+        "total_tokens": 309,
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 71
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 3,
+        "total": 3,
+        "passed": 3,
+        "wall_s": 0.6035150029999841
+      },
+      "hidden": {
+        "status": "pass",
+        "reason": "hidden_checks_complete",
+        "checked": 50,
+        "total": 50,
+        "passed": 50,
+        "wall_s": 1.1823929899999825
+      }
+    },
+    {
+      "run_id": "draft-11-he32-deepseek-flash-rep2",
+      "task_id": "HumanEval/32",
+      "model": "deepseek-flash",
+      "repeat": 2,
+      "generation_status": "parsed",
+      "generation_wall_s": 1.973375577000013,
+      "usage_peak_estimate_cny": "0.004495488",
+      "usage": {
+        "prompt_tokens": 416,
+        "completion_tokens": 427,
+        "total_tokens": 843,
+        "prompt_cache_hit_tokens": 256,
+        "prompt_cache_miss_tokens": 160
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 2,
+        "total": 2,
+        "passed": 2,
+        "wall_s": 0.5796486849999951
+      },
+      "hidden": {
+        "status": "fail",
+        "reason": "hidden_checks_complete",
+        "checked": 888,
+        "total": 888,
+        "passed": 872,
+        "wall_s": 1.0065201699999875
+      }
+    },
+    {
+      "run_id": "draft-12-he32-deepseek-v4-pro-rep2",
+      "task_id": "HumanEval/32",
+      "model": "deepseek-v4-pro",
+      "repeat": 2,
+      "generation_status": "parsed",
+      "generation_wall_s": 5.938208713999984,
+      "usage_peak_estimate_cny": "0.018931968",
+      "usage": {
+        "prompt_tokens": 415,
+        "completion_tokens": 583,
+        "total_tokens": 998,
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 31
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 2,
+        "total": 2,
+        "passed": 2,
+        "wall_s": 0.5695907649999867
+      },
+      "hidden": {
+        "status": "fail",
+        "reason": "hidden_checks_complete",
+        "checked": 888,
+        "total": 888,
+        "passed": 880,
+        "wall_s": 0.8598069410000448
+      }
+    },
+    {
+      "run_id": "draft-13-he7-deepseek-flash-rep2",
+      "task_id": "HumanEval/7",
+      "model": "deepseek-flash",
+      "repeat": 2,
+      "generation_status": "parsed",
+      "generation_wall_s": 0.995001215000002,
+      "usage_peak_estimate_cny": "0.0015768",
+      "usage": {
+        "prompt_tokens": 249,
+        "completion_tokens": 102,
+        "total_tokens": 351,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 249
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 2,
+        "total": 2,
+        "passed": 2,
+        "wall_s": 0.5783210109999573
+      },
+      "hidden": {
+        "status": "pass",
+        "reason": "hidden_checks_complete",
+        "checked": 182,
+        "total": 182,
+        "passed": 182,
+        "wall_s": 1.22619776800002
+      }
+    },
+    {
+      "run_id": "draft-14-he7-deepseek-v4-pro-rep2",
+      "task_id": "HumanEval/7",
+      "model": "deepseek-v4-pro",
+      "repeat": 2,
+      "generation_status": "parsed",
+      "generation_wall_s": 1.7385045109999737,
+      "usage_peak_estimate_cny": "0.004670336",
+      "usage": {
+        "prompt_tokens": 248,
+        "completion_tokens": 106,
+        "total_tokens": 354,
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 120
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 2,
+        "total": 2,
+        "passed": 2,
+        "wall_s": 0.58812609499995
+      },
+      "hidden": {
+        "status": "pass",
+        "reason": "hidden_checks_complete",
+        "checked": 182,
+        "total": 182,
+        "passed": 182,
+        "wall_s": 1.2127995019999958
+      }
+    },
+    {
+      "run_id": "draft-15-he56-deepseek-flash-rep2",
+      "task_id": "HumanEval/56",
+      "model": "deepseek-flash",
+      "repeat": 2,
+      "generation_status": "parsed",
+      "generation_wall_s": 1.0225554329999795,
+      "usage_peak_estimate_cny": "0.0019704",
+      "usage": {
+        "prompt_tokens": 249,
+        "completion_tokens": 143,
+        "total_tokens": 392,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 249
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 4,
+        "total": 4,
+        "passed": 4,
+        "wall_s": 0.6200213580000309
+      },
+      "hidden": {
+        "status": "pass",
+        "reason": "hidden_checks_complete",
+        "checked": 1012,
+        "total": 1012,
+        "passed": 1012,
+        "wall_s": 1.1823425009999937
+      }
+    },
+    {
+      "run_id": "draft-16-he56-deepseek-v4-pro-rep2",
+      "task_id": "HumanEval/56",
+      "model": "deepseek-v4-pro",
+      "repeat": 2,
+      "generation_status": "parsed",
+      "generation_wall_s": 2.0386195760000305,
+      "usage_peak_estimate_cny": "0.005842496",
+      "usage": {
+        "prompt_tokens": 248,
+        "completion_tokens": 143,
+        "total_tokens": 391,
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 120
+      },
+      "public": {
+        "status": "pass",
+        "reason": "public_checks_complete",
+        "checked": 4,
+        "total": 4,
+        "passed": 4,
+        "wall_s": 0.5983789160000015
+      },
+      "hidden": {
+        "status": "pass",
+        "reason": "hidden_checks_complete",
+        "checked": 1012,
+        "total": 1012,
+        "passed": 1012,
+        "wall_s": 1.2827610329999857
+      }
+    }
+  ],
+  "batch_cost_cny": "0.084681216",
+  "current_study_known_cny": "0.296871136",
+  "all_experimental_estimated_cny": "0.459382432",
+  "unknown_reserved_cny": "0",
+  "cost_semantics": "Reported usage at fixed planning peak prices; not invoice or account balance",
+  "process_closed": {
+    "child_returncode": 0,
+    "child_reaped": true,
+    "outer_wall_s": 68.23302827200001
+  },
+  "next_step": {
+    "decision": "run_predeclared_extension16",
+    "dev_ids": [
+      16,
+      99,
+      18,
+      31
+    ],
+    "reason": "All 16 generated candidates passed every public check; no publicly observable natural error found.",
+    "hidden_results_used_for_decision": false,
+    "new_budget_created": false
+  },
+  "limitations": [
+    "Four development tasks, two repeats; no significance or general model ranking claim.",
+    "Independent first drafts only; no feedback loop and no shared deadline.",
+    "Generation wall time includes local handling, excludes separate judging; cache usage is reported.",
+    "Selected-task bridge, not full EvalPlus. Task 32 numerical limitations include reference 881/888.",
+    "All four hidden failures were on task 32; hidden diagnostics do not become model feedback.",
+    "Task 32 reference failure limits its binary verdict interpretation; it does not establish impossibility. Per-input counts are diagnostic only."
+  ],
+  "raw_artifacts": {
+    "directory": ".local/coding-first16-paid-20261006",
+    "sha256": {
+      "plan.json": "4d37d08d023a23793bcddc7532177bd2ff2815917570edddff64ae4e7664c8de",
+      "provenance.json": "bef39a8493b15a9b5eaec77611e025bc62d515521398474a3522aa139a1bdfbe",
+      "parent-seal.json": "f48551a2ab58ef54ec48dfb895c60901cf1c2b5bee62ae0ed5dd0235504dd38a",
+      "coding-ledger.jsonl": "00b26ac5b0edec084c603ee32f109cce61da6b7d427e3dd58bb5812e5bef152b",
+      "requests.jsonl": "7acc671796cc00d39a595695b3201af3b151df96e83a2bc07dd5e7cb725f6047",
+      "result.json": "b96c0feb56ab597c47360f1063f7464ce55109181c75436ef25c5db888767dbd",
+      "generation-closed.json": "02e297a863966b395663411079497f2f6110a5e17a54706b1411e8277e7d1831",
+      "summary.json": "5efdb4def0b53fa94cc11c27164bbeec3aeb323945871708572cea39edc60d06",
+      "execution-process-closed.json": "1cdb800c2e79c5242a0a2f37b1e908d6d7184d847a9870821a29ffd2c4337e87"
+    }
+  },
+  "cleanup_verification": {
+    "isolated_executions": 44,
+    "public_candidates": 16,
+    "hidden_candidates": 16,
+    "references": 12,
+    "removed": 44,
+    "worker_cli_reaped": 44,
+    "worker_exit_zero": 44,
+    "source": ".local/overnight/coding16-analysis-agent-v2.json",
+    "source_sha256": "222d31285b5011ee5dd99486e4c2f62f08ec2d6bcbbae58dbf41373dacf5848d",
+    "analysis_note": "First private analysis falsely compared full provider usage with the normalized journal; corrected comparison checks the five billing fields. Both private reports are retained. Paid artifacts were unchanged.",
+    "reference_breakdown": {
+      "HumanEval/55": 4,
+      "HumanEval/7": 4,
+      "HumanEval/56": 4
+    }
+  }
+}
