@@ -1,0 +1,193 @@
+{
+  "schema": 1,
+  "scope": "zero-model environment and external-judge smoke only",
+  "model_calls": 0,
+  "api_spend_cny": "0",
+  "r3_r4_experiment_completed": false,
+  "source_sha256": "0df36e10c9e60c87a068c19132c47e9bb76a19af4c309cac8ad4bd96ee32ab4f",
+  "summary": ".local/coding-research-env/runs/3aabebae4d04446c88eb7a5439b6579c/summary.json",
+  "summary_sha256": "835b97820360b4f15a13e73b6b1ff778c7dd45841aa503218298989590c97044",
+  "delta_summary": ".local/coding-research-env/runs/review-delta-probe-b7fed9f68fca4cb6afb187615d6f4ceb/review-delta-summary.json",
+  "delta_summary_sha256": "c6c49466225832c7061b17839e700afd54662085bb9524790f834d28fe447d2f",
+  "cases": [
+    {
+      "name": "canonical",
+      "passed": true,
+      "input_count": 1006,
+      "correct_inputs": 1006,
+      "judge_result": "pass",
+      "timed_out": false,
+      "output_limit_exceeded": false,
+      "output_bytes_retained": {
+        "stdout": 30275,
+        "stderr": 0
+      },
+      "worker_cli_reaped": true,
+      "cleanup": {
+        "attempted": true,
+        "removed": true,
+        "auto_remove_fallback": true,
+        "interrupt_policy": "ignore SIGINT during bounded exact-owner cleanup",
+        "remove_exit_code": 0
+      }
+    },
+    {
+      "name": "known-wrong",
+      "passed": true,
+      "input_count": 1006,
+      "correct_inputs": 199,
+      "judge_result": "fail",
+      "timed_out": false,
+      "output_limit_exceeded": false,
+      "output_bytes_retained": {
+        "stdout": 31082,
+        "stderr": 0
+      },
+      "worker_cli_reaped": true,
+      "cleanup": {
+        "attempted": true,
+        "removed": true,
+        "auto_remove_fallback": true,
+        "interrupt_policy": "ignore SIGINT during bounded exact-owner cleanup",
+        "remove_exit_code": 0
+      }
+    },
+    {
+      "name": "infinite-loop",
+      "passed": true,
+      "input_count": 1006,
+      "judge_result": "timeout",
+      "timed_out": true,
+      "output_limit_exceeded": false,
+      "output_bytes_retained": {
+        "stdout": 0,
+        "stderr": 0
+      },
+      "worker_cli_reaped": true,
+      "cleanup": {
+        "attempted": true,
+        "removed": true,
+        "auto_remove_fallback": true,
+        "interrupt_policy": "ignore SIGINT during bounded exact-owner cleanup",
+        "remove_exit_code": 0
+      }
+    },
+    {
+      "name": "stdout-flood",
+      "passed": true,
+      "input_count": 1006,
+      "judge_result": "output_limit",
+      "timed_out": false,
+      "output_limit_exceeded": true,
+      "output_bytes_retained": {
+        "stdout": 262144,
+        "stderr": 0
+      },
+      "worker_cli_reaped": true,
+      "cleanup": {
+        "attempted": true,
+        "removed": true,
+        "auto_remove_fallback": true,
+        "interrupt_policy": "ignore SIGINT during bounded exact-owner cleanup",
+        "remove_exit_code": 0
+      }
+    },
+    {
+      "name": "stderr-flood",
+      "passed": true,
+      "input_count": 1006,
+      "judge_result": "output_limit",
+      "timed_out": false,
+      "output_limit_exceeded": true,
+      "output_bytes_retained": {
+        "stdout": 0,
+        "stderr": 65536
+      },
+      "worker_cli_reaped": true,
+      "cleanup": {
+        "attempted": true,
+        "removed": true,
+        "auto_remove_fallback": true,
+        "interrupt_policy": "ignore SIGINT during bounded exact-owner cleanup",
+        "remove_exit_code": 0
+      }
+    }
+  ],
+  "delta_checks": [
+    {
+      "name": "desktop-refusal",
+      "passed": true,
+      "synthetic_identity": true,
+      "docker_mutations": 0
+    },
+    {
+      "name": "fixed-hash-refusal",
+      "passed": true,
+      "asset": "evalplus-source.zip",
+      "acquisition_lock_present": false
+    },
+    {
+      "name": "fixed-hash-refusal",
+      "passed": true,
+      "asset": "evalplus-release-tag.json",
+      "acquisition_lock_present": false
+    },
+    {
+      "name": "fixed-hash-refusal",
+      "passed": true,
+      "asset": "HumanEvalPlus-v0.1.10.jsonl.gz",
+      "acquisition_lock_present": false
+    },
+    {
+      "name": "fixed-hash-refusal",
+      "passed": true,
+      "asset": "HumanEvalPlus-LICENSE.txt",
+      "acquisition_lock_present": false
+    },
+    {
+      "name": "fixed-hash-refusal",
+      "passed": true,
+      "asset": "HumanEval-MIT-LICENSE.txt",
+      "acquisition_lock_present": false
+    },
+    {
+      "name": "double-interrupt",
+      "passed": true,
+      "first_sent": true,
+      "second_sent": true,
+      "second_handler_ignored": true,
+      "first_caught": true,
+      "cli_pid_absent": true
+    },
+    {
+      "name": "unstarted-cleanup",
+      "passed": true
+    },
+    {
+      "name": "autoremove-lifecycle",
+      "passed": true
+    }
+  ],
+  "preparation_boundaries": {
+    "candidate_scope": "only the five preset candidates on HumanEval/0; not arbitrary model code",
+    "hidden_input_boundary": "worker can read test inputs; raw worker output is local evidence only, never model feedback",
+    "r3_feedback_requirement": "separate visible tests and return only parent-generated hidden-judge summaries",
+    "failure_taxonomy": "preset smoke errors are diagnostic; general candidate versus infrastructure classification is not implemented",
+    "timeout_semantics": "one wall timeout for the whole input batch, not EvalPlus per-input canonical-relative limits",
+    "autoremove_boundary": "--rm acts when started PID 1 exits; unstarted containers still require exact-name cleanup"
+  },
+  "reviews": [
+    {
+      "file": ".local/overnight/coding-environment-review-20261006.json",
+      "sha256": "04e433c3c8f74a9c9ed3abcfd6c22fce2d5fc98d45771999f33e2c7fac270ca0",
+      "model": "claude-opus-5-5",
+      "blocking_findings": false
+    },
+    {
+      "file": ".local/overnight/coding-environment-delta-review-20261006.json",
+      "sha256": "f79c94a50c52a77b0f5d252f0ca8d68910c3150e3fb676fafb95ec83b8419f3a",
+      "model": "claude-opus-5-5",
+      "blocking_findings": false
+    }
+  ]
+}

@@ -2,6 +2,13 @@
 
 阶段状态以 [`agent.md`](../agent.md) 为准。本文件记录每次任务的实际工作、验证和审查结果。
 
+## 2026-10-06：编程隔离环境准备
+
+- **实现**：固定 HumanEval/0 的预设候选容器执行；候选非 root、无网络及宿主挂载、只读根、资源和输出上限。只使用并验证本机原生 WSL Docker daemon。固定 EvalPlus/HumanEval+ 资产哈希、展开源码清单和不可变许可证来源。
+- **验证**：5 个真实容器场景全部通过；canonical 1006/1006，known-wrong 199/1006 被正确拒绝，无限循环和两种输出洪泛被终止并清理。9 个增量 probe 全部通过，涵盖身份/哈希拒绝、二次中断、未启动容器清理和自动删除。零模型调用、零 API 支出；[脱敏证据](../research/results/coding-environment-validation.json)与当前源码 hash 一致。
+- **审查**：两轮实际 Claude CLI 均为 Opus 5.5、exit 0，无该窄范围阻断；已修正 daemon/资产来源问题，其余具体边界记录在[处置说明](reviews/2026-10-06-coding-environment.md)。清理中的 SIGINT 是忽略而非延后，不能泛称所有终止方式均安全清理。
+- **未完成**：完整 EvalPlus evaluator、通用候选判定、可见检查/隐藏验收隔离及统一 agent deadline。当前是 R3 准备，不能当作 R3/R4 实验结果。用法见[环境说明](research/coding-environment.md)。README 研究状态仍准确。
+
 ## 2026-10-06：顶会与同期工作的再次核验
 
 - **范围**：独立核验 Timely、CUDAnalyst、EvoRoute、AgentTTS、Snell 和 HPCA 的正式身份，复核 EFC、SWE-Router、SSA、LEAP 与 Agents Are Systems 的重合及边界；新增 Apple/EPFL 的 MLE harness 论文，相关工作表共 32 篇。

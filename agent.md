@@ -134,6 +134,8 @@ TracePilot 计划成为一个基于任务特征与 Agent 执行轨迹进行路�
 
 补充核验将文献表扩充至 32 篇：Apple/EPFL 的 MLE harness 研究已有墙钟时间曲线和代码检查点分析，其附录在改变告知预算及回合末剩余时间提醒时观察到同时间点的 oracle ceiling 差异。后续对看到预算的策略应独立运行不同 deadline 条件；主结果使用实际选择的提交，隐藏最优候选仅作为上界。本轮只补充文献和实验设计约束，不改变付费实验或代码审查状态。
 
+R3 编程环境准备已完成固定 HumanEval/0 的零模型检查：5 项真实容器场景及 9 项增量验证通过，实际 Claude Opus 5.5 两轮审查无该范围内阻断。当前只覆盖预设候选、资源隔离和清理，尚非完整 EvalPlus、任意模型代码 judge 或共同 deadline 实验。来源、已知边界和下一步见 [编程环境](docs/research/coding-environment.md)。
+
 **下一步：** 先跑通官方 evaluator 的真实任务路径并测量两模型延迟曲线，再推进共同 deadline、原生/共同状态、盲重采样/反馈修复及留出预测；各付费批次前冻结范围与费用上限。工程按实验需求补足记录和 Provider attempt 边界。Agent 内部状态不迁移为 Langfuse schema；完整 router 和通用 checkpoint 不作为先导前置条件。
 
 已完成的 E0/E1 结果见 [`docs/research/pilot-results.md`](docs/research/pilot-results.md)：E0 为离线代码审计，E1 包含 40 次真实模型任务运行、191 次请求；峰值价格估算约 0.135 元。单一路径档案任务中的倒计时并未显示共同前缀动作变化，不能支持或否定历史方案的信息价值假设，也不构成当前快慢模型比较或反馈机制的证据。不扩大该玩具任务。
