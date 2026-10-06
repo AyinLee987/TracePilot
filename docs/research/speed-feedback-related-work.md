@@ -10,7 +10,7 @@
 
 本轮主要变化：确认 EvoRoute 为 ACL 2026 主会、CUDAnalyst 为 ICML 2026 主会；发现 EFC v2 已加入仅使用前缀信息的在线控制；补入 AgentTTS、Strategy Auctions 和 Nature Machine Intelligence 的配置选择研究。以上使“分析轨迹后做 router”的宽泛定位进一步收窄。
 
-同日补查又发现 AutoLab 和 AgentOpt 两项直接近邻：前者已有实际工程任务的时间曲线、失败轨迹及 pi 等 harness 对照，后者已有跨框架记录和模型组合搜索库。因此任务扩展与即插即用本身也不足以构成论文贡献。最近一周的增量检索补入 cua-speedrun、LEAP、SSA 最新版与评测可靠性研究；再次核查补入 S* 和 Agents Are Systems, Not Models，当前共记录 31 篇相关工作。后者已直接比较共同实际时限、模型配置和轨迹行为，使单纯曲线加分类的定位进一步受限。
+同日补查又发现 AutoLab 和 AgentOpt 两项直接近邻：前者已有实际工程任务的时间曲线、失败轨迹及 pi 等 harness 对照，后者已有跨框架记录和模型组合搜索库。因此任务扩展与即插即用本身也不足以构成论文贡献。最近一周的增量检索补入 cua-speedrun、LEAP、SSA 最新版与评测可靠性研究；再次核查补入 S* 和 Agents Are Systems, Not Models，补查又加入 Apple/EPFL 的 MLE harness 研究，当前共记录 32 篇相关工作。后者已直接比较共同实际时限、模型配置和轨迹行为，使单纯曲线加分类的定位进一步受限。
 
 ## 1. 研究问题与范围
 
@@ -126,7 +126,7 @@ PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部�
 
 ### 最近一周增量：速度前沿、行为分解与预测已进一步接近
 
-以下五项按本轮核验的预印本身份记录，没有据聚合站的会议标签推定录用。它们分别约束测量、机制与预测主张，不是要求本项目复跑其全部规模。
+以下六项按本轮核验的预印本身份记录，没有据聚合站的会议标签推定录用。它们分别约束测量、机制与预测主张，不是要求本项目复跑其全部规模。
 
 **[cua-speedrun](https://arxiv.org/html/2609.40284v1)，2026-09-30。** 在四种计算机操作 benchmark 上统一基础设施，并比较模型、reasoning effort、harness 与 I/O 条件的质量—时间—费用前沿。§3.2 已解释“更多推理有时更快”和“更快 I/O 有时反而更慢”：后者会过早取得界面截图，触发额外观察与动作。主结果是各 benchmark 上任务成绩与平均耗时的前沿，并非不同 deadline 下的未见任务赢家预测，也不是跨问答、编程和 GUI 的任务类型选型图。它为“速度—结果图”提供了直接同期参照；改变 I/O 还可能改变可见信息，不能自动视为只改速度的干预。
 
@@ -139,6 +139,8 @@ PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部�
 **[Agents Are Systems, Not Models: Rethinking Agentic Evaluation](https://arxiv.org/html/2610.01618v1)，2026-10-01。** 这是本轮新发现的直接近邻。它在四个科学任务中联合改变模型、5/10/20 分钟墙钟预算等配置；主网格使用三个 Qwen3.5 尺寸，另有模型家族消融。它分解生成/工具耗时与每分钟步数，并对完整轨迹作行为分类（§3–5、附录 A.11）。因此“模型×实际时间×任务表现＋轨迹解释”已经有人直接研究。其附录 A.10 还说明，更多预算下的平均分下降可能部分来自较弱运行终于完成，不一定是同一条轨迹越改越差；我们的分析也要区分完成率、完成者质量和轨迹内退化。
 
 这篇的分类读取完整日志、最终工作区和任务预期解法，是离线分析。所检章节没有直接验证：仅从决策时可得的前缀预测独立模型的 deadline 质量差，再将规则冻结到新任务及改变的服务延迟。它补充了 Timely 的时间现象和 EFC 的反馈指标，并不证明我们的候选问题已解决。当前仅核验其预印本身份。[原始版本记录](https://arxiv.org/abs/2610.01618)
+
+**[How Much of a Harness Does a Strong Agent Need for Autonomous ML Engineering?](https://arxiv.org/abs/2609.40303)，2026-09-30 首稿，本轮仅核验预印本身份。** 固定骨干、硬件和时间预算比较 MLE harness，§5.1 已有墙钟曲线，§5.2 分析代码检查点。附录 C.4/Fig.7 在特定骨干与最简框架下，同时改变告知预算及回合末剩余时间提醒，观察到同一经过时间的 oracle ceiling 分数不同；不能单独归因于某一种提示。对于看到预算的策略，长运行的前缀不能自动替代独立短 deadline 实验。主指标应使用截止前实际选出的提交，隐藏评分最优候选仅作为上界。[全文](https://arxiv.org/html/2609.40303v1)
 
 上述工作将目前的候选贡献进一步限定为**决策时可得的反馈信号，对未见任务和变化延迟下的截止前相对质量，是否有超出简单能力/速度画像及轨迹重计时的预测价值**。本轮未找到完整直接验证这一具体目标的工作；这不是“首次”的证明，也不能保证先导会得到正面结果。
 
@@ -223,3 +225,4 @@ PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部�
 29. Michael Hardy, Ruhana Azam, Anka Reuel, Mykel Kochenderfer, Sanmi Koyejo. **Agent Evaluation Reliability: More Tasks Won’t (Always) Fix An Agent Leaderboard.** arXiv:2610.00651v1, 2026-09-30. [全文](https://arxiv.org/html/2610.00651v1)
 30. Dacheng Li 等. **S*: Test Time Scaling for Code Generation.** Findings of EMNLP 2025, 15964–15978. [官方记录](https://aclanthology.org/2025.findings-emnlp.865/)
 31. Luis Wiedmann, Leander Girrbach, Cordelia Schmid, Zeynep Akata. **Agents Are Systems, Not Models: Rethinking Agentic Evaluation.** arXiv:2610.01618v1, 2026-10-01. [原始记录](https://arxiv.org/abs/2610.01618)；[全文](https://arxiv.org/html/2610.01618v1)
+32. Kirill Brilliantov, Alejandro Hernández-Cano, Emmanuel Abbé. **How Much of a Harness Does a Strong Agent Need for Autonomous ML Engineering?** arXiv:2609.40303v1, 2026-09-30. [原始记录](https://arxiv.org/abs/2609.40303)；[全文](https://arxiv.org/html/2609.40303v1)
