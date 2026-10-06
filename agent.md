@@ -6,6 +6,8 @@
 
 TracePilot 计划成为一个基于任务特征与 Agent 执行轨迹进行路由的 Python 扩展库。项目包含三条主线：即插即用地记录完整 Agent 流程与开销；对任务分类并分配合适的模型和 Agent 配置；在不同任务领域评估质量、时间与费用的权衡。
 
+本节描述长期库目标。研究分支当前优先验证速度、反馈迭代与能力的关系，具体问题以 [当前研究决定](docs/research/decision.md) 为准；完整 router 不是先导实验的前置条件。
+
 - 仓库：<https://github.com/AyinLee987/TracePilot>
 - 最小起点：一个任务领域、两个候选模型、一个固定 Agent 流程，先验证记录与模型路由；随后加入至少两种可比较的 Agent 配置，验证任务级联合分配。
 - 观测基础：复用官方 Langfuse SDK / OpenTelemetry；核心路由逻辑不依赖 LangChain、Langfuse 服务端或特定医疗业务。
@@ -116,17 +118,17 @@ TracePilot 计划成为一个基于任务特征与 Agent 执行轨迹进行路�
 | P4 学习与评估 | 轻量策略、文本/规则/trace 基线、模型/Agent 分配消融、质量/时间/费用分析和域外测试 | 待开始 | 待分领域结果、泛化分析与不确定性报告 |
 | P5 购物拓展与交付 | 可重置购物环境与评分、跨域实验、接入示例、复现说明与论文初稿 | 待开始 | 待购物沙箱端到端验证及完整交付检查 |
 
-**最近更新：2026-10-05。** P1 已开始：先独立部署 Langfuse，通过官方 SDK 接入现有 harness 的运行、模型、工具与检索边界，提供可复现的合成数据 E2E。完整观测范围与缺口见 `docs/langfuse-pilot.md`，部署及验证结果见 `docs/progress.md`。路由尚未实现；独立研究脚本已完成公开代码计时审计和小型真实 API 工程先导，不等于 P1 的运行时 JSONL 或 P3 的跨任务实验设施已经完成。
+**最近更新：2026-10-06。** P1 已开始：先独立部署 Langfuse，通过官方 SDK 接入现有 harness 的运行、模型、工具与检索边界，提供可复现的合成数据 E2E。完整观测范围与缺口见 `docs/langfuse-pilot.md`，部署及验证结果见 `docs/progress.md`。路由尚未实现；独立研究脚本已完成公开代码计时审计和小型真实 API 工程先导，不等于 P1 的运行时 JSONL 或 P3 的跨任务实验设施已经完成。
 
-研究方向已与 Claude Opus 5.5 完成多轮可行性讨论。早期记录见 [`docs/research-directions.md`](docs/research-directions.md)，本轮最新建议见 [`docs/research/decision.md`](docs/research/decision.md)。少数据/轨迹路由、干预收益、接管损失、延迟预测和保留首稿均有直接先行；推荐先验证“相同证据和剩余时间下，模型能否区分耗时历史的预测价值与紧迫感”。这仍是待否证的问题，不是已确认新颖的方法，不因此更改 P2–P5 的实现状态。
+研究方向已与 Claude Opus 5.5 完成多轮可行性讨论。早期记录见 [`docs/research-directions.md`](docs/research-directions.md)，最新决定见 [`docs/research/decision.md`](docs/research/decision.md)。用户现选择研究“快模型在同时间内通过迭代弥补能力差距”的机制与选型边界。2026-10-06 的 [顶会与同期工作核查](docs/research/speed-feedback-related-work.md)发现 Timely、EFC、CUDAnalyst、AgentTTS、SALE 等直接先行；候选贡献收紧为反馈机制是否增加共同 deadline 下的模型相对优势预测能力，并能迁移到新任务与速度条件。这是待否证问题，不是已确认新颖的方法，也不因此更改 P2–P5 的实现状态。
 
-用户要求的同日二次查重进一步发现 JAUNT、NetMCP、Can LLMs Perceive Time? 等直接近邻，并核实 TicToc 的 ACL Findings 状态。候选 C 只保留作小探针；历史预测、预测辅助路由、时间反馈校准和预测／行动分离均不能单独作为创新。新增来源和限制见 [`docs/research/latency-history-check.md`](docs/research/latency-history-check.md)。
+2026-10-05 的候选 C“历史耗时预测价值 vs 紧迫感”保留为历史方案，不再作为默认主线。该轮查重发现 JAUNT、NetMCP、Can LLMs Perceive Time? 等近邻，并核实 TicToc 的 ACL Findings 状态；历史预测、预测辅助路由、时间反馈校准和预测／行动分离均不能单独作为创新。来源和限制见 [`docs/research/latency-history-check.md`](docs/research/latency-history-check.md)。
 
 用户已授权夜间小实验及 Pi 等开源 Agent 的本地试跑，使用当前 Agent 项目的 API key；余额不足时报告，不自动购买额度。研究在独立 worktree / 分支 `research/acl-feasibility-20261005` 进行，原 `main@dadab3f` 不修改、不合并、不强推。今晚实验上限 200 元、总研究预算约 2,000 元；原始输出及凭证留在忽略目录。Pi 与 mini-SWE-agent 已隔离部署并完成真实小任务；mini 首轮适配器提示词问题导致未正常提交，修正后通过，首轮记录保留。两框架加 E1 共 207 次请求，峰值价格估算约 0.163 元；无未知计费或余额不足报错。详细范围、审查和结果见 [`docs/research/open-agent-plan.md`](docs/research/open-agent-plan.md)。
 
-**下一步：** 根据已写入 Langfuse 的记录核对指标与缺口，定义 TracePilot 最小事件口径，再做本地 trace 前缀与 JSONL。补齐 Provider attempt 与辅助调用的用量边界后，再锁定问答先导任务、两个模型和测量口径，推进分类路由与编程任务。Agent 内部状态不迁移为 Langfuse schema。
+**下一步：** 研究先冻结快慢配置、共同 deadline、原生/共同状态对照、盲重采样/反馈修复和留出预测协议；付费批次前明确范围与费用上限。工程按实验需求核对 Langfuse 指标，补最小事件、Provider attempt/辅助调用边界与本地 trace 前缀/JSONL。Agent 内部状态不迁移为 Langfuse schema；完整 router 和通用 checkpoint 不作为先导前置条件。
 
-已完成的 E0/E1 结果见 [`docs/research/pilot-results.md`](docs/research/pilot-results.md)：40 次真实模型任务运行、191 次请求；峰值价格估算约 0.135 元。单一路径档案任务中的倒计时并未显示共同前缀动作变化，不能支持或否定下一阶段的信息价值假设。下一步做有可选验证的同状态探针，并以简单外部预测／答案预留为基线；不扩大当前玩具任务，也不以完整 router 或通用 checkpoint 为前置条件。
+已完成的 E0/E1 结果见 [`docs/research/pilot-results.md`](docs/research/pilot-results.md)：E0 为离线代码审计，E1 包含 40 次真实模型任务运行、191 次请求；峰值价格估算约 0.135 元。单一路径档案任务中的倒计时并未显示共同前缀动作变化，不能支持或否定历史方案的信息价值假设，也不构成当前快慢模型比较或反馈机制的证据。不扩大该玩具任务。
 
 原路由方向的约一个月安排：第一周完成记录闭环与问答基线；第二周完成分类、路由和小规模配置对照；第三周加入编程任务并验证策略；第四周完成重复评估、文档与初稿。该安排目前作为备选，研究范围、周计划与人民币 2,000 元的分配在用户阅读论文并选择先导后重新确定，不同时承诺完成路由、迁移和全部时延实验。P2–P5 保留长期路线图，购物在前两域闭环后继续推进。排期随证据调整，不以时间到期代替验证。
 
