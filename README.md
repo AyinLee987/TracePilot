@@ -19,7 +19,7 @@ See the [experiment plan](docs/research/timely-reproduction.md) and [related wor
 | Existing Python harness adapter and local Langfuse setup | Available; see [setup and limitations](docs/langfuse-pilot.md) |
 | Timely code audit and Pi/mini-SWE-agent smoke runs | Available; [earlier results](docs/research/pilot-results.md) are engineering checks |
 | Timely evaluation with real benchmark tasks | Three real Zork1 runs recorded; both batch conditions stopped on tool-format failures; no valid model comparison yet |
-| Coding first-draft and public/hidden checks | First 16 real drafts complete; all public checks passed; [results](docs/research/coding-first16-results.md) |
+| Coding first-draft and public/hidden checks | 32 real drafts complete; one public code failure and one format failure; [latest results](docs/research/coding-extension16-results.md) |
 | Runtime JSONL, routing, and held-out selection experiments | Planned |
 
 ## Getting started

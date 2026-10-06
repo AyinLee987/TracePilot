@@ -197,6 +197,14 @@
 - **审查**：初审与增量复审均实际 Claude Opus 5.5 / exit0 / is_error=false，无当前提交或执行阻断。落实 stop 父批拒绝、fixture 目录隔离与 summary 绑定。记录拒绝原因未逐项断言的证据限制；真实父 summary 由 prepare 再核验，不为通过而修改历史文件。见 [扩展审查](reviews/2026-10-06-coding-extension.md)。
 - **下一步**：提交后在相同 WSL 环境 prepare/activate，继承研究累计 0.296871136 元，再真实执行固定扩展；尚无扩展结果，共同 deadline、反馈与留出预测仍待完成。README 的首批状态仍准确；修正复现计划中旧的两条轨迹描述为三条。
 
+## 2026-10-06：预定扩展真实完成并获得公开错误
+
+- **执行**：代码 `bceaead` 审查、提交及远端核验完成后，在同一 WSL prepare/activate；真实父 summary 身份校验通过，开账 0.296871136 元。计划摘要 `7b01b16182ed6ecfe919525e26f81c9ed8e1a942aadbb2a7669247bf091f6804`，激活 head `b0133d528ddc381f487449f0ff61fb579fc3fc6ccba97b506a9bd4275947f654`。16 请求闭合，CLI child4207 exit0/reaped。
+- **结果**：Flash 8parsed/公开7pass1fail；Pro 7parsed1parse_failed/公开7pass1未评估。代码错误为 Flash /99 rep2，公开题面已明确 -14.5→-15，候选负数 ROUND_HALF_DOWN 得到 -14；格式错误为 Pro /16 rep2 的 ambiguous_or_surrounded_fence。未用隐藏结果定位或选状态。保持全部16分母；15可执行候选的45个容器/worker清理记录完整，独立分析无完整性问题。
+- **费用与分支**：新增 0.047613312 元，研究累计 0.344484448 元，连早期实验合计估算 0.506995744 元，无未知负债、无新额度；非账单，Claude另计。按预定规则继续 HumanEval 反馈研究，不迁移基准。八开发题完整对照与单个Flash错误状态续跑分开设计；没有共同deadline或repair结果。
+- **计时发现**：生成阶段 89.401 秒，单条 timer 合计22.743秒，其余66.658秒为尚未细分的编排开销；timer 不含前置逐调用准入/请求写盘，不能拿它冻结共同deadline。后续先按完整循环校准；两种timer口径在JSON分列。
+- **产物与审查**：[脱敏结果](../research/results/coding-extension16.json)、[实验报告](research/coding-extension16-results.md)。两批共32首稿中30份公开pass、1份代码fail、1份格式未评估。数值由 `.local/overnight/publish_coding_extension_result.py` 汇总，原始文件hash与独立分析来源保留；实际Claude Opus 5.5审查 exit0/is_error=false，无提交阻断。补齐公开错误/格式证据、45个worker exit0计数、脚本hash和完整循环计时限制；详见 [结果审查](reviews/2026-10-06-coding-extension-results.md)。后续源码修改前，六份执行源码已归档在 `.local/study-code-archives/bceaead150216a8047531123a36e75e8167bc60c/`，manifest SHA `d3ef3907d5bc064c417c810608bf558a8aea640da1f7f61c1ab3f7933bcd14c8`，与实际Git/计划/激活记录相符。
+
 ## 后续记录格式
 
 每次任务新增一条记录，至少包含：日期、范围、实际完成内容、验证命令与结果、Claude 审查及处置、已知限制、下一步。代码功能的记录应附对应端到端场景；只读评审不单独触发提交循环。
