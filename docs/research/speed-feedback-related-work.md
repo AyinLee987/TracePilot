@@ -10,7 +10,7 @@
 
 本轮主要变化：确认 EvoRoute 为 ACL 2026 主会、CUDAnalyst 为 ICML 2026 主会；发现 EFC v2 已加入仅使用前缀信息的在线控制；补入 AgentTTS、Strategy Auctions 和 Nature Machine Intelligence 的配置选择研究。以上使“分析轨迹后做 router”的宽泛定位进一步收窄。
 
-同日补查又发现 AutoLab 和 AgentOpt 两项直接近邻：前者已有实际工程任务的时间曲线、失败轨迹及 pi 等 harness 对照，后者已有跨框架记录和模型组合搜索库。因此任务扩展与即插即用本身也不足以构成论文贡献。最近一周的增量检索补入 cua-speedrun、LEAP、SSA 最新版与评测可靠性研究；当前共记录 29 篇相关工作，版本及边界见第 5 节。
+同日补查又发现 AutoLab 和 AgentOpt 两项直接近邻：前者已有实际工程任务的时间曲线、失败轨迹及 pi 等 harness 对照，后者已有跨框架记录和模型组合搜索库。因此任务扩展与即插即用本身也不足以构成论文贡献。最近一周的增量检索补入 cua-speedrun、LEAP、SSA 最新版与评测可靠性研究；再次核查补入 S* 和 Agents Are Systems, Not Models，当前共记录 31 篇相关工作。后者已直接比较共同实际时限、模型配置和轨迹行为，使单纯曲线加分类的定位进一步受限。
 
 ## 1. 研究问题与范围
 
@@ -30,19 +30,19 @@
 
 纳入依据是与上述问题有实质重合，而不是标题含 agent。通用 tracing 平台、仅优化推理内核而不评估任务结果的系统、纯 token 预算控制不作为主证据。这里是有针对性的文献核查，没有声称穷尽数据库、完成 PRISMA 筛选或复现论文。
 
-身份规则：官方论文集确认才标主会；作者自报录用与独立核验分开；未独立核实正式身份的稿件标“本次仅核验预印本”，不推断其未被录用。EvoRoute 的正式身份已确认，方法阅读依据仍是 arXiv 全文，未完成终稿逐页对照；EFC 使用 v2，避免将 v1 的实验数值和 v2 控制器混用。Nature Machine Intelligence 工作使用改题后的正式版，不沿用早期稿更强的泛化表述。
+身份规则：官方论文集确认才标主会；Findings、Workshop 单独标注；作者自报录用与独立核验分开；未独立核实正式身份的稿件标“本次仅核验预印本”，不推断其未被录用。EvoRoute 的正式身份及终稿 §3–4 的时间目标、经验字段和逐任务更新已确认；EFC 使用 v2，避免将 v1 的实验数值和 v2 控制器混用。Nature Machine Intelligence 工作使用改题后的正式版，不沿用早期稿更强的泛化表述。
 
 ## 3. 文献地图
 
 | 分支 | 解释对象 | 代表先行 | 对我们尚待验证的问题 |
 | --- | --- | --- | --- |
-| A：计算、时间与能力交换 | 为什么某种预算下小模型/大模型更优 | Timely；Snell；Inference Scaling Laws；HPCA | 这种边界能否由反馈机制预测，而不仅事后测出？ |
+| A：计算、时间与能力交换 | 为什么某种预算下小模型/大模型更优 | Timely；Snell；Inference Scaling Laws；HPCA；Agents Are Systems | 这种边界能否由反馈机制预测，而不仅事后测出？ |
 | B：反馈如何转化为进展 | 哪些尝试修复错误，哪些重复或造成退化 | EFC；CUDAnalyst；Self-Repair；PAIR；EdgeBench | 能否把局部反馈收益与实际速度结合，预测模型间相对优势？ |
 | C：经验转化为选择 | 如何按任务、轨迹和经验分配模型或配置 | AgentTTS；SALE；EvoRoute；SWE-Router；NMI 配置研究 | 冻结规则在留出任务及变化的服务条件下是否仍有用？ |
 
 这三类按主要研究问题分类，方法可跨类。尤其 EFC 同时涉及反馈分析、泛化和在线控制，不能被简化为纯事后指标。
 
-## 4. 已确认的顶会与正式期刊先行
+## 4. 已确认的主会、Findings 与正式期刊先行
 
 ### 4.1 时间与计算交换：Timely 已覆盖核心现象
 
@@ -56,6 +56,8 @@
 
 **[Are More LM Calls All You Need?](https://proceedings.neurips.cc/paper_files/paper/2024/hash/51173cf34c5faac9796a47dc2fdd3a71-Abstract-Conference.html)，NeurIPS 2024。** §3–5 用易题/难题混合解释投票系统随调用数非单调变化，并用少量样本预测合适调用数。它研究独立采样/投票，不能替代工具反馈闭环；但足以说明“画曲线、解释任务差异、形成资源选择规则”这一叙事本身已有成熟先例。
 
+**[S*: Test Time Scaling for Code Generation](https://aclanthology.org/2025.findings-emnlp.865/)，EMNLP 2025 Findings。** [正式全文](https://aclanthology.org/2025.findings-emnlp.865.pdf) 将并行采样、执行反馈修订和候选选择结合；Fig.1、§4.2 显示部分较小模型超过较强的单次生成基线。§4–5 同时区分候选覆盖率与最终选择准确率；这提醒我们，出现过正确候选并不等于 Agent 最后能交出它。已查主实验按采样/修订方案比较，不直接建立共同实际 deadline 下的模型选型边界；不能把它写成同秒数下小模型反超的证据。Findings 也不计为 EMNLP 主会论文。
+
 **对 RQ1 的回答：** 快模型反超是有条件的已知现象。我们的新知识不能仅是再次找到交叉曲线；必须说明新的预测依据比速度、首轮能力和历史结果曲线更有用，以及在哪些条件下失效。
 
 ### 4.2 反馈机制：控制初稿与研究修复都已有先例
@@ -64,7 +66,7 @@
 
 **[Towards Feedback-to-Plan Decisions for Self-Evolving LLM Agents in CUDA Kernel Generation](https://proceedings.mlr.press/v306/chong26b.html)，ICML 2026，方法名 CUDAnalyst。** [全文](https://arxiv.org/html/2605.26720v1) §3.2、附录 B.1 冻结程序状态、参考内容、提示和解码条件，替换反馈；让不同被测模型共享第三方固定轨迹，并在 §5.1 固定 evaluator、改变轨迹来源检验归因趋势。它提供比随意挑失败案例更强的局部机制证据。局部固定状态实验刻意阻断后续演化，因此既不能替代整条 Agent 轨迹收益，也没有回答实际速度改变时哪个模型能在截止前胜出。
 
-两者分别说明反馈质量约束和固定状态干预已被研究。我们可以借鉴这些方法，不能把“统一初稿再比较纠错能力”本身当成新方法。下面的 EFC 更进一步，直接覆盖有效反馈指标与控制。
+两者分别说明反馈质量约束和固定状态干预已被研究。CUDAnalyst 还在所读版本 §5.4–5.5 提供 CPU Numba 跨域分析和 CuGEdit 插件验证，不能将整篇概括为仅有局部诊断。我们可以借鉴这些方法，不能把“统一初稿再比较纠错能力”本身当成新方法。下面的 EFC 更进一步，直接覆盖有效反馈指标与控制。
 
 ### 4.3 从分析到选型：不能把泛化描述成空白
 
@@ -72,7 +74,7 @@
 
 **[Scaling Small Agents Through Strategy Auctions](https://proceedings.mlr.press/v306/alazraki26a.html)，ICML 2026，简称 SALE。** [所读 v3](https://arxiv.org/html/2602.02751v3) 分析大小模型互补失败、规划与工具使用，再通过计划/拍卖和经验记忆分配模型。目标主要是美元成本；附录 D.5 有合成工具延迟惩罚，但测的是分配变化，并非共同 deadline 下的结果。测试流中记忆会增长，应与冻结规则区分。仅报告“弱模型也有强项”“大模型会过度规划”不足以超过其已有分析。
 
-**[EvoRoute](https://aclanthology.org/2026.acl-long.1771/)，ACL 2026 主会。** [所读 arXiv 版本](https://arxiv.org/html/2601.02695v1) §3–4 已考虑墙钟目标，经验元组包含模型、角色、工具、成本、耗时、执行成功和任务回报，并做经验检索与模型选择。测试过程允许经验更新，不能将其后续 benchmark 全部描述成冻结的跨域迁移。它是 TracePilot 工程方向非常直接的近邻，也说明“trace＋时间＋router”这个组合本身已存在。
+**[EvoRoute](https://aclanthology.org/2026.acl-long.1771/)，ACL 2026 主会。** [正式全文](https://aclanthology.org/2026.acl-long.1771.pdf) §3–4 已考虑墙钟目标，经验元组包含模型、角色、工具、成本、耗时、执行成功和任务回报，并做经验检索与模型选择；Eq.6 明确每次完整任务后追加经验。测试过程允许经验更新，不能将其后续 benchmark 全部描述成冻结的跨域迁移。它是 TracePilot 工程方向非常直接的近邻，也说明“trace＋时间＋router”这个组合本身已存在。
 
 **[Router-R1](https://proceedings.nips.cc/paper_files/paper/2025/hash/ceaa137fce916aba5c65fceb1309088b-Abstract-Conference.html)，NeurIPS 2025。** 学习多轮选择/调用模型并聚合结果，确有冻结模型在训练集之外 QA 数据集及新候选模型上的评价。目标主要是质量与价格，不能直接回答相同时限内反馈修复的速度收益；但我们也不能声称既有路由器“都没有泛化”。
 
@@ -124,7 +126,7 @@ PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部�
 
 ### 最近一周增量：速度前沿、行为分解与预测已进一步接近
 
-以下四项按本轮核验的预印本身份记录，没有据聚合站的会议标签推定录用。它们分别约束测量、机制与预测主张，不是要求本项目复跑其全部规模。
+以下五项按本轮核验的预印本身份记录，没有据聚合站的会议标签推定录用。它们分别约束测量、机制与预测主张，不是要求本项目复跑其全部规模。
 
 **[cua-speedrun](https://arxiv.org/html/2609.40284v1)，2026-09-30。** 在四种计算机操作 benchmark 上统一基础设施，并比较模型、reasoning effort、harness 与 I/O 条件的质量—时间—费用前沿。§3.2 已解释“更多推理有时更快”和“更快 I/O 有时反而更慢”：后者会过早取得界面截图，触发额外观察与动作。主结果是各 benchmark 上任务成绩与平均耗时的前沿，并非不同 deadline 下的未见任务赢家预测，也不是跨问答、编程和 GUI 的任务类型选型图。它为“速度—结果图”提供了直接同期参照；改变 I/O 还可能改变可见信息，不能自动视为只改速度的干预。
 
@@ -134,7 +136,11 @@ PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部�
 
 **[Agent Evaluation Reliability: More Tasks Won’t (Always) Fix An Agent Leaderboard](https://arxiv.org/html/2610.00651v1)，2026-09-30。** 在 22 个 benchmark 的分析中用方差分解区分模型、任务、scaffold 及交互，指出可靠排名固定部署系统不等于可靠排名底层模型。它与 SSA 对 harness 影响的分析相互补充；附录 D.4 的留一 benchmark 重拟合用于可靠性敏感性分析，不能写成零样本预测任意新任务。对我们的直接要求是将结论限定到被评估的模型—harness—服务配置，保留配对任务和不确定性，不能靠增加同类任务就声称得到普适模型排名。
 
-上述四项将目前的候选贡献进一步限定为**决策时可得的反馈信号，对未见任务和变化延迟下的截止前相对质量，是否有超出简单能力/速度画像及轨迹重计时的预测价值**。本轮未找到完整直接验证这一具体目标的工作；这不是“首次”的证明，也不能保证先导会得到正面结果。
+**[Agents Are Systems, Not Models: Rethinking Agentic Evaluation](https://arxiv.org/html/2610.01618v1)，2026-10-01。** 这是本轮新发现的直接近邻。它在四个科学任务中联合改变模型、5/10/20 分钟墙钟预算等配置；主网格使用三个 Qwen3.5 尺寸，另有模型家族消融。它分解生成/工具耗时与每分钟步数，并对完整轨迹作行为分类（§3–5、附录 A.11）。因此“模型×实际时间×任务表现＋轨迹解释”已经有人直接研究。其附录 A.10 还说明，更多预算下的平均分下降可能部分来自较弱运行终于完成，不一定是同一条轨迹越改越差；我们的分析也要区分完成率、完成者质量和轨迹内退化。
+
+这篇的分类读取完整日志、最终工作区和任务预期解法，是离线分析。所检章节没有直接验证：仅从决策时可得的前缀预测独立模型的 deadline 质量差，再将规则冻结到新任务及改变的服务延迟。它补充了 Timely 的时间现象和 EFC 的反馈指标，并不证明我们的候选问题已解决。当前仅核验其预印本身份。[原始版本记录](https://arxiv.org/abs/2610.01618)
+
+上述工作将目前的候选贡献进一步限定为**决策时可得的反馈信号，对未见任务和变化延迟下的截止前相对质量，是否有超出简单能力/速度画像及轨迹重计时的预测价值**。本轮未找到完整直接验证这一具体目标的工作；这不是“首次”的证明，也不能保证先导会得到正面结果。
 
 ## 6. 重合审计与剩余问题
 
@@ -149,6 +155,7 @@ PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部�
 | 实际工程任务中的时间曲线及多框架轨迹分析 | 已有直接同期工作 | AutoLab；EdgeBench |
 | 跨框架记录后搜索模型组合并绘制开销前沿 | 已有公开库和技术报告 | AgentOpt |
 | 计算机操作 benchmark 的速度—质量前沿，以及代码任务轨迹行为分解 | 两种方向各有直接近邻 | cua-speedrun；SSA v3 |
+| 模型配置与共同墙钟预算的交互，加完整轨迹行为分类 | 已有直接同期工作 | Agents Are Systems, Not Models |
 | 轨迹重放预测加速收益，并检验工具延迟变化 | 已有相邻系统方法 | LEAP；预测对象不同 |
 | 预测共同 deadline 下的相对优势，并迁移到未见任务及速度条件 | 本轮未找到直接完整验证这一目标的工作；仍是候选 | 需要正面对比上述工作，不能靠控制项组合宣称首次 |
 
@@ -177,7 +184,7 @@ PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部�
 
 ## 8. 阅读顺序与项目决定
 
-建议优先读 **Timely §5.1 → EFC v2 §3.3、§6–7 → cua-speedrun §3.2 → SSA v3 §3、§4.3**：依次确认已知现象、指标与控制重合、实际速度前沿、逐轮行为先行。随后读 **LEAP §3.2、§4.4、附录 H**，检查“机制预测”应达到的证据强度，再读 CUDAnalyst 的局部干预与 AutoLab 的实际工程轨迹。工程上单独对照 AgentOpt，AgentTTS、SALE 和 SWE-Router 用于配置/路由基线，NMI 用于核对泛化口径。
+建议优先读 **Timely §5.1 → EFC v2 §3.3、§6–7 → Agents Are Systems, Not Models §4–5、附录 A.10–11 → SSA v3 §3、§4.3**：依次确认已知现象、指标与控制重合、模型/时间的直接同期对照、逐轮行为先行。随后读 cua-speedrun §3.2 和 **LEAP §3.2、§4.4、附录 H**，检查速度干预与预测应达到的证据强度，再读 CUDAnalyst 的分析及插件验证、S* 的候选选择、AutoLab 的实际工程轨迹。工程上单独对照 AgentOpt，AgentTTS、SALE 和 SWE-Router 用于配置/路由基线，NMI 用于核对泛化口径。
 
 当前决定：保留这个方向作为实证研究候选，按用户授权先完成官方 Jericho 评测路径的协议复验，再在客观验收的编程任务上冻结 R3/R4 机制与预测协议，验证机制能否增加预测价值。Jericho 的计时复验不自动承担编程修复/退化实验；详细衔接见 [执行计划](timely-reproduction.md)。TracePilot 负责可靠记录和实验复现；暂不以完整通用 router、后训练或购物扩展作为前置条件。与当前用户目标不同的“历史耗时预测价值 vs 紧迫感”仅保留为历史候选，不再作为默认主线。
 
@@ -194,7 +201,7 @@ PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部�
 7. Yee Hin Chong, Jiaming Wu, Youhui Zhang, Peng Qu. **Towards Feedback-to-Plan Decisions for Self-Evolving LLM Agents in CUDA Kernel Generation.** ICML 2026, PMLR 306:20365–20397. [官方记录](https://proceedings.mlr.press/v306/chong26b.html)
 8. Fali Wang 等. **AgentTTS: Large Language Model Agent for Test-time Compute-optimal Scaling Strategy in Complex Tasks.** NeurIPS 2025. [官方记录](https://papers.nips.cc/paper_files/paper/2025/hash/8d9bbba8cac9cabb54e85ee7f21441c8-Abstract-Conference.html)
 9. Lisa Alazraki, William F. Shen, Yoram Bachrach, Akhil Mathur. **Scaling Small Agents Through Strategy Auctions.** ICML 2026, PMLR 306:1706–1766. [官方记录](https://proceedings.mlr.press/v306/alazraki26a.html)；方法阅读依据 [arXiv:2602.02751v3](https://arxiv.org/html/2602.02751v3)。
-10. Guibin Zhang, Haiyang Yu, Kaiming Yang, Bingli Wu, Fei Huang, Yongbin Li, Shuicheng Yan. **EvoRoute: Experience-Driven Self-Routing LLM Agent Systems.** ACL 2026, Long Papers, 38213–38225. [官方记录](https://aclanthology.org/2026.acl-long.1771/)；方法阅读依据 [arXiv:2601.02695v1](https://arxiv.org/html/2601.02695v1)。
+10. Guibin Zhang, Haiyang Yu, Kaiming Yang, Bingli Wu, Fei Huang, Yongbin Li, Shuicheng Yan. **EvoRoute: Experience-Driven Self-Routing LLM Agent Systems.** ACL 2026, Long Papers, 38213–38225. [官方记录](https://aclanthology.org/2026.acl-long.1771/)；[正式全文](https://aclanthology.org/2026.acl-long.1771.pdf)。
 11. Haozhen Zhang, Tao Feng, Jiaxuan You. **Router-R1: Teaching LLMs Multi-Round Routing and Aggregation via Reinforcement Learning.** NeurIPS 2025. [官方记录](https://proceedings.nips.cc/paper_files/paper/2025/hash/ceaa137fce916aba5c65fceb1309088b-Abstract-Conference.html)
 12. Yubin Kim 等. **Capable language models can outgrow the benefits of collaboration.** Nature Machine Intelligence 8:1157–1172, 2026. [正式版](https://www.nature.com/articles/s42256-026-01268-y)；预印本原题 *Towards a Science of Scaling Agent Systems*, arXiv:2512.08296。
 13. Xuanliang Zhang, Dingzirui Wang, Keyan Xu, Qingfu Zhu, Wanxiang Che. **Scaling Laws for Agent Harnesses via Effective Feedback Compute.** arXiv:2605.29682v2, 2026. [核验版本](https://arxiv.org/html/2605.29682v2)
@@ -214,3 +221,5 @@ PAIR 与 Try Again 则给出互补要求：既记修复，也记原本正确部�
 27. Gaurav Gupta, Vatshank Chaturvedi, Sudipta Sengupta, Jun Huan, Anoop Deoras. **Dissecting model behavior through agent trajectories.** arXiv:2606.17454v3, 2026-10-01. [版本记录](https://arxiv.org/abs/2606.17454)；[全文](https://arxiv.org/html/2606.17454v3)
 28. Zhen Xu, Qizheng Zhang, Gerry Wan, Shang Zhu, Ce Zhang. **LEAP: Learning Efficient Action Proposals For LLM Agents.** arXiv:2610.02670v1, 2026-10-02. [全文](https://arxiv.org/html/2610.02670v1)
 29. Michael Hardy, Ruhana Azam, Anka Reuel, Mykel Kochenderfer, Sanmi Koyejo. **Agent Evaluation Reliability: More Tasks Won’t (Always) Fix An Agent Leaderboard.** arXiv:2610.00651v1, 2026-09-30. [全文](https://arxiv.org/html/2610.00651v1)
+30. Dacheng Li 等. **S*: Test Time Scaling for Code Generation.** Findings of EMNLP 2025, 15964–15978. [官方记录](https://aclanthology.org/2025.findings-emnlp.865/)
+31. Luis Wiedmann, Leander Girrbach, Cordelia Schmid, Zeynep Akata. **Agents Are Systems, Not Models: Rethinking Agentic Evaluation.** arXiv:2610.01618v1, 2026-10-01. [原始记录](https://arxiv.org/abs/2610.01618)；[全文](https://arxiv.org/html/2610.01618v1)
