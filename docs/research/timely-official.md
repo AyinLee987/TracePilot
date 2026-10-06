@@ -1,7 +1,7 @@
 # Official Timely four-game evaluation
 
-Status: 256 episodes generated. Execution is switching schedulers at the user's
-request; the remaining 128 episodes have not been dispatched at this checkpoint.
+Status: **384/384 episodes complete**; 12,521 requests settled, no unknown usage,
+verified process cleanup. [Results and metrics](timely-official-results.md).
 
 Use the released evaluator at `e13af2b8c98d799857ace789ebcfdfd4ea6c2985`
 with its original prompts, parser, tool feedback, scoring and virtual tool delays.
@@ -15,6 +15,8 @@ earlier stopped runs remain unchanged; this is a separate, declared condition.
 - Models: `deepseek-flash` and `deepseek-v4-pro`, thinking disabled.
 - Each game/model: eight 32-step speed trajectories, then eight trajectories at
   each released default timed budget: 10, 20, 30, 50 and 100 steps.
+  The upstream loop also enforces that step limit; the logical deadline is
+  the step multiplier times the game/model calibration.
 - Total: 64 calibration + 320 timed = 384 trajectories.
 - Calibration follows the official positive-step trajectory criterion and
   `sum(logical elapsed time) / sum(recorded steps)` aggregation. Malformed

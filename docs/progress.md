@@ -246,6 +246,14 @@
 - 真实 spawn 进程、合成 worker 的离线检查 9/9 通过，provider calls=0；真实 256 条只读核对通过。实际 Claude Opus 5.5 审查 exit0/is_error=false，无阻断；条件性疑问按 helper 源码与 fixture 处置，详见 [审查记录](reviews/2026-10-06-timely-official-async.md)。未宣称已完成剩余付费任务。
 - 同步英文 README、agent.md 与原文 benchmark 协议。提交推送后直接继续剩余 128 条，不启动其它实验。
 
+## 2026-10-06：原文四游戏矩阵 384/384 完成
+
+- **执行结果**：审查后的异步入口 `aa66605` 推送并核对远端后，继续原矩阵剩余 128 条；15.71 分钟完成。全部 384 条唯一轨迹（64 校准、320 计时），48 组各 8 次，12,521 次请求闭合，无 unknown/held。外层进程 exit0，cleanup 已核验。旧 256 条未重跑，补结算 episode-252，原结果与校准保留。
+- **费用与耗时**：本批估算 28.744457120 元，同一 study 累计 31.874239712 元，不含 Codex/Claude，非账单。所有轨迹平均实际执行 39.94 秒；10/20/30/50/100 步条件均值为 11.43/20.78/30.48/52.68/82.64 秒，不是所施加的 deadline。原阶段 60.50 分钟、续跑阶段 15.71 分钟分别记录，不包含审查、准入和切换停顿。
+- **公开产物与验证**：`.local/overnight/publish_timely_official.py` 从原始结果与请求账本导出 [报告](research/timely-official-results.md)、[JSON](../research/results/timely-official.json) 和 [逐轨迹 CSV](../research/results/timely-official-episodes.csv)，核对全量 ID、分组、费用与调度阶段。每格补充 SD/min/max、通关、格式问题、调度数量与校准指标。源码、ROM、凭证及原始 trace 均未公开。
+- **边界与审查**：保留 19 条时钟诊断标记、1 条官方/环境分数差异与格式错误；两个替代 API 模型不代表原论文训练 checkpoint。原文同时限制步数并按模型/游戏单独校准时间，中途改调度，不能据混合结果证明共同墙钟优势。实际 Claude Opus 5.5 结果审查 exit0/is_error=false、无阻断，建议已通过解释和已有数据补充处置，详见 [审查](reviews/2026-10-06-timely-official-results.md)。
+- **交付**：英文 README、agent.md 与协议状态同步为完成。提交推送本轮结果，暂不继续新实验；用户先查看原文 benchmark 结果。
+
 ## 后续记录格式
 
 每次任务新增一条记录，至少包含：日期、范围、实际完成内容、验证命令与结果、Claude 审查及处置、已知限制、下一步。代码功能的记录应附对应端到端场景；只读评审不单独触发提交循环。
