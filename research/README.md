@@ -179,7 +179,8 @@ Rebuilding preserves the plotted content; PDF/SVG byte hashes can differ because
 ### Original Agentic ML tasks
 
 The corrected batch is complete: 384 evaluated episodes and 373 valid submissions.
-See the [completion record](../docs/research/timely-ml-completion.md); the original
+See the [result and stage analysis](../docs/research/timely-ml-analysis.md) and
+[completion record](../docs/research/timely-ml-completion.md); the original
 faulty batch remains quarantined. Re-executing the admitted batch is rejected
 by the existing duplicate-run guard.
 
@@ -189,6 +190,26 @@ for commands, budget succession and differences from the paper. Engineering E2E
 uses real training/data/grading with fake HTTP; it is not a model benchmark result.
 Paid execution requires the completed Claude review, immutable plan activation,
 and the existing study balance. Do not launch a separate paid script or reset the cap.
+
+Offline analysis aligns 1034 replies with 616 executions and merges them into
+928 tentative intent stages. It uses no model calls or code replay. Rebuild from
+the frozen local batch and upstream parser, then render five PNG/SVG/PDF figures
+and a standalone, filterable local HTML explorer:
+
+```powershell
+.local/analysis-venv/Scripts/python.exe -X utf8 -B research/analyze_timely_ml.py
+.local/analysis-venv/Scripts/python.exe -X utf8 -B research/visualize_timely_ml.py
+.local/analysis-venv/Scripts/python.exe -X utf8 -B research/verify_timely_ml_analysis.py
+```
+
+Numeric tables live in `research/results/timely-ml-analysis`; figures in
+`research/figures/timely-ml`; the generated explorer in
+`.local/timely-ml-analysis-preview/explorer.html`. The analyzer needs private
+local evidence; plotting can use the committed redacted tables alone. Intent
+labels are rule-based hypotheses with `unknown` retained, not validated human
+annotations. All comparisons retain the original model-specific budget and
+private-test-feedback limitations. Plot manifests record the actual Matplotlib
+version; this render used the existing 3.10.8 environment.
 
 ### Descriptive Timely trajectory
 

@@ -1,0 +1,29 @@
+{
+  "matplotlib": "3.10.8",
+  "data_sha256": {
+    "summary.json": "c451088d2e9e00faa36b24ed73ec088b8341f49b9a9d83c73b3cf28612631726",
+    "runs.json": "5b7c4bced9faca78c6be7374e4d09cc2d2d1a9ad99364722147579d0e2faf75b",
+    "iterations.json": "68970ef5454ec79ea3ce2444d0326a7c54effa98b8387cf8562958a115bc7ac0",
+    "segments.json": "f39d12ad2e5a21116b1857d1fd1dbe7185acf6a5589087672ebdf6a6aeaab287"
+  },
+  "figures": {
+    "quality-budget.png": "78f43160bef2b42da5689741b5bec2b1791a95dda4a53cdc8866915f09d09ee9",
+    "quality-budget.svg": "a43aded3654b74c26abf270b98387922cba07611c80ea5ffb59bec92c03f1dc7",
+    "quality-budget.pdf": "c922d7d8d5de4cfa78ceeb5ab1ca970f0a75d4e547384a51103ef03844779446",
+    "quality-time.png": "b4de8ea89869d10ff60c3519438c6cb9ae0097b68a69a671e9be5283a3f554e1",
+    "quality-time.svg": "acc98c9572e48242079d92a56e599433c260d6d45ffc12501668eb45549c4bfa",
+    "quality-time.pdf": "bcd0081fd351d91399628eed469839aa50a31d6e8886ec48a9277cfa8f3b3578",
+    "iteration-gain.png": "9540e0d5097b9221d40b462f49501e69413137431ed46c825429c77c8dbc1fe7",
+    "iteration-gain.svg": "28ffc7c09dd8090b2ec0abe88aaf6d2e1913b0011fedc67e33416130a9c1dbfb",
+    "iteration-gain.pdf": "a0f30c4ac71d363ef57477a6139e96f627c6aa5bf5d1ee1f5487a4925beb234b",
+    "response-intents.png": "6b7b630e7c0af063090d59e637704f0a5de09bc04a617a8f4ed0809a0a14a960",
+    "response-intents.svg": "b98eb6e83d29962d2230994e2d694dc8346cd282264077cd49bf6352faf16d20",
+    "response-intents.pdf": "5288776548ccfacbafdd9b8f263986bf9822676daec256bc0f297a77259b0f05",
+    "time-components.png": "b43445a9053208aac1db22e4077edd5b6d66f354af86fca7b1722cfcbd794030",
+    "time-components.svg": "d6a4892cc98ba1c792b2ec981e3d2857218403791ecc007fa777ce04745abf49",
+    "time-components.pdf": "6a402a64afe6d09b3785fd9da367f492a1d0852a652567da055e572291c3458a"
+  },
+  "source_sha256": "865834c84664a0e99aac5264e2b0d5aa561b53730aa75c01bbb1ec1181842dfe",
+  "template_sha256": "ac1359b612999e4031b6ba16641beddef6fc9728a20a9b7e5e03997a0b274ac0",
+  "explorer_sha256": "3637df8e8f3dacae9a8687ec3306f4456d75195cde2d264f7c1fa7cfb9ef9caa"
+}

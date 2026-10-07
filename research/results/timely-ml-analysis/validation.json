@@ -1,0 +1,29 @@
+{
+  "source": "corrected real ML traces",
+  "provider_calls": 0,
+  "replay": false,
+  "verification_script_sha256": "dc8e4f12ee7dcebea786a25ce2e1b407badb59fd323f03809504a1a328098a30",
+  "aligned_responses": 1034,
+  "reconstructed_episode_scores": 384,
+  "independently_checked_cells": 48,
+  "episodes_per_cell": 8,
+  "segment_coverage_exact_once": true,
+  "segments": 928,
+  "deterministic_table_rebuild": true,
+  "cost_reconciled": true,
+  "plan_row_fields_checked": [
+    "model",
+    "multiplier",
+    "phase",
+    "repeat",
+    "run_id",
+    "task"
+  ],
+  "frozen_inputs_unchanged": {
+    "plan.json": "c739b78007b87f940417882bce132314811d63098eda2399cead03b27aa28940",
+    "result.json": "98eed33a5abaeb5d2eb4c03dd9fe1b703f349c6c6e88601d91f1d14afb1bac3c",
+    "requests.jsonl": "da6f891fe90d32722c5e5ba8e521c6e94ead25614125eba33bda0517f1a0c437"
+  },
+  "figure_hashes_verified": 15,
+  "annotation_accuracy": "not measured; rule-based hypotheses"
+}

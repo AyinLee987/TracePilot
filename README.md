@@ -19,7 +19,7 @@ See the [experiment plan](docs/research/timely-reproduction.md) and [related wor
 | Existing Python harness adapter and local Langfuse setup | Available; see [setup and limitations](docs/langfuse-pilot.md) |
 | Timely code audit and Pi/mini-SWE-agent smoke runs | Available; [earlier results](docs/research/pilot-results.md) are engineering checks |
 | Timely evaluation with real benchmark tasks | 384/384 four-game episodes complete; [results and limitations](docs/research/timely-official-results.md) |
-| Timely Agentic ML | 384/384 corrected episodes complete; 373 valid submissions; [completion and limitations](docs/research/timely-ml-completion.md) |
+| Timely Agentic ML | 384 episodes analyzed; 373 valid submissions; [results, stage annotations, and figures](docs/research/timely-ml-analysis.md) |
 | Coding first-draft and public/hidden checks | 32 real drafts complete; one public code failure and one format failure; [latest results](docs/research/coding-extension16-results.md) |
 | Shared-deadline repair and resampling | 144 trajectories scored; reference-answer and clock limitations disclosed in the [results](docs/research/coding-deadline-results.md) |
 | Offline analysis and figures | [384 Timely trajectories](docs/research/timely-iteration-analysis.md) analyzed per response; plots and an interactive local explorer available |

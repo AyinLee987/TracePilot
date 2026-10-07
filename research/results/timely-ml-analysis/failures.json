@@ -1,0 +1,353 @@
+[
+  {
+    "model": "deepseek-flash",
+    "multiplier": 0,
+    "phase": "speed",
+    "repeat": 7,
+    "run_id": "ml-051",
+    "task": "spaceship-titanic",
+    "valid": false,
+    "score": 0,
+    "duration_s": 15.798374100006185,
+    "model_s": 11.93230990000302,
+    "other_s": 3.8660642000031658,
+    "budget_s": null,
+    "cost_cny": "0.037761120",
+    "iterations": 2,
+    "executions": 2,
+    "prompt_tokens": 4217,
+    "output_tokens": 3820,
+    "first_response_score": 0,
+    "later_gain": 0,
+    "recovered_after_first_response": false,
+    "strict_nominal_posthoc_score": 0.0,
+    "failure_category": "code_or_data_error",
+    "error_categories": [
+      "missing_column"
+    ],
+    "outcomes": [
+      "execution_error",
+      "execution_error"
+    ]
+  },
+  {
+    "model": "deepseek-v4-pro",
+    "multiplier": 0,
+    "phase": "speed",
+    "repeat": 8,
+    "run_id": "ml-062",
+    "task": "random-acts-of-pizza",
+    "valid": false,
+    "score": 0,
+    "duration_s": 14.021479099988937,
+    "model_s": 14.013255699945148,
+    "other_s": 0.008223400043789297,
+    "budget_s": null,
+    "cost_cny": "0.070290176",
+    "iterations": 2,
+    "executions": 0,
+    "prompt_tokens": 3161,
+    "output_tokens": 1825,
+    "first_response_score": 0,
+    "later_gain": 0,
+    "recovered_after_first_response": false,
+    "strict_nominal_posthoc_score": 0.0,
+    "failure_category": "no_executable_code",
+    "error_categories": [
+      "no_code"
+    ],
+    "outcomes": [
+      "no_code",
+      "no_code"
+    ]
+  },
+  {
+    "model": "deepseek-flash",
+    "multiplier": 0,
+    "phase": "speed",
+    "repeat": 8,
+    "run_id": "ml-063",
+    "task": "detecting-insults-in-social-commentary",
+    "valid": false,
+    "score": 0,
+    "duration_s": 4.7143572000204585,
+    "model_s": 3.663756199995987,
+    "other_s": 1.0506010000244714,
+    "budget_s": null,
+    "cost_cny": "0.007523808",
+    "iterations": 2,
+    "executions": 1,
+    "prompt_tokens": 1469,
+    "output_tokens": 636,
+    "first_response_score": 0,
+    "later_gain": 0,
+    "recovered_after_first_response": false,
+    "strict_nominal_posthoc_score": 0.0,
+    "failure_category": "no_submission_file",
+    "error_categories": [
+      "no_code",
+      "no_submission"
+    ],
+    "outcomes": [
+      "no_code",
+      "no_submission"
+    ]
+  },
+  {
+    "model": "deepseek-flash",
+    "multiplier": 2,
+    "phase": "timed",
+    "repeat": 3,
+    "run_id": "ml-157",
+    "task": "random-acts-of-pizza",
+    "valid": false,
+    "score": 0,
+    "duration_s": 9.200271899986546,
+    "model_s": 8.665373399970122,
+    "other_s": 0.5348985000164248,
+    "budget_s": 125.66312707500765,
+    "cost_cny": "0.022447488",
+    "iterations": 3,
+    "executions": 1,
+    "prompt_tokens": 7232,
+    "output_tokens": 2161,
+    "first_response_score": 0,
+    "later_gain": 0,
+    "recovered_after_first_response": false,
+    "strict_nominal_posthoc_score": 0.0,
+    "failure_category": "code_or_data_error",
+    "error_categories": [
+      "no_code",
+      "syntax_error"
+    ],
+    "outcomes": [
+      "execution_error",
+      "no_code",
+      "no_code"
+    ]
+  },
+  {
+    "model": "deepseek-v4-pro",
+    "multiplier": 4,
+    "phase": "timed",
+    "repeat": 3,
+    "run_id": "ml-174",
+    "task": "random-acts-of-pizza",
+    "valid": false,
+    "score": 0,
+    "duration_s": 36.68775879999157,
+    "model_s": 31.846575000032317,
+    "other_s": 4.8411837999592535,
+    "budget_s": 157.31240937143698,
+    "cost_cny": "0.161993920",
+    "iterations": 3,
+    "executions": 3,
+    "prompt_tokens": 8617,
+    "output_tokens": 4922,
+    "first_response_score": 0,
+    "later_gain": 0,
+    "recovered_after_first_response": false,
+    "strict_nominal_posthoc_score": 0.0,
+    "failure_category": "code_or_data_error",
+    "error_categories": [
+      "nan_features"
+    ],
+    "outcomes": [
+      "execution_error",
+      "execution_error",
+      "execution_error"
+    ]
+  },
+  {
+    "model": "deepseek-v4-pro",
+    "multiplier": 2,
+    "phase": "timed",
+    "repeat": 4,
+    "run_id": "ml-196",
+    "task": "spaceship-titanic",
+    "valid": false,
+    "score": 0,
+    "duration_s": 41.749512600013986,
+    "model_s": 36.0379937000107,
+    "other_s": 5.711518900003284,
+    "budget_s": 32.29029970000556,
+    "cost_cny": "0.185953152",
+    "iterations": 3,
+    "executions": 3,
+    "prompt_tokens": 9487,
+    "output_tokens": 5677,
+    "first_response_score": 0,
+    "later_gain": 0,
+    "recovered_after_first_response": false,
+    "strict_nominal_posthoc_score": 0.0,
+    "failure_category": "code_or_data_error",
+    "error_categories": [
+      "feature_mismatch"
+    ],
+    "outcomes": [
+      "execution_error",
+      "execution_error",
+      "execution_error"
+    ]
+  },
+  {
+    "model": "deepseek-v4-pro",
+    "multiplier": 5,
+    "phase": "timed",
+    "repeat": 4,
+    "run_id": "ml-218",
+    "task": "leaf-classification",
+    "valid": false,
+    "score": 0,
+    "duration_s": 19.751228800043464,
+    "model_s": 16.091770500002895,
+    "other_s": 3.659458300040569,
+    "budget_s": 428.0728008749793,
+    "cost_cny": "0.062004096",
+    "iterations": 3,
+    "executions": 3,
+    "prompt_tokens": 4848,
+    "output_tokens": 1826,
+    "first_response_score": 0,
+    "later_gain": 0,
+    "recovered_after_first_response": false,
+    "strict_nominal_posthoc_score": 0.0,
+    "failure_category": "code_or_data_error",
+    "error_categories": [
+      "invalid_stratified_split"
+    ],
+    "outcomes": [
+      "execution_error",
+      "execution_error",
+      "execution_error"
+    ]
+  },
+  {
+    "model": "deepseek-v4-pro",
+    "multiplier": 2,
+    "phase": "timed",
+    "repeat": 5,
+    "run_id": "ml-238",
+    "task": "random-acts-of-pizza",
+    "valid": false,
+    "score": 0,
+    "duration_s": 195.11762350000208,
+    "model_s": 15.517800800036639,
+    "other_s": 179.59982269996544,
+    "budget_s": 78.65620468571849,
+    "cost_cny": "0.065906368",
+    "iterations": 1,
+    "executions": 1,
+    "prompt_tokens": 1087,
+    "output_tokens": 2048,
+    "first_response_score": 0,
+    "later_gain": 0,
+    "recovered_after_first_response": false,
+    "strict_nominal_posthoc_score": 0.0,
+    "failure_category": "execution_timeout",
+    "error_categories": [
+      "execution_timeout"
+    ],
+    "outcomes": [
+      "execution_timeout"
+    ]
+  },
+  {
+    "model": "deepseek-v4-pro",
+    "multiplier": 5,
+    "phase": "timed",
+    "repeat": 6,
+    "run_id": "ml-302",
+    "task": "random-acts-of-pizza",
+    "valid": false,
+    "score": 0,
+    "duration_s": 25.07957649999298,
+    "model_s": 20.117770500015467,
+    "other_s": 4.961805999977514,
+    "budget_s": 196.64051171429622,
+    "cost_cny": "0.091675584",
+    "iterations": 3,
+    "executions": 3,
+    "prompt_tokens": 7155,
+    "output_tokens": 2736,
+    "first_response_score": 0,
+    "later_gain": 0,
+    "recovered_after_first_response": false,
+    "strict_nominal_posthoc_score": 0.0,
+    "failure_category": "code_or_data_error",
+    "error_categories": [
+      "no_submission",
+      "unsupported_argument"
+    ],
+    "outcomes": [
+      "execution_error",
+      "execution_error",
+      "no_submission"
+    ]
+  },
+  {
+    "model": "deepseek-flash",
+    "multiplier": 1,
+    "phase": "timed",
+    "repeat": 8,
+    "run_id": "ml-347",
+    "task": "spaceship-titanic",
+    "valid": false,
+    "score": 0,
+    "duration_s": 24.99818769999547,
+    "model_s": 17.610594900033902,
+    "other_s": 7.387592799961567,
+    "budget_s": 14.565984614276593,
+    "cost_cny": "0.055914336",
+    "iterations": 3,
+    "executions": 3,
+    "prompt_tokens": 9449,
+    "output_tokens": 5626,
+    "first_response_score": 0,
+    "later_gain": 0,
+    "recovered_after_first_response": false,
+    "strict_nominal_posthoc_score": 0.0,
+    "failure_category": "code_or_data_error",
+    "error_categories": [
+      "feature_mismatch"
+    ],
+    "outcomes": [
+      "execution_error",
+      "execution_error",
+      "execution_error"
+    ]
+  },
+  {
+    "model": "deepseek-flash",
+    "multiplier": 4,
+    "phase": "timed",
+    "repeat": 8,
+    "run_id": "ml-371",
+    "task": "spaceship-titanic",
+    "valid": false,
+    "score": 0,
+    "duration_s": 15.38124349998543,
+    "model_s": 11.955640900006983,
+    "other_s": 3.425602599978447,
+    "budget_s": 58.26393845710637,
+    "cost_cny": "0.036004800",
+    "iterations": 3,
+    "executions": 2,
+    "prompt_tokens": 7806,
+    "output_tokens": 3367,
+    "first_response_score": 0,
+    "later_gain": 0,
+    "recovered_after_first_response": false,
+    "strict_nominal_posthoc_score": 0.0,
+    "failure_category": "code_or_data_error",
+    "error_categories": [
+      "invalid_dtype",
+      "no_code"
+    ],
+    "outcomes": [
+      "execution_error",
+      "no_code",
+      "no_submission"
+    ]
+  }
+]

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Timely ML · 阶段与迭代</title>
+<style>
+:root{color-scheme:light dark;--bg:#fafbfc;--fg:#1d2c3d;--muted:#526475;--line:#cbd5df;--panel:#fff;--accent:#0072b2}
+@media(prefers-color-scheme:dark){:root{--bg:#17202a;--fg:#e7edf4;--muted:#b9c7d5;--line:#526172;--panel:#202d3b;--accent:#56b4e9}}
+*{box-sizing:border-box}body{font:15px/1.55 system-ui,sans-serif;margin:24px auto;padding:0 22px;max-width:1140px;background:var(--bg);color:var(--fg)}
+h1{font-size:26px;font-weight:600;margin-bottom:4px}h2{font-size:18px}p{margin:8px 0}small,.muted{color:var(--muted)}
+.controls{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}.controls label{display:grid;gap:4px;min-width:135px}
+select,button{font:inherit;padding:8px;border:1px solid var(--line);border-radius:4px;background:var(--panel);color:var(--fg);min-height:40px}
+#run-select{max-width:100%;width:100%}.selection{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
+.stage-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:12px;margin-top:14px}
+.stage{border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:4px;padding:14px;background:var(--panel)}
+.stage h3{margin:6px 0 10px;font-size:17px}.stage.unknown{border-top-color:var(--muted)}
+details{margin-top:18px}summary{cursor:pointer;font-weight:600}.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{white-space:nowrap}code{font-size:12px;overflow-wrap:anywhere}.facts{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+#empty{color:var(--muted)}.evidence{font-size:13px}.outcome{font-weight:600}
+@media(max-width:600px){body{padding:0 12px}.controls label{flex:1;min-width:140px}.selection{grid-template-columns:1fr 1fr}.selection select{grid-column:1/-1;grid-row:1}.stage-grid{grid-template-columns:1fr}h1{font-size:22px}}
+</style>
+<h1>Timely ML · 阶段与迭代</h1>
+<p class="muted" id="totals"></p>
+<p>“可能意图”是规则推断，依据本轮回复、代码变化和此前反馈；没有用后续得分倒推。规则无法确定时保留 <code>unknown</code>，仍可能通过人工阅读确认。</p>
+<div class="controls">
+<label>任务<select id="task"><option value="">全部任务</option></select></label>
+<label>模型<select id="model"><option value="">全部模型</option><option>deepseek-flash</option><option>deepseek-v4-pro</option></select></label>
+<label>阶段<select id="phase"><option value="">全部阶段</option><option value="speed">校准</option><option value="timed">限时</option></select></label>
+<label>结果<select id="valid"><option value="">全部结果</option><option value="yes">有有效提交</option><option value="no">无有效提交</option></select></label>
+<label>包含可能意图<select id="intent"><option value="">全部意图</option></select></label>
+</div>
+<div class="selection"><button id="prev" type="button">上一条</button><select id="run-select" aria-label="选择轨迹"></select><button id="next" type="button">下一条</button></div>
+<p id="empty" hidden>没有符合这些条件的轨迹。</p>
+<section id="detail" aria-live="polite">
+<div class="facts" id="facts"></div>
+<p class="muted">连续同类意图合并展示；修复阶段在取得可评分结果后分段。合并不代表已证明目标或错误原因相同，轮次范围不会跨越轨迹。</p>
+<div class="stage-grid" id="stages"></div>
+<details open><summary>展开逐轮证据与实际结果</summary><div class="scroll"><table><thead><tr>
+<th>轮次</th><th>可能意图 / 置信度</th><th>判断依据</th><th>实际结果</th><th>时间与开销</th>
+</tr></thead><tbody id="steps"></tbody></table></div></details>
+<p class="muted">评分为原评分器的私有测试 accuracy；超出 1.5 倍名义预算的候选不参与最终选择。模型预算不同，此页不能当作统一 deadline 对比。</p>
+</section>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(function(){
+"use strict";
+const d=JSON.parse(document.getElementById("data").textContent);
+const $=id=>document.getElementById(id);
+const taskNames={"leaf-classification":"叶片分类","spaceship-titanic":"Spaceship Titanic","random-acts-of-pizza":"披萨请求","detecting-insults-in-social-commentary":"侮辱检测"};
+const outcomeNames={scored:"已评分",no_code:"没有可执行代码",execution_error:"代码执行失败",execution_timeout:"代码执行超时",no_submission:"未生成提交文件",scoring_error:"评分失败"};
+const actionNames={no_executable_code:"无可执行代码",first_executable_code:"首次提供代码",same_code:"与上次执行的代码相同",changed_code:"代码已改动"};
+const evidenceNames={first_response_contains_executable_candidate:"首轮给出候选代码",response_self_report:"回复中明确陈述目标",
+identical_extracted_code_to_previous_execution:"与上次执行的代码完全相同",previous_response_unparseable:"上一轮未解析出代码",now_contains_code:"本轮补充可解析代码",
+previous_feedback_reports_failure:"此前反馈报告失败",code_changed:"候选代码发生变化",different_recognized_estimator_constructors:"可识别的建模算法发生变化",
+result_reporting_language_without_executable_code:"结果汇报文字，没有可执行代码",no_clear_goal:"现有规则未识别出明确目标",changed_code_without_clear_goal:"代码变化但现有规则未确定目标",
+multiple_explicit_goals:"存在多个明确目标，无法唯一判断"};
+const conf={medium:"中等（仍是推断）",low:"低（上下文推测）",unknown:"unknown"};
+function node(tag,text,cls){const x=document.createElement(tag);if(text!==undefined)x.textContent=text;if(cls)x.className=cls;return x;}
+function option(sel,value,text){const x=node("option",text);x.value=value;sel.append(x);}
+function fmt(n,k=2){return n===null||n===undefined?"未记录":Number(n).toFixed(k);}
+Object.entries(taskNames).forEach(([k,v])=>option($("task"),k,v));
+Object.entries(d.labels).forEach(([k,v])=>option($("intent"),k,v));
+$("totals").textContent=d.summary.episodes+" 条轨迹 · "+d.summary.responses+" 次模型回复 · "+d.summary.executions+" 次代码执行 · "+d.summary.segments+" 个展示阶段";
+let filtered=[];
+function filter(){
+ const old=$("run-select").value;
+ filtered=d.runs.filter(r=>(!$("task").value||r.task===$("task").value)&&(!$("model").value||r.model===$("model").value)&&
+ (!$("phase").value||r.phase===$("phase").value)&&(!$("valid").value||r.valid===($("valid").value==="yes"))&&
+ (!$("intent").value||d.segments.some(s=>s.run_id===r.run_id&&(s.possible_intent===$("intent").value||s.subintents.includes($("intent").value)))));
+ $("run-select").replaceChildren();
+ filtered.forEach(r=>option($("run-select"),r.run_id,r.run_id+" · "+taskNames[r.task]+" · "+r.model+" · "+(r.phase==="speed"?"校准":"限时 ×"+r.multiplier)));
+ if(filtered.some(r=>r.run_id===old))$("run-select").value=old;
+ $("empty").hidden=filtered.length>0;$("detail").hidden=filtered.length===0;show();
+}
+function show(){
+ const r=filtered.find(r=>r.run_id===$("run-select").value);
+ $("prev").disabled=!r||filtered.indexOf(r)===0;$("next").disabled=!r||filtered.indexOf(r)===filtered.length-1;
+ if(!r)return;
+ $("facts").replaceChildren();
+ [r.valid?"有效提交":"无有效提交","最终接受分数 "+fmt(r.score,4),"实际耗时 "+fmt(r.duration_s)+" s",
+ "名义预算 "+(r.budget_s===null?"校准无固定期限":fmt(r.budget_s)+" s"),"费用 ¥"+fmt(r.cost_cny,4),r.iterations+" 次回复 / "+r.executions+" 次执行"].forEach(x=>$("facts").append(node("span",x)));
+ $("stages").replaceChildren();
+ d.segments.filter(s=>s.run_id===r.run_id).forEach(s=>{
+   const box=node("article",undefined,"stage"+(s.possible_intent==="unknown"?" unknown":""));
+   box.append(node("small","第 "+s.start_iteration+(s.end_iteration===s.start_iteration?"":"–"+s.end_iteration)+" 轮"));
+   box.append(node("h3",d.labels[s.possible_intent]));
+   box.append(node("p","置信度："+conf[s.intent_confidence]));
+   box.append(node("p",s.intent_evidence.map(x=>evidenceNames[x]||x).join("；"),"evidence"));
+   box.append(node("p",s.outcomes.map(x=>outcomeNames[x]).join(" → "),"outcome"));
+   box.append(node("small","阶段结束时累计最好分数 "+fmt(s.best_eligible_score,4)));
+   $("stages").append(box);
+ });
+ $("steps").replaceChildren();
+ d.steps.filter(s=>s.run_id===r.run_id).forEach(s=>{
+   const row=node("tr");
+   const cells=[String(s.iteration),d.labels[s.possible_intent]+" / "+conf[s.intent_confidence],
+    s.intent_evidence.map(x=>evidenceNames[x]||x).join("；"),
+    actionNames[s.observed_action]+"；"+outcomeNames[s.outcome]+(s.accuracy===null?"":" · accuracy "+fmt(s.accuracy,4)+(s.eligible?" · 可接受":" · 超出接受期限"))+
+      (s.error_category==="none"?"":" · "+s.error_category),
+    "累计 "+fmt(s.elapsed_s)+" s；模型请求 "+fmt(s.response_latency_s)+" s；¥"+fmt(s.cost_cny,4)];
+   cells.forEach(x=>row.append(node("td",x)));$("steps").append(row);
+ });
+}
+["task","model","phase","valid","intent"].forEach(id=>$(id).addEventListener("change",filter));
+$("run-select").addEventListener("change",show);
+$("prev").addEventListener("click",()=>{const i=filtered.findIndex(r=>r.run_id===$("run-select").value);if(i>0){$("run-select").value=filtered[i-1].run_id;show();}});
+$("next").addEventListener("click",()=>{const i=filtered.findIndex(r=>r.run_id===$("run-select").value);if(i<filtered.length-1){$("run-select").value=filtered[i+1].run_id;show();}});
+filter();
+})();
+</script>
+</html>

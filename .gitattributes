@@ -9,3 +9,7 @@
 
 # Preserve the analyzer's exact CSV bytes referenced by the result manifest.
 /research/results/coding-deadline/*.csv -text
+# Preserve exact generated ML evidence/figure bytes used by manifests.
+/research/results/timely-ml-analysis/* -text
+/research/figures/timely-ml/*.svg -text
+/research/figures/timely-ml/manifest.json -text

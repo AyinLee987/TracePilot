@@ -45,5 +45,6 @@ remain disclosed limitations. Completion alone does not establish a model
 ranking or an exact replication of the paper's results. Because the agent sees
 private-test scores during iteration, subsequent quality results are not an
 untouched held-out generalization estimate. Per-task quality, time curves,
-trajectory analysis and the 11 invalid episodes' failure causes have not yet
-been summarized for this batch.
+stage annotations and the 11 invalid episodes' failure causes are now available
+in the [offline analysis](timely-ml-analysis.md). The completion counts and
+original scores are unchanged.
