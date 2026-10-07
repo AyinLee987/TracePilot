@@ -23,9 +23,11 @@ from timely_transport import BudgetedTimelyTransport, run_context
 import timely_ml_clock as host_clock
 
 ROOT = batch.ROOT
-PARENT = ROOT / ".local/timely-official-paid-20261006"
-DEST = ROOT / ".local/timely-ml-paid-20261007"
-CAP = Decimal("50")
+PARENT = ROOT / ".local/timely-ml-paid-20261007"
+DEST = ROOT / ".local/timely-ml-corrected-paid-20261007"
+CAP = Decimal("44.929487536")  # Original CNY 50 allowance, less the quarantined batch.
+IMAGE = "sha256:34c45e2c43a7eaba26a8898b40e52d33d5ffe08eb98bebbaf4a20c34e5c6c756"
+PROTOCOL = ROOT / "docs/research/timely-ml-corrected.md"
 UPSTREAM = "e13af2b8c98d799857ace789ebcfdfd4ea6c2985"
 FILES = ("timely_ml.py", "timely_ml_sandbox.py", "prepare_timely_ml.py", "timely_transport.py",
          "timely_batch.py", "timely_study.py", "timely_official.py", "timely_ml_e2e.py", "timely_ml_clock.py", "docker/TimelyML.Dockerfile")
@@ -49,8 +51,10 @@ def identity(plan):
     batch.require(plan["clock"] == "Windows time.perf_counter via local read-only bridge", "ML host clock required")
     host_clock.configure()
     batch.require(host_clock.now() > 0, "ML host clock unavailable")
-    batch.require(plan["rows"] == rows() and plan["workers"] == 2 and plan["batch_cap_cny"] == "50"
-                  and plan["max_calls"] == 1088 and plan["stage"] == study.ML_STAGE, "ML protocol changed")
+    batch.require(plan["rows"] == rows() and plan["workers"] == 2 and plan["batch_cap_cny"] == str(CAP)
+                  and plan["max_calls"] == 1088 and plan["stage"] == study.ML_CORRECTED_STAGE
+                  and plan["image"] == IMAGE and plan["protocol_sha256"] == batch.file_hash(PROTOCOL), "ML protocol changed")
+    batch.require(set(plan["sources"]) == set(FILES), "ML source inventory changed")
     for name, sha in plan["sources"].items():
         batch.require(batch.file_hash(ROOT / "research" / name) == sha, "ML source changed")
     batch.require(batch.file_hash(DATA / "manifest.json") == plan["data_manifest_sha256"], "ML data manifest changed")
@@ -69,36 +73,62 @@ def identity(plan):
 
 
 def parent_basis():
-    from timely_official import inspect
     parent_plan = read(PARENT / "plan.json")
     event = study._assert_active_record(PARENT, parent_plan)
-    result = read(PARENT / "async-result.json")
-    batch.require(event["stage_name"] == study.OFFICIAL_STAGE and result["complete"] is True
-                  and result["completed"] == result["planned"] == 384 and result["stop_reason"] is None
-                  and batch.money(result["held_cny"]) == 0, "ML requires settled original games")
-    actual = []
-    for row in parent_plan["rows"]:
-        tau = result["calibration"][f"{row['game']}/{row['model']}"] if row["mode"] == "timed" else None
-        actual.append(inspect(PARENT, parent_plan, row, tau))
-    cost = sum((batch.money(r["cost_cny"]) for r in actual), Decimal(0))
+    result = read(PARENT / "result.json")
+    batch.require(event["stage_name"] == study.ML_STAGE and parent_plan["rows"] == rows()
+                  and result["complete"] is False and result["planned"] == 384 and result["completed"] == 100
+                  and result["stop_reason"] == "RuntimeError" and batch.money(result["held_cny"]) == 0,
+                  "correction requires the settled, quarantined ML batch")
+    batch.require(batch.file_hash(PARENT / "result.json") == "ddc49e5054ec3df643c042b99367ae0bb5305c4f87f921723681bd70a71f1a21"
+                  and batch.file_hash(PARENT / "requests.jsonl") == "8dad5c79c04076d76b31f82a3a1f9f8aad7de140bf47d7e9b1c2c677069f0b85",
+                  "quarantined ML evidence changed")
+    raw = (PARENT / "requests.jsonl").read_bytes()
+    batch.require(raw.endswith(b"\n"), "torn ML billing")
+    events = [json.loads(line) for line in raw.splitlines()]
+    dispatched = [e["request_id"] for e in events if e["event"] == "request_dispatch"]
+    completed = [e for e in events if e["event"] == "request_complete"]
+    batch.require(events[0]["event"] == "batch_open" and events[-1]["event"] == "batch_close"
+                  and len(dispatched) == len(set(dispatched)) == len(completed) == 212
+                  and set(dispatched) == {e["request_id"] for e in completed}
+                  and not any(e["event"] == "request_unknown" for e in events), "unclosed ML billing")
+    cost = sum((batch.money(e["provider_usage_peak_estimate_cny"]) for e in completed), Decimal(0))
+    for account in (events[-1], result["accounting"]):
+        batch.require(account["unknown_calls"] == account["active_calls"] == 0
+                      and account["calls_dispatched"] == 212 and batch.money(account["reserved_cny"]) == 0
+                      and batch.money(account["spent_estimate_cny"]) == cost, "ML billing not fully known")
+    owner_path = ROOT / ".local/overnight/timely-ml-admitted.process.json"
+    closed_path = owner_path.with_name("timely-ml-admitted.process.closed.json")
+    owner, closed = read(owner_path), read(closed_path)
+    batch.require(closed["reaped"] is True and closed["pid"] == owner["pid"] and closed["returncode"] == 1,
+                  "previous ML process not reaped")
     known = batch.money(parent_plan["study_opening"]["known_cny"]) + cost
     batch.require(cost == batch.money(result["batch_cost_cny"]) and known == batch.money(result["study_known_cny"])
+                  and batch.money(parent_plan["batch_cap_cny"]) == 50 and cost + CAP == 50
                   and not parent_plan["study_opening"]["liabilities"] and known + CAP <= 200, "ML carryover mismatch")
-    archive = ROOT / ".local/timely-ml-history-20261007/timely_study.py"
+    archive = ROOT / ".local/timely-ml-corrected-history-20261007/timely_study.py"
     batch.require(batch.file_hash(archive) == event["module_sha256"], "ML previous study bytes missing")
     return {"root":str(PARENT), "files":study._files(PARENT), "opening":{"known_cny":str(known), "liabilities":[]},
+            "process_closure":{str(p):batch.file_hash(p) for p in (owner_path,closed_path)},
             "previous_head_sha256":study.head()["sha256"], "historical_study":{"path":str(archive), "sha256":batch.file_hash(archive)}}
 
 
 def prepare():
     with batch.exclusive(batch.PAID_STUDY_ROOT), batch.exclusive(PARENT):
         batch.require(not DEST.exists(), "ML destination exists; cannot overwrite")
-        seal = parent_basis()
-        batch.require(subprocess.check_output(["git", "-C", str(SOURCE), "rev-parse", "HEAD"], text=True).strip() == UPSTREAM,
+        batch.require(subprocess.check_output(["git", "-c", f"safe.directory={SOURCE}", "-C", str(SOURCE), "rev-parse", "HEAD"], text=True).strip() == UPSTREAM,
                       "wrong upstream revision")
-        image = subprocess.check_output(["docker", "image", "inspect", "tracepilot-timely-ml:20261007", "--format", "{{.Id}}"], text=True).strip()
+        batch.require(not subprocess.check_output(["git", "-c", f"safe.directory={SOURCE}", "-C", str(SOURCE), "status", "--porcelain"], text=True).strip(),
+                      "upstream checkout is dirty")
+        image = subprocess.check_output(["docker", "image", "inspect", IMAGE, "--format", "{{.Id}}"], text=True).strip()
+        validation = read(ROOT / "research/results/timely-ml-libgomp-validation.json")
+        batch.require(validation["image"] == image and validation["lightgbm_real_leaf_training"] is True
+                      and validation["provider_calls"] == 0, "corrected image validation missing")
+        for name, sha in validation["source_sha256"].items():
+            batch.require(batch.file_hash(ROOT / name) == sha, "validated sandbox or image source changed")
+        seal = parent_basis()
         registry, _ = study._registry()
-        plan = {"paid":True, "stage":study.ML_STAGE, "cap_cny":"200", "batch_cap_cny":"50", "max_calls":1088,
+        plan = {"paid":True, "stage":study.ML_CORRECTED_STAGE, "cap_cny":"200", "batch_cap_cny":str(CAP), "max_calls":1088,
             "clock":"Windows time.perf_counter via local read-only bridge",
             "workers":2, "rows":rows(), "image":image, "upstream_commit":UPSTREAM,
             "data_manifest_sha256":batch.file_hash(DATA / "manifest.json"),
@@ -107,7 +137,7 @@ def prepare():
             "study_opening":seal["opening"], "imports":registry["imports"],
             "settings":{"temperature":0.7, "max_tokens":2048, "thinking":"disabled", "max_turns":3,
                         "execution_timeout_s":180, "http_timeout_s":60, "retries":0},
-            "protocol_sha256":batch.file_hash(ROOT / "docs/research/timely-ml.md")}
+            "protocol_sha256":batch.file_hash(PROTOCOL)}
         identity(plan)
         DEST.mkdir()
         batch.write_new(DEST / "parent-seal.json", seal)
@@ -128,7 +158,7 @@ def activate(review: Path):
         batch.require(batch.file_hash(Path(evidence["raw_review_path"])) == evidence["raw_review_sha256"], "ML raw review changed")
         current = study.head()
         payload = {"schema":1, "seq":current["count"], "previous_sha256":current["sha256"],
-            "kind":"advance-timely-ml", "stage_name":study.ML_STAGE, "parent_root":str(PARENT), "root":str(DEST),
+            "kind":"correct-timely-ml-libgomp", "stage_name":study.ML_CORRECTED_STAGE, "parent_root":str(PARENT), "root":str(DEST),
             "plan_sha256":batch.digest(plan), "plan_file_sha256":batch.file_hash(DEST / "plan.json"),
             "parent_seal_sha256":batch.digest(seal), "opening":seal["opening"],
             "module_sha256":plan["sources"]["timely_study.py"], "review":{"path":str(review), "sha256":batch.file_hash(review)},
@@ -247,7 +277,7 @@ async def execute(plan, key, *, root=DEST, inner=None):
                     try:
                         result = await episode(root, plan, row, client, key, tau, accounting=transport.snapshot)
                         results.append(result)
-                        print(json.dumps({"completed":len(results), "planned":384, "run_id":row["run_id"],
+                        print(json.dumps({"completed":sum(r["status"]=="evaluated" for r in results), "planned":len(plan["rows"]), "run_id":row["run_id"],
                             "phase":phase, "valid":result["valid"], "score":result["score"],
                             "duration":result["duration"], "cny":transport.snapshot()["spent_estimate_cny"]}), flush=True)
                     except asyncio.CancelledError:
@@ -315,6 +345,12 @@ async def execute(plan, key, *, root=DEST, inner=None):
     return {k:v for k,v in report.items() if k != "records"}
 
 
+def require_idle_sandbox():
+    names = subprocess.check_output(["docker", "ps", "-a", "--filter",
+        "label=tracepilot.experiment=timely-ml", "--format", "{{.Names}}"], text=True, timeout=30)
+    batch.require(not names.strip(), "ML containers already exist; do not overlap validation and paid runs")
+
+
 def run(env_file):
     from dotenv import dotenv_values
     key = dotenv_values(env_file).get("DEEPSEEK_API_KEY")
@@ -325,7 +361,8 @@ def run(env_file):
         identity(plan)
         batch.require(not any((DEST / name).exists() for name in ("reservation.json", "requests.jsonl", "result.json")), "ML cannot repeat")
         batch.require(batch.money(plan["study_opening"]["known_cny"])+CAP <= 200 and not plan["study_opening"]["liabilities"], "ML cap does not fit")
-        batch.write_new(DEST / "reservation.json", {"cap_cny":"50", "plan_sha256":batch.digest(plan), "utc":datetime.now(timezone.utc).isoformat()})
+        require_idle_sandbox()
+        batch.write_new(DEST / "reservation.json", {"cap_cny":str(CAP), "plan_sha256":batch.digest(plan), "utc":datetime.now(timezone.utc).isoformat()})
         return asyncio.run(execute(plan,key))
 
 

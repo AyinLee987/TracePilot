@@ -1,0 +1,37 @@
+{
+  "paid": false,
+  "provider_calls": 0,
+  "remaining_cap_cny": "44.929487536",
+  "archived_study_bytes_match": true,
+  "named_successor_accepted": true,
+  "duplicate_successor_rejected": true,
+  "original_study_unchanged": true,
+  "scheduler_cancel_preserves_remaining_cap": true,
+  "scheduler_missing_calibration_stays_missing": true,
+  "scheduler_uses_actual_docker": true,
+  "api_transport": "httpx.MockTransport",
+  "evidence_sha256": {
+    ".local/overnight/timely-ml-corrected-admission-check.json": "98f9d60ee2f7de5d6a69fc006192c6f3ad3976b09f4301c4017774f2e6f3b291",
+    ".local/ml-scheduler-check-07e82e56/cancel/result.json": "263772f029ad1c34680a5a122866e4f6fab5dbca9747fe0de551d726ffcb25d9",
+    ".local/ml-scheduler-check-07e82e56/missing/result.json": "0b082fed178b187a97bf6f78aad3efcc92572fa612cb2cc652e70cf515da54bc",
+    ".local/overnight/timely-ml-corrected-container-check.json": "9ceb70ddfacfc309c169cf809cf4ba081df9ac92592aecac792374ec1107ffb4"
+  },
+  "container_admission": {
+    "paid": false,
+    "provider_calls": 0,
+    "existing_container_blocks_start": true,
+    "clean_environment_accepted": true,
+    "owned_container_removed": true
+  },
+  "scope": "Scheduler fixtures validate cancellation and missing calibration using a historical opening; copied-ledger checks validate the named successor separately. Real parent reconciliation runs during prepare/activate/run.",
+  "source_sha256": {
+    "research/timely_ml.py": "dac4ff8ee576fda0204581501e0a01392e1742601aa8a95c99d1d83ed4505025",
+    "research/timely_study.py": "66974372e5da0ee20e81f59c22052ab01d51509d8e9ed34c224419d11517da30"
+  },
+  "container_check_provenance": {
+    "command": "WSL Ubuntu-24.04, root, isolated Python: .local/overnight/timely_ml_corrected_container_check.py",
+    "engine": "Native Docker in WSL Ubuntu-24.04",
+    "evidence_mtime_utc": "2026-10-07T12:02:50.189689+00:00",
+    "script_sha256": "d7e95a93aea10caa8e43a6f1c4b67f01784be66256400d14bbee2d6c72d3b2d5"
+  }
+}
