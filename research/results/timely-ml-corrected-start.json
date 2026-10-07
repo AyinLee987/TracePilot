@@ -1,0 +1,23 @@
+{
+  "status": "running",
+  "snapshot_utc": "2026-10-07T12:24:29.848796+00:00",
+  "planned": 384,
+  "evaluated": 11,
+  "valid": 11,
+  "phase_counts": {
+    "speed": 11
+  },
+  "calls_dispatched": 14,
+  "calls_settled": 13,
+  "unknown_calls": 0,
+  "known_estimate_cny": "0.410227328",
+  "batch_cap_cny": "44.929487536",
+  "study_opening": {
+    "known_cny": "36.944752176",
+    "liabilities": []
+  },
+  "plan_file_sha256": "c739b78007b87f940417882bce132314811d63098eda2399cead03b27aa28940",
+  "image": "sha256:34c45e2c43a7eaba26a8898b40e52d33d5ffe08eb98bebbaf4a20c34e5c6c756",
+  "code_commit": "3724271ace410d75716a86c0b36e67b5b47ebf45",
+  "limitations": "In-progress snapshot only; in-flight requests are not included in the known estimate. Not a final result or model comparison."
+}

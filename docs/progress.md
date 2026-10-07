@@ -6,7 +6,9 @@
 
 - **授权/范围**：用户要求继续，保留故障首批，从头运行相同 384 条矩阵并重新校准；仅使用已验证的 libgomp 修复镜像，原提示、循环、评分和资源配置不变。
 - **费用/准入**：首批 5.070512464 元计入原 50 元额度，新批最多 44.929487536 元；同一 200 元 study 追加一个明确的纠正阶段。校验首批完整费用日志、退出记录及历史文件封存；拒绝重复批次。见[纠正协议](research/timely-ml-corrected.md)。
-- **验证与状态**：复制账本的纠正准入/重复拒绝、真实 Docker 的取消保留额度/缺校准/残留容器拒绝均通过，零 Provider 请求。调度 fixture 使用历史 opening，仅验证调度边界；真实历史核验在启动准入中执行。两次实际 Claude Opus 5.5 审查无阻断，见[处置](reviews/2026-10-07-timely-ml-corrected.md)和[验证记录](../research/results/timely-ml-corrected-validation.json)。纠正后的付费调用尚未启动。
+- **验证与状态**：复制账本的纠正准入/重复拒绝、真实 Docker 的取消保留额度/缺校准/残留容器拒绝均通过，零 Provider 请求。调度 fixture 使用历史 opening，仅验证调度边界；真实历史核验在启动准入中执行。两次实际 Claude Opus 5.5 审查无阻断，见[处置](reviews/2026-10-07-timely-ml-corrected.md)和[验证记录](../research/results/timely-ml-corrected-validation.json)。纠正计划已完成 prepare/activate/run 准入，已开始真实 API 校准，完整 384 条矩阵后台运行中。首次启动因 Windows CRLF 与 Linux Git 的换行符判断差异被拒绝（零请求、无新批次目录）；核实全部上游源码字节与旧 plan 一致后，只为当前进程设置 `core.autocrlf=true`，保留首个进程的退出证据。
+
+- **启动快照**：20:24:29，已评估 11/384 条、有效提交 11 条；14 次已发出、13 次已结算，已知估算 0.410227328 元（不含在途请求）。这是运行中快照，不作模型排名，见[机器可读记录](../research/results/timely-ml-corrected-start.json)。代码提交 `3724271` 已推送并核对远端一致。
 
 ## 2026-10-07：ML 进度检查发现依赖缺失，停止首批并修复镜像
 

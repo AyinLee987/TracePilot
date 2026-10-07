@@ -4,7 +4,7 @@
 
 ## 1. 项目目标
 
-**当前执行状态（2026-10-07）：** 已完成 Timely 四游戏 384 条轨迹的[逐轮分析与可视化](docs/research/timely-iteration-analysis.md)，对齐 12,521 个响应与 12,494 个官方步骤，并核验[多类型 benchmark](docs/research/multitask-benchmarks-20261007.md)。最新[经验适用性查重](docs/research/experience-applicability-related-work.md)发现 BASM、XSkill、Skill-Pro、MACLA、Grounding 等直接先行；[原候选方案](docs/research/training-free-experience-plan.md)已下调为未验证的工程设计。下一步先读强基线并选择窄问题；另记录核验成本、快慢模型经验收益、拒用与保留帮助三个候选，均未确认新颖性。该文献调研未产生模型实验；后续 ML 首批已因镜像依赖错误停止并隔离（100 条评估、212 次请求，估算 5.07 元），不用于排名，详见[故障记录](docs/research/timely-ml-environment-failure.md)。用户已授权纠正后的 ML 全矩阵重跑，沿用原 50 元额度，剩余上限 44.929487536 元；正在完成准入，见[纠正协议](docs/research/timely-ml-corrected.md)。候选经验及完整 router 尚未实现。原矩阵及账务见[完整结果](docs/research/timely-official-results.md)，未重跑或改分。
+**当前执行状态（2026-10-07）：** 已完成 Timely 四游戏 384 条轨迹的[逐轮分析与可视化](docs/research/timely-iteration-analysis.md)，对齐 12,521 个响应与 12,494 个官方步骤，并核验[多类型 benchmark](docs/research/multitask-benchmarks-20261007.md)。最新[经验适用性查重](docs/research/experience-applicability-related-work.md)发现 BASM、XSkill、Skill-Pro、MACLA、Grounding 等直接先行；[原候选方案](docs/research/training-free-experience-plan.md)已下调为未验证的工程设计。下一步先读强基线并选择窄问题；另记录核验成本、快慢模型经验收益、拒用与保留帮助三个候选，均未确认新颖性。该文献调研未产生模型实验；后续 ML 首批已因镜像依赖错误停止并隔离（100 条评估、212 次请求，估算 5.07 元），不用于排名，详见[故障记录](docs/research/timely-ml-environment-failure.md)。用户已授权纠正后的 ML 全矩阵重跑，沿用原 50 元额度，剩余上限 44.929487536 元；准入已通过并已开始真实 API 校准，384 条矩阵后台运行中，见[纠正协议](docs/research/timely-ml-corrected.md)。候选经验及完整 router 尚未实现。原矩阵及账务见[完整结果](docs/research/timely-official-results.md)，未重跑或改分。
 
 TracePilot 计划成为一个基于任务特征与 Agent 执行轨迹进行路由的 Python 扩展库。项目包含三条主线：即插即用地记录完整 Agent 流程与开销；对任务分类并分配合适的模型和 Agent 配置；在不同任务领域评估质量、时间与费用的权衡。
 
