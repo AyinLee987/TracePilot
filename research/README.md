@@ -176,6 +176,15 @@ python -B research/plot_coding_deadline.py --source research/results/coding-dead
 
 Rebuilding preserves the plotted content; PDF/SVG byte hashes can differ because Matplotlib includes generated metadata. Each render writes a manifest for its own files. The public summary retains hashes of the private analysis and independent audits; its table bytes match the closed analysis output. /32 exclusion was prespecified. HE99's additional exact-number/reference discrepancy was discovered after scoring and is disclosed without replacing labels or silently dropping the task.
 
+### Original Agentic ML tasks
+
+The four original task prompts and evaluator are connected to reconstructed public
+datasets and a bounded Docker executor. See the [ML protocol](../docs/research/timely-ml.md)
+for commands, budget succession and differences from the paper. Engineering E2E
+uses real training/data/grading with fake HTTP; it is not a model benchmark result.
+Paid execution requires the completed Claude review, immutable plan activation,
+and the existing study balance. Do not launch a separate paid script or reset the cap.
+
 ### Descriptive Timely trajectory
 
 [Redacted step records](results/timely-trajectory-diagnostic.json) distinguish error feedback, tool execution and score changes across the three real runs. Rebuild the [single-run diagnostic](figures/timely-v2-diagnostic.png) in a separate plotting environment:

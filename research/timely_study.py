@@ -33,6 +33,7 @@ CODING_STAGE = "r3-coding-first-draft-16-v1"
 CODING_EXTENSION = "r3-coding-first-draft-extension16-v1"
 DEADLINE_STAGE = "r3-coding-deadline-dev-v1"
 OFFICIAL_STAGE = "timely-official-four-game-v1"
+ML_STAGE = "timely-agentic-ml-v1"
 DEADLINE_CAP = Decimal("120")
 DEADLINE_KNOWN_STOPS = (None, "budget_censored", "public_infrastructure_failure", "request_or_context_failure")
 DEADLINE_REQUEST_GUARDS = ("per_request_cap", "message_limit_no_code_truncation", "feedback_projection_limit")
@@ -76,7 +77,9 @@ def head() -> dict:
                     and result["stage_name"] == CODING_EXTENSION and result["revision_used"])
         official = (event["kind"] == "advance-timely-official" and event["stage_name"] == OFFICIAL_STAGE
                     and result["stage_name"] == DEADLINE_STAGE and result["revision_used"])
-        batch.require(event["parent_root"] == result["root"] and (revision or coding or extension or deadline or official),
+        ml = (event["kind"] == "advance-timely-ml" and event["stage_name"] == ML_STAGE
+              and result["stage_name"] == OFFICIAL_STAGE and result["revision_used"])
+        batch.require(event["parent_root"] == result["root"] and (revision or coding or extension or deadline or official or ml),
                       "invalid_or_duplicate_study_transition")
         previous = event["sha256"]
         result = {"sha256": previous, "root": event["root"], "revision_used": True,
