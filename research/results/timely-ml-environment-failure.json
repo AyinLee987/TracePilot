@@ -1,0 +1,26 @@
+{
+  "status": "stopped_environment_failure",
+  "planned": 384,
+  "evaluated": 100,
+  "evaluated_by_phase": {
+    "speed": 64,
+    "timed": 36
+  },
+  "row_statuses": {
+    "evaluated": 100,
+    "missing_no_calibration": 6,
+    "censored_infrastructure": 2,
+    "not_run_after_stop": 276
+  },
+  "api_calls": 212,
+  "known_estimate_cny": "5.070512464",
+  "held_cny": "0",
+  "active_calls": 0,
+  "unknown_calls": 0,
+  "study_known_cny": "36.944752176",
+  "libgomp_affected_episodes": 50,
+  "libgomp_failed_executions": 78,
+  "result_sha256": "ddc49e5054ec3df643c042b99367ae0bb5305c4f87f921723681bd70a71f1a21",
+  "requests_sha256": "8dad5c79c04076d76b31f82a3a1f9f8aad7de140bf47d7e9b1c2c677069f0b85",
+  "reason": "Missing libgomp1 makes standalone LightGBM import fail; earlier torch-first import check masked dependency. Clock service was deliberately stopped to halt new requests and let active requests settle. Scores quarantined; original files retained."
+}

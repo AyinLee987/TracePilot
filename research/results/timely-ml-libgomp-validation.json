@@ -1,0 +1,79 @@
+{
+  "paid": false,
+  "provider_calls": 0,
+  "image": "sha256:34c45e2c43a7eaba26a8898b40e52d33d5ffe08eb98bebbaf4a20c34e5c6c756",
+  "independent_process_imports": [
+    "lightgbm",
+    "xgboost",
+    "torch",
+    "torchvision",
+    "sklearn",
+    "statsmodels",
+    "bayes_opt",
+    "timm",
+    "torch_geometric"
+  ],
+  "lightgbm_real_leaf_training": true,
+  "real_task_results": [
+    {
+      "task": "leaf-classification",
+      "valid": true,
+      "score": 0.98989898989899,
+      "duration": 4.314840499981074
+    },
+    {
+      "task": "spaceship-titanic",
+      "valid": true,
+      "score": 0.7724137931034483,
+      "duration": 4.036510599980829
+    },
+    {
+      "task": "random-acts-of-pizza",
+      "valid": true,
+      "score": 0.7624784853700516,
+      "duration": 2.4214242000016384
+    },
+    {
+      "task": "detecting-insults-in-social-commentary",
+      "valid": true,
+      "score": 0.8345296562145825,
+      "duration": 2.227683100005379
+    }
+  ],
+  "timed_missing_code_feedback": true,
+  "isolation_imports_timeout_cancel": true,
+  "no_remaining_containers": true,
+  "wall_s": 42.16884422302246,
+  "monotonic_s": 44.47332092399938,
+  "synthetic_accounting": {
+    "batch_budget_cny": "5",
+    "max_calls": 12,
+    "calls_dispatched": 7,
+    "spent_estimate_cny": "0.058992",
+    "paid_call_count": 7,
+    "estimated_cny": "0.058992",
+    "unknown_reserved_cny": "0",
+    "in_flight_reserved_cny": "0",
+    "reserved_cny": "0",
+    "committed_cny": "0.058992",
+    "active_calls": 0,
+    "unknown_calls": 0,
+    "stop_reason": null,
+    "closing": true
+  },
+  "scheduler_unknown_usage_terminal_report": true,
+  "raw_evidence_sha256": "bcece451665c1b058413f76cd3ed27286328f47f3970cd50e669bcdfc2884cdf",
+  "source_sha256": {
+    "research/docker/TimelyML.Dockerfile": "c396fcd65a7887318aa43f442bb288e24a762cf798d90c86c89377468cdddfad",
+    "research/timely_ml_e2e.py": "0e23036be89ab340a3f4743d088141246b0874e041b933926b1e63b5f8ac9638",
+    "research/timely_ml_sandbox.py": "037ee52f7ef4dbb439634a1977956cb8a8b94270eec2cd906f568b22187d430d"
+  },
+  "image_tag_used": "tracepilot-timely-ml:20261007-libgomp",
+  "original_frozen_image_id": "sha256:49ee0948822c15cc6579f36fb37968016386f31f1bfb3fd2988a982422d12675",
+  "original_plan_sha256": "3dcf41e2f32e8f792cf4d84838e0f25e23637f34f31ad3c9b59af63ca7306c1c",
+  "libgomp1_version": "12.2.0-14+deb12u1",
+  "original_image_standalone_lightgbm_negative_check": {
+    "returncode": 1,
+    "expected_error": "libgomp.so.1 missing"
+  }
+}

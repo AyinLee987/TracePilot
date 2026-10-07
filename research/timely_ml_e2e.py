@@ -1,4 +1,5 @@
 """Zero-provider E2E: four real tasks, original grading, isolated Docker, fake HTTP."""
+import argparse
 import asyncio
 import json
 from pathlib import Path
@@ -49,11 +50,11 @@ out.to_csv("submission.csv",index=False)
 '''
 
 
-async def main():
+async def main(image_name="tracepilot-timely-ml:20261007"):
     runner.upstream()
     root = runner.ROOT / (".local/timely-ml-e2e-" + uuid.uuid4().hex[:10])
     root.mkdir()
-    image = subprocess.check_output(["docker","image","inspect","tracepilot-timely-ml:20261007","--format","{{.Id}}"],text=True).strip()
+    image = subprocess.check_output(["docker","image","inspect",image_name,"--format","{{.Id}}"],text=True).strip()
     counts = {}
     async def fake(request):
         body = json.loads(request.content)
@@ -85,7 +86,22 @@ async def main():
     finally:
         await client.close()
     sandbox=Sandbox(image,runner.DATA / tasks[0] / "public",root / "boundary")
+    independent_imports=[]
     try:
+        for module in ("lightgbm","xgboost","torch","torchvision","sklearn","statsmodels","bayes_opt","timm","torch_geometric"):
+            check=await sandbox.execute(f"import {module}; print('fresh process import passed')")
+            assert check.returncode==0,(module,check.stderr)
+            independent_imports.append(module)
+        check=await sandbox.execute('''import lightgbm as lgb
+import pandas as pd
+df=pd.read_csv("data/public/train.csv")
+model=lgb.LGBMClassifier(n_estimators=5,n_jobs=2,verbosity=-1)
+model.fit(df.drop(columns=["id","species"]),df.species)
+test=pd.read_csv("data/public/test.csv")
+p=model.predict_proba(test.drop(columns="id"))
+assert p.shape==(99,99)
+''')
+        assert check.returncode==0,check.stderr
         check=await sandbox.execute('''import os, socket
 assert not os.path.exists("data/private")
 assert not any("API_KEY" in k for k in os.environ)
@@ -97,8 +113,7 @@ try:
  open("data/public/forbidden","w").write("bad")
  raise AssertionError("data writable")
 except OSError: pass
-import torch, torchvision, sklearn, xgboost, lightgbm, statsmodels, bayes_opt, timm, torch_geometric
-print("isolation and imports verified")
+print("isolation verified")
 ''')
         assert check.returncode==0,check.stderr
         symlink=await sandbox.execute('import os; os.symlink("/etc/passwd","submission.csv")')
@@ -114,6 +129,7 @@ print("isolation and imports verified")
     rc,names,_,_=await command("docker","ps","-a","--filter","name=tracepilot-ml-","--format","{{.Names}}")
     assert rc==0 and not names.strip(),names
     evidence={"paid":False,"provider_calls":0,"image":image,
+        "independent_process_imports":independent_imports,"lightgbm_real_leaf_training":True,
         "real_task_results":[{k:r[k] for k in ("task","valid","score","duration")} for r in results],
         "timed_missing_code_feedback":True,"isolation_imports_timeout_cancel":True,"no_remaining_containers":True,
         "wall_s":time.time()-started_wall,"monotonic_s":time.perf_counter()-started_mono,
@@ -133,4 +149,6 @@ print("isolation and imports verified")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--image",default="tracepilot-timely-ml:20261007")
+    asyncio.run(main(parser.parse_args().image))
