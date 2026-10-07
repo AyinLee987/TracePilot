@@ -1,5 +1,11 @@
 # 当前研究方向与历史决策
 
+## 2026-10-07：经验适用性查重后的修正
+
+[本轮核查](experience-applicability-related-work.md)纳入 11 篇核心工作和 2 篇相邻工作：BASM、XSkill、Skill-Pro、MACLA 与 Grounding Agent Memory 已直接覆盖条件化技能、推理时适配/拒用或验收，不能将“trace → 有条件的经验 → 新任务复用”本身当成新方法。XSkill/Skill-Pro 的 ICML 2026、MACLA 的 AAMAS 2026、experience-following 研究的 ACL 2026 身份已按官方记录核实；其余工作按已查证据标预印本。前轮对宽泛方向的推荐据此下调。
+
+下一步先读最接近的方法并核对强基线，随后选择一个窄问题。按用户要求额外列出三个候选：共同 deadline 下经验核验的净收益、同一经验对快慢模型的收益差异、拒用有害经验与保留帮助的取舍。建议优先检查核验成本，条件成立/改变/未知作为共用诊断切分；尚未选定最终论文主线。每项都有最近先行、最小实验和停止条件，均未确认新颖性或实际效果。本轮仅查重及文档更新，无新实验；下面当日更早建议保留为历史，不能覆盖本次修正。
+
 ## 2026-10-07：先做逐轮证据分析与经验迁移设计
 
 按用户新要求完成[384 条 Timely 轨迹分析](timely-iteration-analysis.md)，并核验[多类型基准](multitask-benchmarks-20261007.md)。当前可研究的问题是“有适用条件的经验能否减少新任务重复错误，并改善共同时间上限内的表现”；先将协议修复与任务技能收益分开。具体候选、最小实验和否证条件见[方案](training-free-experience-plan.md)。ExpeL、MemRL、Mem²Evolve、WikiSkill、EvoAgentBench 和 9 月 Self-Evolving Harness 已覆盖大部分宽泛想法，尚未确认新颖方法或迁移效果。本轮没有新付费模型实验，router/后训练仍非前置条件。下列 10 月 6 日及更早决定保留为历史，不表示其待办已自动启动。

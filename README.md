@@ -24,9 +24,9 @@ See the [experiment plan](docs/research/timely-reproduction.md) and [related wor
 | Offline analysis and figures | [384 Timely trajectories](docs/research/timely-iteration-analysis.md) analyzed per response; plots and an interactive local explorer available |
 | Runtime JSONL, routing, and held-out selection experiments | Planned; [R4 candidate protocol](docs/research/coding-prefix-prediction.md) is not frozen or admitted for execution |
 
-The Timely four-game evaluation is complete with substitute API models. Results use per-model calibrated budgets, not a shared wall-clock deadline. Coding extensions and routing experiments remain deferred.
+The Timely four-game evaluation is complete with substitute API models. Results use per-model calibrated budgets, not a shared wall-clock deadline. Further coding extensions and routing experiments remain deferred.
 
-Next-step proposals: [training-free experience transfer](docs/research/training-free-experience-plan.md) and [2026 multi-task benchmarks](docs/research/multitask-benchmarks-20261007.md). These are research plans, not validated methods.
+The [applicability audit](docs/research/experience-applicability-related-work.md) identifies close prior work and untested research questions. The [earlier experience-transfer draft](docs/research/training-free-experience-plan.md) and [benchmark shortlist](docs/research/multitask-benchmarks-20261007.md) remain proposals; no new method is validated.
 
 ## Getting started
 
