@@ -178,6 +178,11 @@ Rebuilding preserves the plotted content; PDF/SVG byte hashes can differ because
 
 ### Original Agentic ML tasks
 
+The corrected batch is complete: 384 evaluated episodes and 373 valid submissions.
+See the [completion record](../docs/research/timely-ml-completion.md); the original
+faulty batch remains quarantined. Re-executing the admitted batch is rejected
+by the existing duplicate-run guard.
+
 The four original task prompts and evaluator are connected to reconstructed public
 datasets and a bounded Docker executor. See the [ML protocol](../docs/research/timely-ml.md)
 for commands, budget succession and differences from the paper. Engineering E2E

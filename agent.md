@@ -4,7 +4,7 @@
 
 ## 1. 项目目标
 
-**当前执行状态（2026-10-07）：** 已完成 Timely 四游戏 384 条轨迹的[逐轮分析与可视化](docs/research/timely-iteration-analysis.md)，对齐 12,521 个响应与 12,494 个官方步骤，并核验[多类型 benchmark](docs/research/multitask-benchmarks-20261007.md)。最新[经验适用性查重](docs/research/experience-applicability-related-work.md)发现 BASM、XSkill、Skill-Pro、MACLA、Grounding 等直接先行；[原候选方案](docs/research/training-free-experience-plan.md)已下调为未验证的工程设计。下一步先读强基线并选择窄问题；另记录核验成本、快慢模型经验收益、拒用与保留帮助三个候选，均未确认新颖性。该文献调研未产生模型实验；后续 ML 首批已因镜像依赖错误停止并隔离（100 条评估、212 次请求，估算 5.07 元），不用于排名，详见[故障记录](docs/research/timely-ml-environment-failure.md)。用户已授权纠正后的 ML 全矩阵重跑，沿用原 50 元额度，剩余上限 44.929487536 元；准入已通过并已开始真实 API 校准，384 条矩阵后台运行中，见[纠正协议](docs/research/timely-ml-corrected.md)。候选经验及完整 router 尚未实现。原矩阵及账务见[完整结果](docs/research/timely-official-results.md)，未重跑或改分。
+**当前执行状态（2026-10-07）：** 已完成 Timely 四游戏 384 条轨迹的[逐轮分析与可视化](docs/research/timely-iteration-analysis.md)，对齐 12,521 个响应与 12,494 个官方步骤，并核验[多类型 benchmark](docs/research/multitask-benchmarks-20261007.md)。最新[经验适用性查重](docs/research/experience-applicability-related-work.md)发现 BASM、XSkill、Skill-Pro、MACLA、Grounding 等直接先行；[原候选方案](docs/research/training-free-experience-plan.md)已下调为未验证的工程设计。下一步先读强基线并选择窄问题；另记录核验成本、快慢模型经验收益、拒用与保留帮助三个候选，均未确认新颖性。该文献调研未产生模型实验；后续 ML 首批已因镜像依赖错误停止并隔离（100 条评估、212 次请求，估算 5.07 元），不用于排名，详见[故障记录](docs/research/timely-ml-environment-failure.md)。纠正后的 ML 矩阵已于 22:23（UTC+8）完成 384/384 条，373 条有效提交，1034 次请求全结算；本批估算 19.11 元，含旧批合计 24.18/50 元，无未知费用或残留容器，见[完成记录](docs/research/timely-ml-completion.md)。下一步分析各任务质量、时间曲线和失败轨迹，尚未据此给出模型排名。候选经验及完整 router 尚未实现。原矩阵及账务见[完整结果](docs/research/timely-official-results.md)，未重跑或改分。
 
 TracePilot 计划成为一个基于任务特征与 Agent 执行轨迹进行路由的 Python 扩展库。项目包含三条主线：即插即用地记录完整 Agent 流程与开销；对任务分类并分配合适的模型和 Agent 配置；在不同任务领域评估质量、时间与费用的权衡。
 
@@ -160,9 +160,9 @@ R3 编程准备现支持固定 8 个开发题的公开/隐藏判定与 16 槽独
 
 ## 4. 验证方式：端到端优先
 
-**ML 当前状态（覆盖下段准备记录）：** 首批因镜像缺少 `libgomp1` 已停止，100 条已评估（64 校准 + 36 限时）、212 次请求全部已结算，本批估算 5.070512464 元、累计 study 36.944752176 元，未知费用零。50 个 episode 出现依赖错误，整批不用于模型排名。此前 Torch 优先导入的检查掩盖 LightGBM 独立导入失败，相关验证结论已撤回。原始批次及镜像保留；修复镜像单独标记，补逐包独立进程和真实 LightGBM 训练检查。纠正后的付费批次尚未准入或启动，必须沿用原预算并重新校准，见 [故障记录](docs/research/timely-ml-environment-failure.md)。
+**ML 首批故障历史（当前结果见顶部完成记录）：** 首批因镜像缺少 `libgomp1` 已停止，100 条已评估（64 校准 + 36 限时）、212 次请求全部已结算，本批估算 5.070512464 元、累计 study 36.944752176 元，未知费用零。50 个 episode 出现依赖错误，整批不用于模型排名。此前 Torch 优先导入的检查掩盖 LightGBM 独立导入失败，相关验证结论已撤回。原始批次及镜像保留；修复镜像单独标记，补逐包独立进程和真实 LightGBM 训练检查。当时纠正后的付费批次尚未准入或启动；后续已沿用原预算重新校准并完成，首批细节见 [故障记录](docs/research/timely-ml-environment-failure.md)。
 
-**历史执行前记录（独立导入检查结论已撤回；当前状态以上段为准）：** 2026-10-07 按用户要求准备原 Timely Agentic ML 的四个任务，公开镜像与 MLE-bench 划分重建数据；作者未公开原标签，不能声称数据逐字复现。原提示和评测循环保留，Docker 隔离代码执行；WSL 计时漂移后改用 Windows 单调时钟桥接，作为环境差异披露。四任务训练/提交/评分和并发、隔离、超时、取消、费用未知及缺失校准检查已通过，均为零 Provider 验证；实际模型实验尚未开始。计划 64 校准 + 320 限时轨迹，沿用累计 200 元 study，新增批次上限 50 元。三次实际 Claude Opus 5.5 审查完成，阻断已处理；同预算迁移核验后执行，详见 [ML 协议](docs/research/timely-ml.md)和[审查](docs/reviews/2026-10-07-timely-ml.md)。
+**历史执行前记录（独立导入检查结论已撤回；当前状态以顶部完成记录为准）：** 2026-10-07 按用户要求准备原 Timely Agentic ML 的四个任务，公开镜像与 MLE-bench 划分重建数据；作者未公开原标签，不能声称数据逐字复现。原提示和评测循环保留，Docker 隔离代码执行；WSL 计时漂移后改用 Windows 单调时钟桥接，作为环境差异披露。四任务训练/提交/评分和并发、隔离、超时、取消、费用未知及缺失校准检查已通过，均为零 Provider 验证；实际模型实验尚未开始。计划 64 校准 + 320 限时轨迹，沿用累计 200 元 study，新增批次上限 50 元。三次实际 Claude Opus 5.5 审查完成，阻断已处理；同预算迁移核验后执行，详见 [ML 协议](docs/research/timely-ml.md)和[审查](docs/reviews/2026-10-07-timely-ml.md)。
 
 用户明确允许不编写 pytest 等测试。本项目不要求建立 pytest、单元测试或覆盖率门槛；默认使用可重复运行的端到端脚本/命令验证功能。
 

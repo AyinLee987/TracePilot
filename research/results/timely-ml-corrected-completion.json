@@ -1,0 +1,52 @@
+{
+  "status": "complete",
+  "planned": 384,
+  "evaluated": 384,
+  "valid_submissions": 373,
+  "no_valid_submission": 11,
+  "phases": {
+    "speed": {
+      "evaluated": 64,
+      "valid": 61
+    },
+    "timed": {
+      "evaluated": 320,
+      "valid": 312
+    }
+  },
+  "calibration_cells": 8,
+  "usable_calibration_cells": 8,
+  "api_calls": 1034,
+  "settled_calls": 1034,
+  "active_calls": 0,
+  "unknown_calls": 0,
+  "held_cny": "0",
+  "corrected_batch_estimate_cny": "19.111148528",
+  "quarantined_batch_estimate_cny": "5.070512464",
+  "all_ml_estimate_cny": "24.181660992",
+  "original_ml_cap_cny": "50",
+  "study_known_estimate_cny": "56.055900704",
+  "finished_utc": "2026-10-07T14:23:14.997894+00:00",
+  "finished_local": "2026-10-07T22:23:14.997894+08:00",
+  "process_reaped": true,
+  "returncode": 0,
+  "remaining_experiment_containers": 0,
+  "verification": {
+    "all_planned_rows_and_child_results_match": true,
+    "all_request_ids_settle_once": true,
+    "billing_reconciled": true,
+    "active_sources_and_protocol_unchanged": true,
+    "quarantined_batch_unchanged": true
+  },
+  "raw_sha256": {
+    ".local/timely-ml-corrected-paid-20261007/plan.json": "c739b78007b87f940417882bce132314811d63098eda2399cead03b27aa28940",
+    ".local/timely-ml-corrected-paid-20261007/result.json": "98eed33a5abaeb5d2eb4c03dd9fe1b703f349c6c6e88601d91f1d14afb1bac3c",
+    ".local/timely-ml-corrected-paid-20261007/requests.jsonl": "da6f891fe90d32722c5e5ba8e521c6e94ead25614125eba33bda0517f1a0c437",
+    ".local/overnight/timely-ml-corrected-admitted.process.closed.json": "691f2bd2447d1782e2adbc0a1a73d19a9cc026e3edaaab3c5df9611ab4542f3c"
+  },
+  "limits": "Substitute API models and reconstructed splits; per-model calibrated budgets; three timed turns; upstream 1.5x acceptance and private-test score feedback. Quality is not an untouched held-out generalization estimate. Completion is not a model ranking or an exact-paper replication.",
+  "validity_definition": {
+    "speed": "Calibration: code exits successfully, produces a submission file, and the upstream scorer accepts it and returns accuracy. Cell budget is the mean positive duration of valid samples after all eight planned calibration episodes are evaluated.",
+    "timed": "At least one scorer-accepted candidate with recorded evaluation time <= 1.5 times the stated budget; later candidates are excluded while earlier eligible ones remain."
+  }
+}

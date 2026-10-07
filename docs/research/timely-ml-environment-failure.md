@@ -1,5 +1,8 @@
 # Timely ML: first batch stopped for an environment defect
 
+Historical failure checkpoint. The subsequent corrected full matrix is now
+[complete](timely-ml-completion.md); the quarantined records below remain unchanged.
+
 The first paid ML batch is stopped, not a completed benchmark. It evaluated
 100/384 planned episodes: all 64 calibration episodes and 36 timed episodes.
 Flash/Spaceship Titanic had zero valid submissions in eight calibration episodes,
