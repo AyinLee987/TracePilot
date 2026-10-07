@@ -2,6 +2,17 @@
 
 These are independent research tools, not TracePilot routing features. Start with the [direction note](../docs/research/decision.md).
 
+## Offline Timely iteration analysis
+
+The frozen local batch is required; raw evidence is deliberately not distributed. This reads existing files and makes no model calls. Run one writer at a time; derived outputs are replaced. Keep `--inline` outside the source batch and away from existing evidence files. The analyzer uses the standard library; plotting needs Matplotlib (validated with 3.10.8).
+
+```powershell
+python research/analyze_timely_iterations.py
+python research/visualize_timely_iterations.py --inline .local/timely-iterations.html
+```
+
+See the [analysis and limitations](../docs/research/timely-iteration-analysis.md). Derived metrics are in `research/results/timely-iterations/`; plots in `research/figures/timely-iterations/`. The full local explorer is `.local/timely-iteration-analysis-20261007/trace-explorer.html`; it includes private tool feedback and loads pinned D3 from jsDelivr. Keep it out of Git. The inline fragment contains six diagnostic examples with feedback summaries. Neither explorer is an unbiased model comparison.
+
 ## Timely evaluation with a real Jericho game
 
 See the [reproduction scope and budget](../docs/research/timely-reproduction.md). Use a dedicated Linux/WSL Python 3.12 environment, a locally obtained supported ROM, and the unmodified official source at `e13af2b8c98d799857ace789ebcfdfd4ea6c2985`. Build tools are needed to install Jericho. The [requirements](requirements-timely.txt) pin the validated SDK, HTTP transport, and game dependencies; a complete environment freeze is retained with each local setup.

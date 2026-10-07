@@ -1,0 +1,556 @@
+{
+  "schema": 1,
+  "episodes": 384,
+  "requests": 12521,
+  "recorded_steps": 12494,
+  "categories_all": {
+    "query": 892,
+    "score_gain": 707,
+    "no_tool": 3808,
+    "other_action": 6546,
+    "conclusion": 27,
+    "repeated_observation": 484,
+    "score_loss": 17,
+    "end_game": 32,
+    "argument_error": 8
+  },
+  "format_flags_all": {
+    "unbalanced_tool_tags": 4048,
+    "dsml_dialect": 1987,
+    "output_limit": 69,
+    "step_tag_dialect": 6
+  },
+  "api_calls_for_analysis": 0,
+  "request_event_counts": {
+    "batch_open": 384,
+    "request_dispatch": 12521,
+    "request_complete": 12521,
+    "batch_close": 384
+  },
+  "tool_result_counts": {
+    "get_available_actions": 542,
+    "step": 7762,
+    "no_tool_result": 3835,
+    "get_score": 289,
+    "get_max_score": 61,
+    "end_game": 32
+  },
+  "initial_scores": {
+    "advent.z5": [
+      36
+    ],
+    "detective.z5": [
+      10
+    ],
+    "enchanter.z3": [
+      0
+    ],
+    "zork1.z5": [
+      0
+    ]
+  },
+  "limitations": [
+    "Descriptive, not causal; eight runs per condition.",
+    "No full game-state snapshots; repeated observation is a proxy only.",
+    "Zero immediate reward is not proof of useless exploration.",
+    "Score carried across no-call/query/conclusion responses is not a fresh measurement.",
+    "HTTP durations exclude tool execution; virtual delays are not wall-clock costs.",
+    "Within-game repetition does not establish transfer to unseen tasks.",
+    "Existing model-specific budgets, scheduler phases and clock flags remain."
+  ],
+  "timed": {
+    "deepseek-flash": {
+      "runs": 160,
+      "recorded_steps": 5261,
+      "responses": 5263,
+      "categories": {
+        "no_tool": 1946,
+        "query": 308,
+        "score_gain": 287,
+        "other_action": 2501,
+        "repeated_observation": 181,
+        "conclusion": 2,
+        "end_game": 28,
+        "score_loss": 10
+      },
+      "http_s": 5047.0391032489915,
+      "no_tool_http_s": 1945.5743735830051,
+      "observed_tool_s": 82.47878799601108,
+      "no_tool_length_responses": 11,
+      "discarded_calls": 1046,
+      "multi_call_responses": 497,
+      "error_streaks": 1155,
+      "next_call_recovered": 1118,
+      "error_streaks_open_at_run_end": 35,
+      "closed_error_streaks": 1120,
+      "recovery_immediate_gain": 63,
+      "zero_net_gain_runs": 56,
+      "negative_net_gain_runs": 0,
+      "runs_with_score_loss": 10
+    },
+    "deepseek-v4-pro": {
+      "runs": 160,
+      "recorded_steps": 5392,
+      "responses": 5412,
+      "categories": {
+        "no_tool": 1466,
+        "query": 436,
+        "other_action": 2947,
+        "repeated_observation": 218,
+        "score_gain": 307,
+        "conclusion": 20,
+        "end_game": 4,
+        "score_loss": 6,
+        "argument_error": 8
+      },
+      "http_s": 7292.558938807012,
+      "no_tool_http_s": 1971.489203023005,
+      "observed_tool_s": 137.01604945099206,
+      "no_tool_length_responses": 2,
+      "discarded_calls": 37,
+      "multi_call_responses": 25,
+      "error_streaks": 536,
+      "next_call_recovered": 490,
+      "error_streaks_open_at_run_end": 26,
+      "closed_error_streaks": 510,
+      "recovery_immediate_gain": 20,
+      "zero_net_gain_runs": 81,
+      "negative_net_gain_runs": 1,
+      "runs_with_score_loss": 6
+    }
+  },
+  "groups": [
+    {
+      "game": "zork1.z5",
+      "model": "deepseek-flash",
+      "budget": 10,
+      "n": 8,
+      "mean_net_gain": 3.125,
+      "net_gain_sd": 3.720119045714225,
+      "mean_final_score": 3.125,
+      "zero_gain_runs": 4
+    },
+    {
+      "game": "zork1.z5",
+      "model": "deepseek-flash",
+      "budget": 20,
+      "n": 8,
+      "mean_net_gain": 10,
+      "net_gain_sd": 5.976143046671968,
+      "mean_final_score": 10,
+      "zero_gain_runs": 1
+    },
+    {
+      "game": "zork1.z5",
+      "model": "deepseek-flash",
+      "budget": 30,
+      "n": 8,
+      "mean_net_gain": 33.125,
+      "net_gain_sd": 10.999188281738924,
+      "mean_final_score": 33.125,
+      "zero_gain_runs": 0
+    },
+    {
+      "game": "zork1.z5",
+      "model": "deepseek-flash",
+      "budget": 50,
+      "n": 8,
+      "mean_net_gain": 36.125,
+      "net_gain_sd": 8.626164517658719,
+      "mean_final_score": 36.125,
+      "zero_gain_runs": 0
+    },
+    {
+      "game": "zork1.z5",
+      "model": "deepseek-flash",
+      "budget": 100,
+      "n": 8,
+      "mean_net_gain": 36.875,
+      "net_gain_sd": 8.838834764831844,
+      "mean_final_score": 36.875,
+      "zero_gain_runs": 0
+    },
+    {
+      "game": "zork1.z5",
+      "model": "deepseek-v4-pro",
+      "budget": 10,
+      "n": 8,
+      "mean_net_gain": 1.25,
+      "net_gain_sd": 3.5355339059327378,
+      "mean_final_score": 1.25,
+      "zero_gain_runs": 7
+    },
+    {
+      "game": "zork1.z5",
+      "model": "deepseek-v4-pro",
+      "budget": 20,
+      "n": 8,
+      "mean_net_gain": 6.875,
+      "net_gain_sd": 3.720119045714225,
+      "mean_final_score": 6.875,
+      "zero_gain_runs": 0
+    },
+    {
+      "game": "zork1.z5",
+      "model": "deepseek-v4-pro",
+      "budget": 30,
+      "n": 8,
+      "mean_net_gain": 15,
+      "net_gain_sd": 15.118578920369089,
+      "mean_final_score": 15,
+      "zero_gain_runs": 2
+    },
+    {
+      "game": "zork1.z5",
+      "model": "deepseek-v4-pro",
+      "budget": 50,
+      "n": 8,
+      "mean_net_gain": 34.375,
+      "net_gain_sd": 11.475906437899734,
+      "mean_final_score": 34.375,
+      "zero_gain_runs": 0
+    },
+    {
+      "game": "zork1.z5",
+      "model": "deepseek-v4-pro",
+      "budget": 100,
+      "n": 8,
+      "mean_net_gain": 41.375,
+      "net_gain_sd": 22.0903178532393,
+      "mean_final_score": 41.375,
+      "zero_gain_runs": 0
+    },
+    {
+      "game": "advent.z5",
+      "model": "deepseek-flash",
+      "budget": 10,
+      "n": 8,
+      "mean_net_gain": 0,
+      "net_gain_sd": 0.0,
+      "mean_final_score": 36,
+      "zero_gain_runs": 8
+    },
+    {
+      "game": "advent.z5",
+      "model": "deepseek-flash",
+      "budget": 20,
+      "n": 8,
+      "mean_net_gain": 0,
+      "net_gain_sd": 0.0,
+      "mean_final_score": 36,
+      "zero_gain_runs": 8
+    },
+    {
+      "game": "advent.z5",
+      "model": "deepseek-flash",
+      "budget": 30,
+      "n": 8,
+      "mean_net_gain": 3.125,
+      "net_gain_sd": 8.838834764831844,
+      "mean_final_score": 39.125,
+      "zero_gain_runs": 7
+    },
+    {
+      "game": "advent.z5",
+      "model": "deepseek-flash",
+      "budget": 50,
+      "n": 8,
+      "mean_net_gain": 13.375,
+      "net_gain_sd": 14.480898748745831,
+      "mean_final_score": 49.375,
+      "zero_gain_runs": 4
+    },
+    {
+      "game": "advent.z5",
+      "model": "deepseek-flash",
+      "budget": 100,
+      "n": 8,
+      "mean_net_gain": 23.75,
+      "net_gain_sd": 15.471171347287925,
+      "mean_final_score": 59.75,
+      "zero_gain_runs": 2
+    },
+    {
+      "game": "advent.z5",
+      "model": "deepseek-v4-pro",
+      "budget": 10,
+      "n": 8,
+      "mean_net_gain": 0,
+      "net_gain_sd": 0.0,
+      "mean_final_score": 36,
+      "zero_gain_runs": 8
+    },
+    {
+      "game": "advent.z5",
+      "model": "deepseek-v4-pro",
+      "budget": 20,
+      "n": 8,
+      "mean_net_gain": 0,
+      "net_gain_sd": 0.0,
+      "mean_final_score": 36,
+      "zero_gain_runs": 8
+    },
+    {
+      "game": "advent.z5",
+      "model": "deepseek-v4-pro",
+      "budget": 30,
+      "n": 8,
+      "mean_net_gain": 0,
+      "net_gain_sd": 0.0,
+      "mean_final_score": 36,
+      "zero_gain_runs": 8
+    },
+    {
+      "game": "advent.z5",
+      "model": "deepseek-v4-pro",
+      "budget": 50,
+      "n": 8,
+      "mean_net_gain": 15.625,
+      "net_gain_sd": 12.938729237669142,
+      "mean_final_score": 51.625,
+      "zero_gain_runs": 3
+    },
+    {
+      "game": "advent.z5",
+      "model": "deepseek-v4-pro",
+      "budget": 100,
+      "n": 8,
+      "mean_net_gain": 21.75,
+      "net_gain_sd": 18.242415253625662,
+      "mean_final_score": 57.75,
+      "zero_gain_runs": 3
+    },
+    {
+      "game": "enchanter.z3",
+      "model": "deepseek-flash",
+      "budget": 10,
+      "n": 8,
+      "mean_net_gain": 0,
+      "net_gain_sd": 0.0,
+      "mean_final_score": 0,
+      "zero_gain_runs": 8
+    },
+    {
+      "game": "enchanter.z3",
+      "model": "deepseek-flash",
+      "budget": 20,
+      "n": 8,
+      "mean_net_gain": 10,
+      "net_gain_sd": 10.690449676496975,
+      "mean_final_score": 10,
+      "zero_gain_runs": 4
+    },
+    {
+      "game": "enchanter.z3",
+      "model": "deepseek-flash",
+      "budget": 30,
+      "n": 8,
+      "mean_net_gain": 12.5,
+      "net_gain_sd": 10.350983390135314,
+      "mean_final_score": 12.5,
+      "zero_gain_runs": 3
+    },
+    {
+      "game": "enchanter.z3",
+      "model": "deepseek-flash",
+      "budget": 50,
+      "n": 8,
+      "mean_net_gain": 17.5,
+      "net_gain_sd": 7.0710678118654755,
+      "mean_final_score": 17.5,
+      "zero_gain_runs": 1
+    },
+    {
+      "game": "enchanter.z3",
+      "model": "deepseek-flash",
+      "budget": 100,
+      "n": 8,
+      "mean_net_gain": 12.5,
+      "net_gain_sd": 14.8804761828569,
+      "mean_final_score": 12.5,
+      "zero_gain_runs": 4
+    },
+    {
+      "game": "enchanter.z3",
+      "model": "deepseek-v4-pro",
+      "budget": 10,
+      "n": 8,
+      "mean_net_gain": 2.5,
+      "net_gain_sd": 7.0710678118654755,
+      "mean_final_score": 2.5,
+      "zero_gain_runs": 7
+    },
+    {
+      "game": "enchanter.z3",
+      "model": "deepseek-v4-pro",
+      "budget": 20,
+      "n": 8,
+      "mean_net_gain": 0,
+      "net_gain_sd": 0.0,
+      "mean_final_score": 0,
+      "zero_gain_runs": 8
+    },
+    {
+      "game": "enchanter.z3",
+      "model": "deepseek-v4-pro",
+      "budget": 30,
+      "n": 8,
+      "mean_net_gain": 0,
+      "net_gain_sd": 0.0,
+      "mean_final_score": 0,
+      "zero_gain_runs": 8
+    },
+    {
+      "game": "enchanter.z3",
+      "model": "deepseek-v4-pro",
+      "budget": 50,
+      "n": 8,
+      "mean_net_gain": 3.75,
+      "net_gain_sd": 6.943650748294136,
+      "mean_final_score": 3.75,
+      "zero_gain_runs": 6
+    },
+    {
+      "game": "enchanter.z3",
+      "model": "deepseek-v4-pro",
+      "budget": 100,
+      "n": 8,
+      "mean_net_gain": 15.625,
+      "net_gain_sd": 14.74485382381644,
+      "mean_final_score": 15.625,
+      "zero_gain_runs": 3
+    },
+    {
+      "game": "detective.z5",
+      "model": "deepseek-flash",
+      "budget": 10,
+      "n": 8,
+      "mean_net_gain": 18.75,
+      "net_gain_sd": 13.562026818605375,
+      "mean_final_score": 28.75,
+      "zero_gain_runs": 1
+    },
+    {
+      "game": "detective.z5",
+      "model": "deepseek-flash",
+      "budget": 20,
+      "n": 8,
+      "mean_net_gain": 27.5,
+      "net_gain_sd": 21.876275473019362,
+      "mean_final_score": 37.5,
+      "zero_gain_runs": 1
+    },
+    {
+      "game": "detective.z5",
+      "model": "deepseek-flash",
+      "budget": 30,
+      "n": 8,
+      "mean_net_gain": 36.25,
+      "net_gain_sd": 23.26094212561969,
+      "mean_final_score": 46.25,
+      "zero_gain_runs": 0
+    },
+    {
+      "game": "detective.z5",
+      "model": "deepseek-flash",
+      "budget": 50,
+      "n": 8,
+      "mean_net_gain": 60,
+      "net_gain_sd": 45.03966505838413,
+      "mean_final_score": 70,
+      "zero_gain_runs": 0
+    },
+    {
+      "game": "detective.z5",
+      "model": "deepseek-flash",
+      "budget": 100,
+      "n": 8,
+      "mean_net_gain": 58.75,
+      "net_gain_sd": 47.03721930556695,
+      "mean_final_score": 68.75,
+      "zero_gain_runs": 0
+    },
+    {
+      "game": "detective.z5",
+      "model": "deepseek-v4-pro",
+      "budget": 10,
+      "n": 8,
+      "mean_net_gain": 16.25,
+      "net_gain_sd": 17.67766952966369,
+      "mean_final_score": 26.25,
+      "zero_gain_runs": 4
+    },
+    {
+      "game": "detective.z5",
+      "model": "deepseek-v4-pro",
+      "budget": 20,
+      "n": 8,
+      "mean_net_gain": 28.75,
+      "net_gain_sd": 18.850918886280926,
+      "mean_final_score": 38.75,
+      "zero_gain_runs": 1
+    },
+    {
+      "game": "detective.z5",
+      "model": "deepseek-v4-pro",
+      "budget": 30,
+      "n": 8,
+      "mean_net_gain": 31.25,
+      "net_gain_sd": 24.16461403433896,
+      "mean_final_score": 41.25,
+      "zero_gain_runs": 2
+    },
+    {
+      "game": "detective.z5",
+      "model": "deepseek-v4-pro",
+      "budget": 50,
+      "n": 8,
+      "mean_net_gain": 72.5,
+      "net_gain_sd": 39.18819064098629,
+      "mean_final_score": 82.5,
+      "zero_gain_runs": 1
+    },
+    {
+      "game": "detective.z5",
+      "model": "deepseek-v4-pro",
+      "budget": 100,
+      "n": 8,
+      "mean_net_gain": 115,
+      "net_gain_sd": 105.01700542565203,
+      "mean_final_score": 125,
+      "zero_gain_runs": 2
+    }
+  ],
+  "cases": [
+    {
+      "reason": "previously_random_example",
+      "run_id": "episode-234",
+      "selection": "post-hoc illustrative; not representative"
+    },
+    {
+      "reason": "actual_victory",
+      "run_id": "episode-167",
+      "selection": "post-hoc illustrative; not representative"
+    },
+    {
+      "reason": "largest_score_loss_count",
+      "run_id": "episode-129",
+      "selection": "post-hoc illustrative; not representative"
+    },
+    {
+      "reason": "most_no_tool_responses",
+      "run_id": "episode-369",
+      "selection": "post-hoc illustrative; not representative"
+    },
+    {
+      "reason": "most_discarded_calls",
+      "run_id": "episode-322",
+      "selection": "post-hoc illustrative; not representative"
+    },
+    {
+      "reason": "most_adjacent_repeated_observations",
+      "run_id": "episode-365",
+      "selection": "post-hoc illustrative; not representative"
+    }
+  ]
+}

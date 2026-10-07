@@ -1,0 +1,85 @@
+{
+  "date": "2026-10-07",
+  "passed": true,
+  "model_experiment_api_calls": 0,
+  "episodes": 384,
+  "responses": 12521,
+  "recorded_steps": 12494,
+  "source_files_hash_verified": 1154,
+  "local_markdown_links_checked": 97,
+  "checks": [
+    "category counts reaggregated",
+    "score deltas reaggregated",
+    "all raw source hashes unchanged",
+    "analysis script hash matches provenance",
+    "no obvious secret patterns in published text",
+    "scientific plots and desktop/narrow screenshots visually inspected",
+    "derived JSON/SVG normalized to LF; SVG whitespace semantics unchanged"
+  ],
+  "browser": {
+    "passed": true,
+    "browser": "Microsoft Edge via Playwright",
+    "runs": 384,
+    "inline_cases": 6,
+    "widths": [
+      {
+        "width": 320,
+        "scroll": 320,
+        "labels": true
+      },
+      {
+        "width": 360,
+        "scroll": 360,
+        "labels": true
+      },
+      {
+        "width": 736,
+        "scroll": 736,
+        "labels": true
+      },
+      {
+        "width": 1024,
+        "scroll": 1024,
+        "labels": true
+      }
+    ],
+    "page_errors": [],
+    "checks": [
+      "score loss at episode-129 iteration 32",
+      "episode-369 has 100 responses and zero net gain",
+      "episode-167 final score 350",
+      "widget state restore",
+      "next/previous navigation",
+      "responsive layout"
+    ]
+  },
+  "artifact_sha256": {
+    "research/analyze_timely_iterations.py": "45fe960040a3e343973ca6b5846bbdc94e48dc8a771ee134320e064fe33d70eb",
+    "research/visualize_timely_iterations.py": "32a887d957bcb5fc292a52f8b95e0f4080f507ac0f86dbc161a1ffd2ec7aa834",
+    "research/templates/timely-iterations.html": "381d25ebfc47a3a6731162f96c61752e0ccd097b9d555802d88dd17c7d0e61de",
+    "research/results/timely-iterations/iterations.jsonl": "1c9927da434285201b0f87bfc4d1fb3c8aed461f5768abfd3f52da3b9ba50f0e",
+    "research/results/timely-iterations/provenance.json": "d7c3909c254a55ecfa07394d9a5dd6db1f174f6112f9aef68cf9212070868e77",
+    "research/results/timely-iterations/runs.json": "24514fa250536c0b0258507e014c989e64bf19e3bcbc71601aa332c578ee657e",
+    "research/results/timely-iterations/summary.json": "908b10d801ad8b0f9f2de1430adfa66cafe7100bda432fdcf77012ad0476280b",
+    "research/figures/timely-iterations/net-progress.pdf": "86fe235771de4d64220ca4e138030ce6610570a353dc5e458a0e7590ade58ff1",
+    "research/figures/timely-iterations/net-progress.png": "55a5652058f02ed7451a92b92459957988075a1abf7014e00ec13a5f7e78d45f",
+    "research/figures/timely-iterations/net-progress.svg": "fcc39e3112c8973185709985543d5ff660e9a941838deb579cbb906de1d5cc9b",
+    "research/figures/timely-iterations/protocol-cost.pdf": "2481020b0cd0a28919e61e1bd295e9ecee846b03a8f9580eaa11f9c01ae20d3e",
+    "research/figures/timely-iterations/protocol-cost.png": "2ada9e482e5a0d58cf653d7e44e7566b083265919e9cc0086bb98117986834ca",
+    "research/figures/timely-iterations/protocol-cost.svg": "672ef2ceb40201dd166b2c77ba5a151f94e0a52f8cc62d2840afef57696b8ac4"
+  },
+  "closed_unrecovered_next_category_timed": {
+    "conclusion": 22
+  },
+  "claude_review": {
+    "models": [
+      "claude-opus-5-5"
+    ],
+    "rounds": 2,
+    "both_exit_zero": true,
+    "both_is_error_false": true,
+    "reviewed_sources_unchanged": true,
+    "final_sha256": "b56899cb5e1af88e7200a083845c22b01368c2d80d643d3c3e260f2300c1b4bc",
+    "blocking_findings": 0
+  }
+}

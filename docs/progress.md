@@ -2,6 +2,14 @@
 
 阶段状态以 [`agent.md`](../agent.md) 为准。本文件记录每次任务的实际工作、验证和审查结果。
 
+## 2026-10-07：Timely 逐轮分析、可视化与经验迁移调研
+
+- **范围**：离线对齐 384 条 / 12,521 响应 / 12,494 官方步骤，导出逐轮动作、前后分数、请求/工具时间、token、协议标记与源哈希；原始输入只读，无新增模型实验。全部 40 个正式条件各 n=8 与分数守恒通过。
+- **结果**：正式阶段 Flash/Pro 无有效调用占记录步骤 37.0%/27.2%，占模型 HTTP 时间 38.5%/27.0%；137/320 净增为零，16/320 出现扣分。调用恢复不等于任务完成，不把时间占比当可回收提速。[完整解释](research/timely-iteration-analysis.md)。
+- **可视化**：导出两组 PNG/SVG/PDF；本地交互版含 384 条、会话版六个事后诊断例。Edge/Playwright 验证选择、逐轮导航、状态恢复、特定加扣分与 320/360/736/1024 宽度；零页面异常。首次检查把水平 SVG 路径当成有面积元素导致等待超时，改用 attached；发现并修复窄屏选择器溢出，最终检查通过。
+- **调研**：核实 ICLR 2026 的 MCPMark、Toolathlon、HAL，Findings ACL 2026 的 WindowsWorld；比较 Agent-Diff、Claw-Eval-Live、WildClawBench、EvoAgentBench 等预印本。列出[候选方向、最近先行与否证实验](research/training-free-experience-plan.md)，均不是已验证方法。
+- **审查/交付**：两次实际 Claude CLI 均为 `claude-opus-5-5`、exit 0、is_error=false、提供文件未变；修正反馈映射、事件/工具显式检查、末尾未闭合段口径等，复审无阻断。1,154 个源文件哈希不变；衍生指标、图表、浏览器和本地文档链接检查通过；见[审查处置](reviews/2026-10-07-timely-iterations.md)和[验证记录](../research/results/timely-iterations/validation.json)。新运行时功能、经验学习器、router 和新基准部署均未实现。
+
 ## 2026-10-06：R3 实际评分、逐轮诊断与结果发布
 
 - **完成范围**：144 条真实在线轨迹、843 次请求终态已封存；离线 hidden scorer exit0，714 个持久候选加 1 个独立 seed 共715/715评分，未知0，原输入未变，资源已清理。实际分析 exit0，保留144物理轨迹和288相关快照；[结果报告](research/coding-deadline-results.md)和[脱敏数值包](../research/results/coding-deadline/summary.json)分别提供解释与复用入口。

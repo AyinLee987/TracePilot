@@ -4,7 +4,7 @@
 
 ## 1. 项目目标
 
-**当前执行状态（2026-10-06，用户明确收束）：** 原文 Timely 四游戏 API 替代模型矩阵已完成 384/384 条，12,521 次请求已结算，本批估算 28.744457120 元，无未知负债。沿用官方格式错误后继续的行为；此前零格式错误整批停止门槛是本项目额外限制，旧结果保留不改。前 256 条按六条一批执行，按用户要求后 128 条改为最多 6 进程持续补位，耗时 15.71 分钟；调度阶段分列，旧轨迹未重跑。单条平均实际执行 39.94 秒，不含启动/准入/审查。替代模型、分模型校准与时钟限制见 [完整结果](docs/research/timely-official-results.md)。当前交付这轮结果，暂不启动编程扩展、router 或新方向调研。
+**当前执行状态（2026-10-07）：** 按用户新要求完成昨天 Timely 四游戏 384 条轨迹的[逐轮分析与可视化](docs/research/timely-iteration-analysis.md)，对齐 12,521 个响应与 12,494 个官方步骤；保留原始数据、费用和计时限制。本次未启动新的模型实验。另完成[多类型 benchmark 核验](docs/research/multitask-benchmarks-20261007.md)与[training-free 经验迁移候选方案](docs/research/training-free-experience-plan.md)，列出有证据的方向及待验证假说。候选经验尚未实现或验证，完整 router 仍未实现。下一步优先检验协议基线和有适用条件的经验能否迁移；新增付费批次仍需明确范围和费用上限。原矩阵及账务见[完整结果](docs/research/timely-official-results.md)，未重跑或改分。
 
 TracePilot 计划成为一个基于任务特征与 Agent 执行轨迹进行路由的 Python 扩展库。项目包含三条主线：即插即用地记录完整 Agent 流程与开销；对任务分类并分配合适的模型和 Agent 配置；在不同任务领域评估质量、时间与费用的权衡。
 
@@ -120,7 +120,7 @@ TracePilot 计划成为一个基于任务特征与 Agent 执行轨迹进行路�
 | P4 学习与评估 | 轻量策略、文本/规则/trace 基线、模型/Agent 分配消融、质量/时间/费用分析和域外测试 | 待开始 | 待分领域结果、泛化分析与不确定性报告 |
 | P5 购物拓展与交付 | 可重置购物环境与评分、跨域实验、接入示例、复现说明与论文初稿 | 待开始 | 待购物沙箱端到端验证及完整交付检查 |
 
-**最近更新：2026-10-06。** P1 已开始：先独立部署 Langfuse，通过官方 SDK 接入现有 harness 的运行、模型、工具与检索边界，提供可复现的合成数据 E2E。完整观测范围与缺口见 `docs/langfuse-pilot.md`，部署及验证结果见 `docs/progress.md`。路由尚未实现；独立研究脚本已完成公开代码计时审计和小型真实 API 工程先导，不等于 P1 的运行时 JSONL 或 P3 的跨任务实验设施已经完成。
+**最近更新：2026-10-07。** P1 已开始：先独立部署 Langfuse，通过官方 SDK 接入现有 harness 的运行、模型、工具与检索边界，提供可复现的合成数据 E2E。完整观测范围与缺口见 `docs/langfuse-pilot.md`，部署及验证结果见 `docs/progress.md`。路由尚未实现；独立研究脚本已完成公开代码计时审计和小型真实 API 工程先导，不等于 P1 的运行时 JSONL 或 P3 的跨任务实验设施已经完成。
 
 研究方向已与 Claude Opus 5.5 完成多轮可行性讨论。早期记录见 [`docs/research-directions.md`](docs/research-directions.md)，最新决定见 [`docs/research/decision.md`](docs/research/decision.md)。用户现选择研究“快模型在同时间内通过迭代弥补能力差距”的机制与选型边界。2026-10-06 的 [顶会与同期工作核查](docs/research/speed-feedback-related-work.md)发现 Timely、EFC、CUDAnalyst、AgentTTS、SALE 等直接先行；候选贡献收紧为反馈机制是否增加共同 deadline 下的模型相对优势预测能力，并能迁移到新任务与速度条件。这是待否证问题，不是已确认新颖的方法，也不因此更改 P2–P5 的实现状态。
 
